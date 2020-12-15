@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
     var MIDI_COLOR = "#243";
 
@@ -14,11 +14,11 @@
 
     LiteGraph.MIDIEvent = MIDIEvent;
 
-    MIDIEvent.prototype.fromJSON = function(o) {
+    MIDIEvent.prototype.fromJSON = function (o) {
         this.setup(o.data);
     };
 
-    MIDIEvent.prototype.setup = function(data) {
+    MIDIEvent.prototype.setup = function (data) {
         var raw_data = data;
         if (data.constructor === Object) {
             raw_data = data.data;
@@ -52,16 +52,16 @@
     };
 
     Object.defineProperty(MIDIEvent.prototype, "velocity", {
-        get: function() {
+        get: function () {
             if (this.cmd == MIDIEvent.NOTEON) {
                 return this.data[2];
             }
             return -1;
         },
-        set: function(v) {
+        set: function (v) {
             this.data[2] = v; //  v / 127;
         },
-        enumerable: true
+        enumerable: true,
     });
 
     MIDIEvent.notes = [
@@ -76,7 +76,7 @@
         "F",
         "F#",
         "G",
-        "G#"
+        "G#",
     ];
     MIDIEvent.note_to_index = {
         A: 0,
@@ -90,67 +90,67 @@
         F: 8,
         "F#": 9,
         G: 10,
-        "G#": 11
+        "G#": 11,
     };
 
     Object.defineProperty(MIDIEvent.prototype, "note", {
-        get: function() {
+        get: function () {
             if (this.cmd != MIDIEvent.NOTEON) {
                 return -1;
             }
             return MIDIEvent.toNoteString(this.data[1], true);
         },
-        set: function(v) {
+        set: function (v) {
             throw "notes cannot be assigned this way, must modify the data[1]";
         },
-        enumerable: true
+        enumerable: true,
     });
 
     Object.defineProperty(MIDIEvent.prototype, "octave", {
-        get: function() {
+        get: function () {
             if (this.cmd != MIDIEvent.NOTEON) {
                 return -1;
             }
             var octave = this.data[1] - 24;
             return Math.floor(octave / 12 + 1);
         },
-        set: function(v) {
+        set: function (v) {
             throw "octave cannot be assigned this way, must modify the data[1]";
         },
-        enumerable: true
+        enumerable: true,
     });
 
     //returns HZs
-    MIDIEvent.prototype.getPitch = function() {
+    MIDIEvent.prototype.getPitch = function () {
         return Math.pow(2, (this.data[1] - 69) / 12) * 440;
     };
 
-    MIDIEvent.computePitch = function(note) {
+    MIDIEvent.computePitch = function (note) {
         return Math.pow(2, (note - 69) / 12) * 440;
     };
 
-    MIDIEvent.prototype.getCC = function() {
+    MIDIEvent.prototype.getCC = function () {
         return this.data[1];
     };
 
-    MIDIEvent.prototype.getCCValue = function() {
+    MIDIEvent.prototype.getCCValue = function () {
         return this.data[2];
     };
 
     //not tested, there is a formula missing here
-    MIDIEvent.prototype.getPitchBend = function() {
+    MIDIEvent.prototype.getPitchBend = function () {
         return this.data[1] + (this.data[2] << 7) - 8192;
     };
 
-    MIDIEvent.computePitchBend = function(v1, v2) {
+    MIDIEvent.computePitchBend = function (v1, v2) {
         return v1 + (v2 << 7) - 8192;
     };
 
-    MIDIEvent.prototype.setCommandFromString = function(str) {
+    MIDIEvent.prototype.setCommandFromString = function (str) {
         this.cmd = MIDIEvent.computeCommandFromString(str);
     };
 
-    MIDIEvent.computeCommandFromString = function(str) {
+    MIDIEvent.computeCommandFromString = function (str) {
         if (!str) {
             return 0;
         }
@@ -201,7 +201,7 @@
     };
 
     //transform from a pitch number to string like "C4"
-    MIDIEvent.toNoteString = function(d, skip_octave) {
+    MIDIEvent.toNoteString = function (d, skip_octave) {
         d = Math.round(d); //in case it has decimals
         var note = d - 21;
         var octave = Math.floor((d - 24) / 12 + 1);
@@ -212,7 +212,7 @@
         return MIDIEvent.notes[note] + (skip_octave ? "" : octave);
     };
 
-    MIDIEvent.NoteStringToPitch = function(str) {
+    MIDIEvent.NoteStringToPitch = function (str) {
         str = str.toUpperCase();
         var note = str[0];
         var octave = 4;
@@ -234,7 +234,7 @@
         return (octave - 1) * 12 + pitch + 21;
     };
 
-    MIDIEvent.prototype.toString = function() {
+    MIDIEvent.prototype.toString = function () {
         var str = "" + this.channel + ". ";
         switch (this.cmd) {
             case MIDIEvent.NOTEON:
@@ -260,17 +260,17 @@
         return str;
     };
 
-    MIDIEvent.prototype.toHexString = function() {
+    MIDIEvent.prototype.toHexString = function () {
         var str = "";
         for (var i = 0; i < this.data.length; i++) {
             str += this.data[i].toString(16) + " ";
         }
     };
 
-    MIDIEvent.prototype.toJSON = function() {
+    MIDIEvent.prototype.toJSON = function () {
         return {
             data: [this.data[0], this.data[1], this.data[2]],
-            object_class: "MIDIEvent"
+            object_class: "MIDIEvent",
         };
     };
 
@@ -300,7 +300,7 @@
         0xfb: "Continue Song",
         0xfc: "Stop Song",
         0xfe: "Sensing",
-        0xff: "Reset"
+        0xff: "Reset",
     };
 
     MIDIEvent.commands_short = {
@@ -320,7 +320,7 @@
         0xfb: "CONTINUE",
         0xfc: "STOP",
         0xfe: "SENS",
-        0xff: "RESET"
+        0xff: "RESET",
     };
 
     MIDIEvent.commands_reversed = {};
@@ -344,22 +344,24 @@
 
         this.state = {
             note: [],
-            cc: []
+            cc: [],
         };
 
-		this.input_ports = null;
-		this.input_ports_info = [];
-		this.output_ports = null;
-		this.output_ports_info = [];
+        this.input_ports = null;
+        this.input_ports_info = [];
+        this.output_ports = null;
+        this.output_ports_info = [];
 
-        navigator.requestMIDIAccess().then(this.onMIDISuccess.bind(this), this.onMIDIFailure.bind(this));
+        navigator
+            .requestMIDIAccess()
+            .then(this.onMIDISuccess.bind(this), this.onMIDIFailure.bind(this));
     }
 
     MIDIInterface.input = null;
 
     MIDIInterface.MIDIEvent = MIDIEvent;
 
-    MIDIInterface.prototype.onMIDISuccess = function(midiAccess) {
+    MIDIInterface.prototype.onMIDISuccess = function (midiAccess) {
         console.log("MIDI ready!");
         console.log(midiAccess);
         this.midi = midiAccess; // store in the global (in real usage, would probably keep in an object instance)
@@ -370,12 +372,12 @@
         }
     };
 
-    MIDIInterface.prototype.updatePorts = function() {
+    MIDIInterface.prototype.updatePorts = function () {
         var midi = this.midi;
         this.input_ports = midi.inputs;
-		this.input_ports_info = [];
+        this.input_ports_info = [];
         this.output_ports = midi.outputs;
-		this.output_ports_info = [];
+        this.output_ports_info = [];
 
         var num = 0;
 
@@ -383,8 +385,20 @@
         var it_value = it.next();
         while (it_value && it_value.done === false) {
             var port_info = it_value.value;
-			this.input_ports_info.push(port_info);
-            console.log( "Input port [type:'" + port_info.type + "'] id:'" + port_info.id + "' manufacturer:'" + port_info.manufacturer + "' name:'" + port_info.name + "' version:'" + port_info.version + "'" );
+            this.input_ports_info.push(port_info);
+            console.log(
+                "Input port [type:'" +
+                    port_info.type +
+                    "'] id:'" +
+                    port_info.id +
+                    "' manufacturer:'" +
+                    port_info.manufacturer +
+                    "' name:'" +
+                    port_info.name +
+                    "' version:'" +
+                    port_info.version +
+                    "'"
+            );
             num++;
             it_value = it.next();
         }
@@ -395,19 +409,31 @@
         var it_value = it.next();
         while (it_value && it_value.done === false) {
             var port_info = it_value.value;
-			this.output_ports_info.push(port_info);
-            console.log( "Output port [type:'" + port_info.type + "'] id:'" + port_info.id + "' manufacturer:'" + port_info.manufacturer + "' name:'" + port_info.name + "' version:'" + port_info.version + "'" );
+            this.output_ports_info.push(port_info);
+            console.log(
+                "Output port [type:'" +
+                    port_info.type +
+                    "'] id:'" +
+                    port_info.id +
+                    "' manufacturer:'" +
+                    port_info.manufacturer +
+                    "' name:'" +
+                    port_info.name +
+                    "' version:'" +
+                    port_info.version +
+                    "'"
+            );
             num++;
             it_value = it.next();
         }
         this.num_output_ports = num;
     };
 
-    MIDIInterface.prototype.onMIDIFailure = function(msg) {
+    MIDIInterface.prototype.onMIDIFailure = function (msg) {
         console.error("Failed to get MIDI access - " + msg);
     };
 
-    MIDIInterface.prototype.openInputPort = function(port, callback) {
+    MIDIInterface.prototype.openInputPort = function (port, callback) {
         var input_port = this.input_ports.get("input-" + port);
         if (!input_port) {
             return false;
@@ -415,7 +441,7 @@
         MIDIInterface.input = this;
         var that = this;
 
-        input_port.onmidimessage = function(a) {
+        input_port.onmidimessage = function (a) {
             var midi_event = new MIDIEvent(a.data);
             that.updateState(midi_event);
             if (callback) {
@@ -429,9 +455,9 @@
         return true;
     };
 
-    MIDIInterface.parseMsg = function(data) {};
+    MIDIInterface.parseMsg = function (data) {};
 
-    MIDIInterface.prototype.updateState = function(midi_event) {
+    MIDIInterface.prototype.updateState = function (midi_event) {
         switch (midi_event.cmd) {
             case MIDIEvent.NOTEON:
                 this.state.note[midi_event.value1 | 0] = midi_event.value2;
@@ -445,12 +471,12 @@
         }
     };
 
-    MIDIInterface.prototype.sendMIDI = function(port, midi_data) {
+    MIDIInterface.prototype.sendMIDI = function (port, midi_data) {
         if (!midi_data) {
             return;
         }
 
-        var output_port = this.output_ports_info[port];//this.output_ports.get("output-" + port);
+        var output_port = this.output_ports_info[port]; //this.output_ports.get("output-" + port);
         if (!output_port) {
             return;
         }
@@ -474,7 +500,7 @@
         this._last_time = 0;
 
         var that = this;
-        new MIDIInterface(function(midi) {
+        new MIDIInterface(function (midi) {
             //open
             that._midi = midi;
             if (that._waiting) {
@@ -490,7 +516,7 @@
     LGMIDIIn.desc = "Reads MIDI from a input port";
     LGMIDIIn.color = MIDI_COLOR;
 
-    LGMIDIIn.prototype.getPropertyInfo = function(name) {
+    LGMIDIIn.prototype.getPropertyInfo = function (name) {
         if (!this._midi) {
             return;
         }
@@ -499,13 +525,14 @@
             var values = {};
             for (var i = 0; i < this._midi.input_ports_info.length; ++i) {
                 var input = this._midi.input_ports_info[i];
-                values[i] = i + ".- " + input.name + " version:" + input.version;
+                values[i] =
+                    i + ".- " + input.name + " version:" + input.version;
             }
             return { type: "enum", values: values };
         }
     };
 
-    LGMIDIIn.prototype.onStart = function() {
+    LGMIDIIn.prototype.onStart = function () {
         if (this._midi) {
             this._midi.openInputPort(
                 this.properties.port,
@@ -516,7 +543,7 @@
         }
     };
 
-    LGMIDIIn.prototype.onMIDIEvent = function(data, midi_event) {
+    LGMIDIIn.prototype.onMIDIEvent = function (data, midi_event) {
         this._last_midi_event = midi_event;
         this.boxcolor = "#AFA";
         this._last_time = LiteGraph.getTime();
@@ -534,7 +561,7 @@
         }
     };
 
-    LGMIDIIn.prototype.onDrawBackground = function(ctx) {
+    LGMIDIIn.prototype.onDrawBackground = function (ctx) {
         this.boxcolor = "#AAA";
         if (!this.flags.collapsed && this._last_midi_event) {
             ctx.fillStyle = "white";
@@ -555,7 +582,7 @@
         }
     };
 
-    LGMIDIIn.prototype.onExecute = function() {
+    LGMIDIIn.prototype.onExecute = function () {
         if (this.outputs) {
             var last = this._last_midi_event;
             for (var i = 0; i < this.outputs.length; ++i) {
@@ -576,7 +603,7 @@
         }
     };
 
-    LGMIDIIn.prototype.onGetOutputs = function() {
+    LGMIDIIn.prototype.onGetOutputs = function () {
         return [
             ["last_midi", "midi"],
             ["on_midi", LiteGraph.EVENT],
@@ -584,7 +611,7 @@
             ["on_noteoff", LiteGraph.EVENT],
             ["on_cc", LiteGraph.EVENT],
             ["on_pc", LiteGraph.EVENT],
-            ["on_pitchbend", LiteGraph.EVENT]
+            ["on_pitchbend", LiteGraph.EVENT],
         ];
     };
 
@@ -595,12 +622,15 @@
         this.properties = { port: 0 };
 
         var that = this;
-        new MIDIInterface(function(midi) {
+        new MIDIInterface(function (midi) {
             that._midi = midi;
-			that.widget.options.values = that.getMIDIOutputs();
+            that.widget.options.values = that.getMIDIOutputs();
         });
-		this.widget = this.addWidget("combo","Device",this.properties.port,{ property: "port", values: this.getMIDIOutputs.bind(this) });
-		this.size = [340,60];
+        this.widget = this.addWidget("combo", "Device", this.properties.port, {
+            property: "port",
+            values: this.getMIDIOutputs.bind(this),
+        });
+        this.size = [340, 60];
     }
 
     LGMIDIOut.MIDIInterface = MIDIInterface;
@@ -609,35 +639,33 @@
     LGMIDIOut.desc = "Sends MIDI to output channel";
     LGMIDIOut.color = MIDI_COLOR;
 
-    LGMIDIOut.prototype.onGetPropertyInfo = function(name) {
+    LGMIDIOut.prototype.onGetPropertyInfo = function (name) {
         if (!this._midi) {
             return;
         }
 
         if (name == "port") {
-			var values = this.getMIDIOutputs();
+            var values = this.getMIDIOutputs();
             return { type: "enum", values: values };
         }
     };
-	LGMIDIOut.default_ports = {0:"unknown"};
+    LGMIDIOut.default_ports = { 0: "unknown" };
 
-	LGMIDIOut.prototype.getMIDIOutputs = function()
-	{
-		var values = {};
-		if(!this._midi)
-			return LGMIDIOut.default_ports;
-		if(this._midi.output_ports_info)
-		for (var i = 0; i < this._midi.output_ports_info.length; ++i) {
-			var output = this._midi.output_ports_info[i];
-			if(!output)
-				continue;
-			var name = i + ".- " + output.name + " version:" + output.version;
-			values[i] = name;
-		}
-		return values;
-	}
+    LGMIDIOut.prototype.getMIDIOutputs = function () {
+        var values = {};
+        if (!this._midi) return LGMIDIOut.default_ports;
+        if (this._midi.output_ports_info)
+            for (var i = 0; i < this._midi.output_ports_info.length; ++i) {
+                var output = this._midi.output_ports_info[i];
+                if (!output) continue;
+                var name =
+                    i + ".- " + output.name + " version:" + output.version;
+                values[i] = name;
+            }
+        return values;
+    };
 
-    LGMIDIOut.prototype.onAction = function(event, midi_event) {
+    LGMIDIOut.prototype.onAction = function (event, midi_event) {
         //console.log(midi_event);
         if (!this._midi) {
             return;
@@ -648,16 +676,15 @@
         this.trigger("midi", midi_event);
     };
 
-    LGMIDIOut.prototype.onGetInputs = function() {
+    LGMIDIOut.prototype.onGetInputs = function () {
         return [["send", LiteGraph.ACTION]];
     };
 
-    LGMIDIOut.prototype.onGetOutputs = function() {
+    LGMIDIOut.prototype.onGetOutputs = function () {
         return [["on_midi", LiteGraph.EVENT]];
     };
 
     LiteGraph.registerNodeType("midi/output", LGMIDIOut);
-
 
     function LGMIDIShow() {
         this.addInput("on_midi", LiteGraph.EVENT);
@@ -669,14 +696,14 @@
     LGMIDIShow.desc = "Shows MIDI in the graph";
     LGMIDIShow.color = MIDI_COLOR;
 
-    LGMIDIShow.prototype.getTitle = function() {
+    LGMIDIShow.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this._str;
         }
         return this.title;
     };
 
-    LGMIDIShow.prototype.onAction = function(event, midi_event) {
+    LGMIDIShow.prototype.onAction = function (event, midi_event) {
         if (!midi_event) {
             return;
         }
@@ -687,7 +714,7 @@
         }
     };
 
-    LGMIDIShow.prototype.onDrawForeground = function(ctx) {
+    LGMIDIShow.prototype.onDrawForeground = function (ctx) {
         if (!this._str || this.flags.collapsed) {
             return;
         }
@@ -696,11 +723,11 @@
         ctx.fillText(this._str, 10, this.size[1] * 0.8);
     };
 
-    LGMIDIShow.prototype.onGetInputs = function() {
+    LGMIDIShow.prototype.onGetInputs = function () {
         return [["in", LiteGraph.ACTION]];
     };
 
-    LGMIDIShow.prototype.onGetOutputs = function() {
+    LGMIDIShow.prototype.onGetOutputs = function () {
         return [["on_midi", LiteGraph.EVENT]];
     };
 
@@ -711,12 +738,12 @@
             channel: -1,
             cmd: -1,
             min_value: -1,
-            max_value: -1
+            max_value: -1,
         };
 
         var that = this;
         this._learning = false;
-        this.addWidget("button", "Learn", "", function() {
+        this.addWidget("button", "Learn", "", function () {
             that._learning = true;
             that.boxcolor = "#FA3";
         });
@@ -733,10 +760,10 @@
     LGMIDIFilter["@cmd"] = {
         type: "enum",
         title: "Command",
-        values: MIDIEvent.commands_reversed
+        values: MIDIEvent.commands_reversed,
     };
 
-    LGMIDIFilter.prototype.getTitle = function() {
+    LGMIDIFilter.prototype.getTitle = function () {
         var str = null;
         if (this.properties.cmd == -1) {
             str = "Nothing";
@@ -760,7 +787,7 @@
         return "Filter: " + str;
     };
 
-    LGMIDIFilter.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIFilter.prototype.onPropertyChanged = function (name, value) {
         if (name == "cmd") {
             var num = Number(value);
             if (isNaN(num)) {
@@ -770,7 +797,7 @@
         }
     };
 
-    LGMIDIFilter.prototype.onAction = function(event, midi_event) {
+    LGMIDIFilter.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -819,7 +846,7 @@
             channel: 0,
             cmd: 144, //0x90
             value1: 1,
-            value2: 1
+            value2: 1,
         };
 
         this.addInput("send", LiteGraph.EVENT);
@@ -834,7 +861,7 @@
     LGMIDIEvent.desc = "Create a MIDI Event";
     LGMIDIEvent.color = MIDI_COLOR;
 
-    LGMIDIEvent.prototype.onAction = function(event, midi_event) {
+    LGMIDIEvent.prototype.onAction = function (event, midi_event) {
         if (event == "assign") {
             this.properties.channel = midi_event.channel;
             this.properties.cmd = midi_event.cmd;
@@ -863,7 +890,7 @@
         this.trigger("on_midi", midi_event);
     };
 
-    LGMIDIEvent.prototype.onExecute = function() {
+    LGMIDIEvent.prototype.onExecute = function () {
         var props = this.properties;
 
         if (this.inputs) {
@@ -891,13 +918,13 @@
                     case "value1":
                         var v = this.getInputData(i);
                         if (v != null) {
-                            this.properties.value1 = Math.clamp(v|0,0,127);
+                            this.properties.value1 = Math.clamp(v | 0, 0, 127);
                         }
                         break;
                     case "value2":
                         var v = this.getInputData(i);
                         if (v != null) {
-                            this.properties.value2 = Math.clamp(v|0,0,127);
+                            this.properties.value2 = Math.clamp(v | 0, 0, 127);
                         }
                         break;
                 }
@@ -961,17 +988,22 @@
         }
     };
 
-    LGMIDIEvent.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIEvent.prototype.onPropertyChanged = function (name, value) {
         if (name == "cmd") {
             this.properties.cmd = MIDIEvent.computeCommandFromString(value);
         }
     };
 
-    LGMIDIEvent.prototype.onGetInputs = function() {
-        return [["cmd", "number"],["note", "number"],["value1", "number"],["value2", "number"]];
+    LGMIDIEvent.prototype.onGetInputs = function () {
+        return [
+            ["cmd", "number"],
+            ["note", "number"],
+            ["value1", "number"],
+            ["value2", "number"],
+        ];
     };
 
-    LGMIDIEvent.prototype.onGetOutputs = function() {
+    LGMIDIEvent.prototype.onGetOutputs = function () {
         return [
             ["midi", "midi"],
             ["on_midi", LiteGraph.EVENT],
@@ -982,7 +1014,7 @@
             ["cc_value", "number"],
             ["pitch", "number"],
             ["gate", "bool"],
-            ["pitchbend", "number"]
+            ["pitchbend", "number"],
         ];
     };
 
@@ -992,7 +1024,7 @@
         this.properties = {
             //		channel: 0,
             cc: 1,
-            value: 0
+            value: 0,
         };
 
         this.addOutput("value", "number");
@@ -1002,7 +1034,7 @@
     LGMIDICC.desc = "gets a Controller Change";
     LGMIDICC.color = MIDI_COLOR;
 
-    LGMIDICC.prototype.onExecute = function() {
+    LGMIDICC.prototype.onExecute = function () {
         var props = this.properties;
         if (MIDIInterface.input) {
             this.properties.value =
@@ -1022,7 +1054,7 @@
             notes: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#",
             octave: 2,
             duration: 0.5,
-            mode: "sequence"
+            mode: "sequence",
         };
 
         this.notes_pitches = LGMIDIGenerator.processScale(
@@ -1035,7 +1067,7 @@
     LGMIDIGenerator.desc = "Generates a random MIDI note";
     LGMIDIGenerator.color = MIDI_COLOR;
 
-    LGMIDIGenerator.processScale = function(scale) {
+    LGMIDIGenerator.processScale = function (scale) {
         var notes = scale.split(",");
         for (var i = 0; i < notes.length; ++i) {
             var n = notes[i];
@@ -1048,13 +1080,13 @@
         return notes;
     };
 
-    LGMIDIGenerator.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIGenerator.prototype.onPropertyChanged = function (name, value) {
         if (name == "notes") {
             this.notes_pitches = LGMIDIGenerator.processScale(value);
         }
     };
 
-    LGMIDIGenerator.prototype.onExecute = function() {
+    LGMIDIGenerator.prototype.onExecute = function () {
         var octave = this.getInputData(2);
         if (octave != null) {
             this.properties.octave = octave;
@@ -1066,7 +1098,7 @@
         }
     };
 
-    LGMIDIGenerator.prototype.onAction = function(event, midi_event) {
+    LGMIDIGenerator.prototype.onAction = function (event, midi_event) {
         //var range = this.properties.max - this.properties.min;
         //var pitch = this.properties.min + ((Math.random() * range)|0);
         var pitch = 0;
@@ -1093,7 +1125,7 @@
 
         //noteoff
         setTimeout(
-            function() {
+            function () {
                 var midi_event = new MIDIEvent();
                 midi_event.setup([MIDIEvent.NOTEOFF, pitch, 0]);
                 this.trigger("note", midi_event);
@@ -1106,7 +1138,7 @@
 
     function LGMIDITranspose() {
         this.properties = {
-            amount: 0
+            amount: 0,
         };
         this.addInput("in", LiteGraph.ACTION);
         this.addInput("amount", "number");
@@ -1119,7 +1151,7 @@
     LGMIDITranspose.desc = "Transpose a MIDI note";
     LGMIDITranspose.color = MIDI_COLOR;
 
-    LGMIDITranspose.prototype.onAction = function(event, midi_event) {
+    LGMIDITranspose.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -1139,7 +1171,7 @@
         }
     };
 
-    LGMIDITranspose.prototype.onExecute = function() {
+    LGMIDITranspose.prototype.onExecute = function () {
         var amount = this.getInputData(1);
         if (amount != null) {
             this.properties.amount = amount;
@@ -1150,7 +1182,7 @@
 
     function LGMIDIQuantize() {
         this.properties = {
-            scale: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#"
+            scale: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#",
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("scale", "string");
@@ -1165,13 +1197,13 @@
     LGMIDIQuantize.desc = "Transpose a MIDI note tp fit an scale";
     LGMIDIQuantize.color = MIDI_COLOR;
 
-    LGMIDIQuantize.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIQuantize.prototype.onPropertyChanged = function (name, value) {
         if (name == "scale") {
             this.processScale(value);
         }
     };
 
-    LGMIDIQuantize.prototype.processScale = function(scale) {
+    LGMIDIQuantize.prototype.processScale = function (scale) {
         this._current_scale = scale;
         this.notes_pitches = LGMIDIGenerator.processScale(scale);
         for (var i = 0; i < 12; ++i) {
@@ -1195,7 +1227,7 @@
         }
     };
 
-    LGMIDIQuantize.prototype.onAction = function(event, midi_event) {
+    LGMIDIQuantize.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -1216,7 +1248,7 @@
         }
     };
 
-    LGMIDIQuantize.prototype.onExecute = function() {
+    LGMIDIQuantize.prototype.onExecute = function () {
         var scale = this.getInputData(1);
         if (scale != null && scale != this._current_scale) {
             this.processScale(scale);
@@ -1225,126 +1257,110 @@
 
     LiteGraph.registerNodeType("midi/quantize", LGMIDIQuantize);
 
-	function LGMIDIFromFile() {
+    function LGMIDIFromFile() {
         this.properties = {
             url: "",
-			autoplay: true
+            autoplay: true,
         };
 
         this.addInput("play", LiteGraph.ACTION);
         this.addInput("pause", LiteGraph.ACTION);
         this.addOutput("note", LiteGraph.EVENT);
-		this._midi = null;
-		this._current_time = 0;
-		this._playing = false;
+        this._midi = null;
+        this._current_time = 0;
+        this._playing = false;
 
         if (typeof MidiParser == "undefined") {
             console.error(
                 "midi-parser.js not included, LGMidiPlay requires that library: https://raw.githubusercontent.com/colxi/midi-parser-js/master/src/main.js"
             );
             this.boxcolor = "red";
-		}
-
-	}
+        }
+    }
 
     LGMIDIFromFile.title = "MIDI fromFile";
     LGMIDIFromFile.desc = "Plays a MIDI file";
     LGMIDIFromFile.color = MIDI_COLOR;
 
-	LGMIDIFromFile.prototype.onAction = function( name )
-	{
-		if(name == "play")
-			this.play();
-		else if(name == "pause")
-			this._playing = !this._playing;
-	}
-
-	LGMIDIFromFile.prototype.onPropertyChanged = function(name,value)
-	{
-		if(name == "url")
-			this.loadMIDIFile(value);
-	}
-
-    LGMIDIFromFile.prototype.onExecute = function() {
-		if(!this._midi)
-			return;
-
-		if(!this._playing)
-			return;
-
-		this._current_time += this.graph.elapsed_time;
-		var current_time = this._current_time * 100;
-
-		for(var i = 0; i < this._midi.tracks; ++i)
-		{
-			var track = this._midi.track[i];
-			if(!track._last_pos)
-			{
-				track._last_pos = 0;
-				track._time = 0;
-			}
-
-			var elem = track.event[ track._last_pos ];
-			if(elem && (track._time + elem.deltaTime) <= current_time )
-			{
-				track._last_pos++;
-				track._time += elem.deltaTime;
-
-				if(elem.data)
-				{
-					var midi_cmd = elem.type << 4 + elem.channel;
-					var midi_event = new MIDIEvent();
-					midi_event.setup([midi_cmd, elem.data[0], elem.data[1]]);
-					this.trigger("note", midi_event);
-				}
-			}
-			
-		}
+    LGMIDIFromFile.prototype.onAction = function (name) {
+        if (name == "play") this.play();
+        else if (name == "pause") this._playing = !this._playing;
     };
 
-	LGMIDIFromFile.prototype.play = function()
-	{
-		this._playing = true;
-		this._current_time = 0;
-		if(!this._midi)
-			return;
+    LGMIDIFromFile.prototype.onPropertyChanged = function (name, value) {
+        if (name == "url") this.loadMIDIFile(value);
+    };
 
-		for(var i = 0; i < this._midi.tracks; ++i)
-		{
-			var track = this._midi.track[i];
-			track._last_pos = 0;
-			track._time = 0;
-		}		
-	}
+    LGMIDIFromFile.prototype.onExecute = function () {
+        if (!this._midi) return;
 
-	LGMIDIFromFile.prototype.loadMIDIFile = function(url)
-	{
-		var that = this;
-		LiteGraph.fetchFile( url, "arraybuffer", function(data)
-		{
-			that.boxcolor = "#AFA";
-			that._midi = MidiParser.parse( new Uint8Array(data) );
-			if(that.properties.autoplay)
-				that.play();
-		}, function(err){
-			that.boxcolor = "#FAA";
-			that._midi = null;
-		});
-	}
+        if (!this._playing) return;
 
-	LGMIDIFromFile.prototype.onDropFile = function(file)
-	{
-		this.properties.url = "";
-		this.loadMIDIFile( file );
-	}
+        this._current_time += this.graph.elapsed_time;
+        var current_time = this._current_time * 100;
+
+        for (var i = 0; i < this._midi.tracks; ++i) {
+            var track = this._midi.track[i];
+            if (!track._last_pos) {
+                track._last_pos = 0;
+                track._time = 0;
+            }
+
+            var elem = track.event[track._last_pos];
+            if (elem && track._time + elem.deltaTime <= current_time) {
+                track._last_pos++;
+                track._time += elem.deltaTime;
+
+                if (elem.data) {
+                    var midi_cmd = elem.type << (4 + elem.channel);
+                    var midi_event = new MIDIEvent();
+                    midi_event.setup([midi_cmd, elem.data[0], elem.data[1]]);
+                    this.trigger("note", midi_event);
+                }
+            }
+        }
+    };
+
+    LGMIDIFromFile.prototype.play = function () {
+        this._playing = true;
+        this._current_time = 0;
+        if (!this._midi) return;
+
+        for (var i = 0; i < this._midi.tracks; ++i) {
+            var track = this._midi.track[i];
+            track._last_pos = 0;
+            track._time = 0;
+        }
+    };
+
+    LGMIDIFromFile.prototype.loadMIDIFile = function (url) {
+        var that = this;
+        LiteGraph.fetchFile(
+            url,
+            "arraybuffer",
+            function (data) {
+                that.boxcolor = "#AFA";
+                that._midi = MidiParser.parse(new Uint8Array(data));
+                if (that.properties.autoplay) that.play();
+            },
+            function (err) {
+                that.boxcolor = "#FAA";
+                that._midi = null;
+            }
+        );
+    };
+
+    LGMIDIFromFile.prototype.onDropFile = function (file) {
+        this.properties.url = "";
+        this.loadMIDIFile(file);
+    };
 
     LiteGraph.registerNodeType("midi/fromFile", LGMIDIFromFile);
-
 
     function LGMIDIPlay() {
         this.properties = {
             volume: 0.5,
-            duration: 1
+            duration: 1,
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("volume", "number");
@@ -1366,7 +1382,7 @@
     LGMIDIPlay.desc = "Plays a MIDI note";
     LGMIDIPlay.color = MIDI_COLOR;
 
-    LGMIDIPlay.prototype.onAction = function(event, midi_event) {
+    LGMIDIPlay.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -1386,7 +1402,7 @@
         this.trigger("note", midi_event);
     };
 
-    LGMIDIPlay.prototype.onExecute = function() {
+    LGMIDIPlay.prototype.onExecute = function () {
         var volume = this.getInputData(1);
         if (volume != null) {
             this.properties.volume = volume;
@@ -1403,7 +1419,7 @@
     function LGMIDIKeys() {
         this.properties = {
             num_octaves: 2,
-            start_octave: 2
+            start_octave: 2,
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("reset", LiteGraph.ACTION);
@@ -1429,10 +1445,10 @@
         { x: 4.75, w: 0.5, h: 0.6, t: 1 },
         { x: 5, w: 1, h: 1, t: 0 },
         { x: 5.75, w: 0.5, h: 0.6, t: 1 },
-        { x: 6, w: 1, h: 1, t: 0 }
+        { x: 6, w: 1, h: 1, t: 0 },
     ];
 
-    LGMIDIKeys.prototype.onDrawForeground = function(ctx) {
+    LGMIDIKeys.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -1471,7 +1487,7 @@
         }
     };
 
-    LGMIDIKeys.prototype.getKeyIndex = function(pos) {
+    LGMIDIKeys.prototype.getKeyIndex = function (pos) {
         var num_keys = this.properties.num_octaves * 12;
         var key_width = this.size[0] / (this.properties.num_octaves * 7);
         var key_height = this.size[1];
@@ -1499,7 +1515,7 @@
         return -1;
     };
 
-    LGMIDIKeys.prototype.onAction = function(event, params) {
+    LGMIDIKeys.prototype.onAction = function (event, params) {
         if (event == "reset") {
             for (var i = 0; i < this.keys.length; ++i) {
                 this.keys[i] = false;
@@ -1524,7 +1540,7 @@
         this.trigger("note", midi_event);
     };
 
-    LGMIDIKeys.prototype.onMouseDown = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseDown = function (e, pos) {
         if (pos[1] < 0) {
             return;
         }
@@ -1538,7 +1554,7 @@
         return true;
     };
 
-    LGMIDIKeys.prototype.onMouseMove = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseMove = function (e, pos) {
         if (pos[1] < 0 || this._last_key == -1) {
             return;
         }
@@ -1564,7 +1580,7 @@
         return true;
     };
 
-    LGMIDIKeys.prototype.onMouseUp = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseUp = function (e, pos) {
         if (pos[1] < 0) {
             return;
         }

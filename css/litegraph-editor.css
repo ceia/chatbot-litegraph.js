@@ -193,21 +193,22 @@
     background-image: url("../editor/imgs/load-progress-full.png");
 }
 
-.litegraph-editor textarea.code, .litegraph-editor div.code {
-	height: 100%;
-	width: 100%;
-	background-color: black;
-	padding: 4px;
-	font: 16px monospace;
-	overflow: auto;
-	resize: none;
-	outline: none;
+.litegraph-editor textarea.code,
+.litegraph-editor div.code {
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    padding: 4px;
+    font: 16px monospace;
+    overflow: auto;
+    resize: none;
+    outline: none;
 }
 
 .litegraph-editor .codeflask {
-	background-color: #2a2a2a;
+    background-color: #2a2a2a;
 }
 
 .litegraph-editor .codeflask textarea {
-	opacity: 0;
+    opacity: 0;
 }

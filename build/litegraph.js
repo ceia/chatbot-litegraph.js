@@ -42,6 +42,7 @@
         WIDGET_SECONDARY_TEXT_COLOR: "#999",
 
         LINK_COLOR: "#9A9",
+        LINK_HIGHLIGHT_COLOR: "#FFF",
         EVENT_LINK_COLOR: "#A86",
         CONNECTING_LINK_COLOR: "#AFA",
 
@@ -6940,7 +6941,7 @@ LGraphNode.prototype.executeAction = function(action)
 
 			//the selection rectangle
             if (this.dragging_rectangle) {
-                ctx.strokeStyle = "#FFF";
+                ctx.strokeStyle = LiteGraph.LINK_HIGHLIGHT_COLOR;
                 ctx.strokeRect(
                     this.dragging_rectangle[0],
                     this.dragging_rectangle[1],
@@ -8244,7 +8245,7 @@ LGraphNode.prototype.executeAction = function(action)
             color = this.default_link_color;
         }
         if (link != null && this.highlighted_links[link.id]) {
-            color = "#FFF";
+            color = LiteGraph.LINK_HIGHLIGHT_COLOR;
         }
 
         start_dir = start_dir || LiteGraph.RIGHT;
@@ -8575,7 +8576,7 @@ LGraphNode.prototype.executeAction = function(action)
                     LiteGraph.NODE_TITLE_HEIGHT
                 );
             }
-            ctx.fillStyle = "#FFF";
+            ctx.fillStyle = LiteGraph.LINK_HIGHLIGHT_COLOR;
             ctx.fillText(
                 node.order,
                 node.pos[0] + LiteGraph.NODE_TITLE_HEIGHT * -0.5,
@@ -11725,7 +11726,7 @@ LGraphNode.prototype.executeAction = function(action)
 			for(var i = 0; i < points.length; ++i)
 			{
 				var p = points[i];
-				ctx.fillStyle = this.selected == i ? "#FFF" : (this.nearest == i ? "#DDD" : "#AAA");
+				ctx.fillStyle = this.selected == i ? LiteGraph.LINK_HIGHLIGHT_COLOR : (this.nearest == i ? "#DDD" : "#AAA");
 				ctx.beginPath();
 				ctx.arc( p[0] * w, (1.0 - p[1]) * h, 2, 0, Math.PI * 2 );
 				ctx.fill();

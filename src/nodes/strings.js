@@ -1,5 +1,5 @@
 //basic nodes
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function toString(a) {
@@ -65,19 +65,15 @@
     );
 
     function split(str, separator) {
-		if(separator == null)
-			separator = this.properties.separator;
-        if (str == null )
-	        return [];
-		if( str.constructor === String )
-			return str.split(separator || " ");
-		else if( str.constructor === Array )
-		{
-			var r = [];
-			for(var i = 0; i < str.length; ++i)
-				r[i] = str[i].split(separator || " ");
-			return r;
-		}
+        if (separator == null) separator = this.properties.separator;
+        if (str == null) return [];
+        if (str.constructor === String) return str.split(separator || " ");
+        else if (str.constructor === Array) {
+            var r = [];
+            for (var i = 0; i < str.length; ++i)
+                r[i] = str[i].split(separator || " ");
+            return r;
+        }
         return null;
     }
 
@@ -86,7 +82,7 @@
         split,
         ["string,array", "string"],
         "array",
-		{ separator: "," }
+        { separator: "," }
     );
 
     function toFixed(a) {
@@ -104,34 +100,32 @@
         { precision: 0 }
     );
 
-
     function StringToTable() {
         this.addInput("", "string");
         this.addOutput("table", "table");
         this.addOutput("rows", "number");
         this.addProperty("value", "");
         this.addProperty("separator", ",");
-		this._table = null;
+        this._table = null;
     }
 
     StringToTable.title = "toTable";
     StringToTable.desc = "Splits a string to table";
 
-    StringToTable.prototype.onExecute = function() {
+    StringToTable.prototype.onExecute = function () {
         var input = this.getInputData(0);
-		if(!input)
-			return;
-		var separator = this.properties.separator || ",";
-		if(input != this._str || separator != this._last_separator )
-		{
-			this._last_separator = separator;
-			this._str = input;
-			this._table = input.split("\n").map(function(a){ return a.trim().split(separator)});
-		}
-        this.setOutputData(0, this._table );
-        this.setOutputData(1, this._table ? this._table.length : 0 );
+        if (!input) return;
+        var separator = this.properties.separator || ",";
+        if (input != this._str || separator != this._last_separator) {
+            this._last_separator = separator;
+            this._str = input;
+            this._table = input.split("\n").map(function (a) {
+                return a.trim().split(separator);
+            });
+        }
+        this.setOutputData(0, this._table);
+        this.setOutputData(1, this._table ? this._table.length : 0);
     };
 
     LiteGraph.registerNodeType("string/toTable", StringToTable);
-
 })(this);

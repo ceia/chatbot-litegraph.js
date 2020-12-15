@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function Selector() {
@@ -15,7 +15,7 @@
     Selector.title = "Selector";
     Selector.desc = "selects an output";
 
-    Selector.prototype.onDrawBackground = function(ctx) {
+    Selector.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -28,10 +28,9 @@
         ctx.fill();
     };
 
-    Selector.prototype.onExecute = function() {
+    Selector.prototype.onExecute = function () {
         var sel = this.getInputData(0);
-        if (sel == null || sel.constructor !== Number)
-            sel = 0;
+        if (sel == null || sel.constructor !== Number) sel = 0;
         this.selected = sel = Math.round(sel) % (this.inputs.length - 1);
         var v = this.getInputData(sel + 1);
         if (v !== undefined) {
@@ -39,15 +38,20 @@
         }
     };
 
-    Selector.prototype.onGetInputs = function() {
-        return [["E", 0], ["F", 0], ["G", 0], ["H", 0]];
+    Selector.prototype.onGetInputs = function () {
+        return [
+            ["E", 0],
+            ["F", 0],
+            ["G", 0],
+            ["H", 0],
+        ];
     };
 
     LiteGraph.registerNodeType("logic/selector", Selector);
 
     function Sequence() {
         this.properties = {
-            sequence: "A,B,C"
+            sequence: "A,B,C",
         };
         this.addInput("index", "number");
         this.addInput("seq");
@@ -60,13 +64,13 @@
     Sequence.title = "Sequence";
     Sequence.desc = "select one element from a sequence from a string";
 
-    Sequence.prototype.onPropertyChanged = function(name, value) {
+    Sequence.prototype.onPropertyChanged = function (name, value) {
         if (name == "sequence") {
             this.values = value.split(",");
         }
     };
 
-    Sequence.prototype.onExecute = function() {
+    Sequence.prototype.onExecute = function () {
         var seq = this.getInputData(1);
         if (seq && seq != this.current_sequence) {
             this.values = seq.split(",");

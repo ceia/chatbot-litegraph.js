@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function GamepadInput() {
@@ -37,10 +37,10 @@
         "start",
         "ls",
         "rs",
-        "home"
+        "home",
     ];
 
-    GamepadInput.prototype.onExecute = function() {
+    GamepadInput.prototype.onExecute = function () {
         //get gamepad
         var gamepad = this.getGamepad();
         var threshold = this.properties.threshold || 0.0;
@@ -189,10 +189,36 @@
         }
     };
 
-	GamepadInput.mapping = {a:0,b:1,x:2,y:3,lb:4,rb:5,lt:6,rt:7,back:8,start:9,ls:10,rs:11 };
-	GamepadInput.mapping_array = ["a","b","x","y","lb","rb","lt","rt","back","start","ls","rs"];
+    GamepadInput.mapping = {
+        a: 0,
+        b: 1,
+        x: 2,
+        y: 3,
+        lb: 4,
+        rb: 5,
+        lt: 6,
+        rt: 7,
+        back: 8,
+        start: 9,
+        ls: 10,
+        rs: 11,
+    };
+    GamepadInput.mapping_array = [
+        "a",
+        "b",
+        "x",
+        "y",
+        "lb",
+        "rb",
+        "lt",
+        "rt",
+        "back",
+        "start",
+        "ls",
+        "rs",
+    ];
 
-    GamepadInput.prototype.getGamepad = function() {
+    GamepadInput.prototype.getGamepad = function () {
         var getGamepads =
             navigator.getGamepads ||
             navigator.webkitGetGamepads ||
@@ -219,7 +245,7 @@
                     axes: [],
                     buttons: {},
                     hat: "",
-                    hatmap: GamepadInput.CENTER
+                    hatmap: GamepadInput.CENTER,
                 };
             }
 
@@ -235,51 +261,54 @@
             for (var j = 0; j < gamepad.buttons.length; j++) {
                 this._current_buttons[j] = gamepad.buttons[j].pressed;
 
-				if(j < 12)
-				{
-					xbox.buttons[ GamepadInput.mapping_array[j] ] = gamepad.buttons[j].pressed;
-					if(gamepad.buttons[j].was_pressed)
-						this.trigger( GamepadInput.mapping_array[j] + "_button_event" );
-				}
-				else //mapping of XBOX
-					switch ( j ) //I use a switch to ensure that a player with another gamepad could play
-					{
-						case 12:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "up";
-								xbox.hatmap |= GamepadInput.UP;
-							}
-							break;
-						case 13:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "down";
-								xbox.hatmap |= GamepadInput.DOWN;
-							}
-							break;
-						case 14:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "left";
-								xbox.hatmap |= GamepadInput.LEFT;
-							}
-							break;
-						case 15:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "right";
-								xbox.hatmap |= GamepadInput.RIGHT;
-							}
-							break;
-						case 16:
-							xbox.buttons["home"] = gamepad.buttons[j].pressed;
-							break;
-						default:
-					}
+                if (j < 12) {
+                    xbox.buttons[GamepadInput.mapping_array[j]] =
+                        gamepad.buttons[j].pressed;
+                    if (gamepad.buttons[j].was_pressed)
+                        this.trigger(
+                            GamepadInput.mapping_array[j] + "_button_event"
+                        );
+                } //mapping of XBOX
+                else
+                    switch (
+                        j //I use a switch to ensure that a player with another gamepad could play
+                    ) {
+                        case 12:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "up";
+                                xbox.hatmap |= GamepadInput.UP;
+                            }
+                            break;
+                        case 13:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "down";
+                                xbox.hatmap |= GamepadInput.DOWN;
+                            }
+                            break;
+                        case 14:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "left";
+                                xbox.hatmap |= GamepadInput.LEFT;
+                            }
+                            break;
+                        case 15:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "right";
+                                xbox.hatmap |= GamepadInput.RIGHT;
+                            }
+                            break;
+                        case 16:
+                            xbox.buttons["home"] = gamepad.buttons[j].pressed;
+                            break;
+                        default:
+                    }
             }
             gamepad.xbox = xbox;
             return gamepad;
         }
     };
 
-    GamepadInput.prototype.onDrawBackground = function(ctx) {
+    GamepadInput.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -310,7 +339,7 @@
         }
     };
 
-    GamepadInput.prototype.onGetOutputs = function() {
+    GamepadInput.prototype.onGetOutputs = function () {
         return [
             ["left_axis", "vec2"],
             ["right_axis", "vec2"],
@@ -330,22 +359,22 @@
             ["rs_button", "number"],
             ["start_button", "number"],
             ["back_button", "number"],
-            ["a_button_event", LiteGraph.EVENT ],
-            ["b_button_event", LiteGraph.EVENT ],
-            ["x_button_event", LiteGraph.EVENT ],
-            ["y_button_event", LiteGraph.EVENT ],
-            ["lb_button_event", LiteGraph.EVENT ],
-            ["rb_button_event", LiteGraph.EVENT ],
-            ["ls_button_event", LiteGraph.EVENT ],
-            ["rs_button_event", LiteGraph.EVENT ],
-            ["start_button_event", LiteGraph.EVENT ],
-            ["back_button_event", LiteGraph.EVENT ],
+            ["a_button_event", LiteGraph.EVENT],
+            ["b_button_event", LiteGraph.EVENT],
+            ["x_button_event", LiteGraph.EVENT],
+            ["y_button_event", LiteGraph.EVENT],
+            ["lb_button_event", LiteGraph.EVENT],
+            ["rb_button_event", LiteGraph.EVENT],
+            ["ls_button_event", LiteGraph.EVENT],
+            ["rs_button_event", LiteGraph.EVENT],
+            ["start_button_event", LiteGraph.EVENT],
+            ["back_button_event", LiteGraph.EVENT],
             ["hat_left", "number"],
             ["hat_right", "number"],
             ["hat_up", "number"],
             ["hat_down", "number"],
             ["hat", "number"],
-            ["button_pressed", LiteGraph.EVENT]
+            ["button_pressed", LiteGraph.EVENT],
         ];
     };
 

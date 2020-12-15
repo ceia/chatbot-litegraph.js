@@ -1,5 +1,5 @@
 //event related nodes
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function LGWebSocket() {
@@ -11,7 +11,7 @@
         this.properties = {
             url: "",
             room: "lgraph", //allows to filter messages,
-            only_send_changes: true
+            only_send_changes: true,
         };
         this._ws = null;
         this._last_sent_data = [];
@@ -21,13 +21,13 @@
     LGWebSocket.title = "WebSocket";
     LGWebSocket.desc = "Send data through a websocket";
 
-    LGWebSocket.prototype.onPropertyChanged = function(name, value) {
+    LGWebSocket.prototype.onPropertyChanged = function (name, value) {
         if (name == "url") {
             this.connectSocket();
         }
     };
 
-    LGWebSocket.prototype.onExecute = function() {
+    LGWebSocket.prototype.onExecute = function () {
         if (!this._ws && this.properties.url) {
             this.connectSocket();
         }
@@ -50,7 +50,7 @@
                     type: 0,
                     room: room,
                     channel: i,
-                    data: data
+                    data: data,
                 });
             } catch (err) {
                 continue;
@@ -72,18 +72,18 @@
         }
     };
 
-    LGWebSocket.prototype.connectSocket = function() {
+    LGWebSocket.prototype.connectSocket = function () {
         var that = this;
         var url = this.properties.url;
         if (url.substr(0, 2) != "ws") {
             url = "ws://" + url;
         }
         this._ws = new WebSocket(url);
-        this._ws.onopen = function() {
+        this._ws.onopen = function () {
             console.log("ready");
             that.boxcolor = "#6C6";
         };
-        this._ws.onmessage = function(e) {
+        this._ws.onmessage = function (e) {
             that.boxcolor = "#AFA";
             var data = JSON.parse(e.data);
             if (data.room && data.room != that.properties.room) {
@@ -108,24 +108,24 @@
                 that._last_received_data[data.channel || 0] = data.data;
             }
         };
-        this._ws.onerror = function(e) {
+        this._ws.onerror = function (e) {
             console.log("couldnt connect to websocket");
             that.boxcolor = "#E88";
         };
-        this._ws.onclose = function(e) {
+        this._ws.onclose = function (e) {
             console.log("connection closed");
             that.boxcolor = "#000";
         };
     };
 
-    LGWebSocket.prototype.send = function(data) {
+    LGWebSocket.prototype.send = function (data) {
         if (!this._ws || this._ws.readyState != WebSocket.OPEN) {
             return;
         }
         this._ws.send(JSON.stringify({ type: 1, msg: data }));
     };
 
-    LGWebSocket.prototype.onAction = function(action, param) {
+    LGWebSocket.prototype.onAction = function (action, param) {
         if (!this._ws || this._ws.readyState != WebSocket.OPEN) {
             return;
         }
@@ -133,15 +133,15 @@
             type: 1,
             room: this.properties.room,
             action: action,
-            data: param
+            data: param,
         });
     };
 
-    LGWebSocket.prototype.onGetInputs = function() {
+    LGWebSocket.prototype.onGetInputs = function () {
         return [["in", 0]];
     };
 
-    LGWebSocket.prototype.onGetOutputs = function() {
+    LGWebSocket.prototype.onGetOutputs = function () {
         return [["out", 0]];
     };
 
@@ -172,7 +172,7 @@
         this.properties = {
             url: "tamats.com:55000",
             room: "lgraph",
-            only_send_changes: true
+            only_send_changes: true,
         };
 
         this._server = null;
@@ -180,28 +180,30 @@
         this._last_sent_data = [];
         this._last_received_data = [];
 
-		if(typeof(SillyClient) == "undefined")
-			console.warn("remember to add SillyClient.js to your project: https://tamats.com/projects/sillyserver/src/sillyclient.js");
+        if (typeof SillyClient == "undefined")
+            console.warn(
+                "remember to add SillyClient.js to your project: https://tamats.com/projects/sillyserver/src/sillyclient.js"
+            );
     }
 
     LGSillyClient.title = "SillyClient";
     LGSillyClient.desc = "Connects to SillyServer to broadcast messages";
 
-    LGSillyClient.prototype.onPropertyChanged = function(name, value) {
+    LGSillyClient.prototype.onPropertyChanged = function (name, value) {
         if (name == "room") {
             this.room_widget.value = value;
         }
         this.connectSocket();
     };
 
-    LGSillyClient.prototype.setRoom = function(room_name) {
+    LGSillyClient.prototype.setRoom = function (room_name) {
         this.properties.room = room_name;
         this.room_widget.value = room_name;
         this.connectSocket();
     };
 
     //force label names
-    LGSillyClient.prototype.onDrawForeground = function() {
+    LGSillyClient.prototype.onDrawForeground = function () {
         for (var i = 1; i < this.inputs.length; ++i) {
             var slot = this.inputs[i];
             slot.label = "in_" + i;
@@ -212,7 +214,7 @@
         }
     };
 
-    LGSillyClient.prototype.onExecute = function() {
+    LGSillyClient.prototype.onExecute = function () {
         if (!this._server || !this._server.is_connected) {
             return;
         }
@@ -221,44 +223,42 @@
 
         for (var i = 1; i < this.inputs.length; ++i) {
             var data = this.getInputData(i);
-			var prev_data = this._last_sent_data[i];
+            var prev_data = this._last_sent_data[i];
             if (data != null) {
-                if (only_send_changes)
-				{	
-					var is_equal = true;
-					if( data && data.length && prev_data && prev_data.length == data.length && data.constructor !== String)
-					{
-						for(var j = 0; j < data.length; ++j)
-							if( prev_data[j] != data[j] )
-							{
-								is_equal = false;
-								break;
-							}
-					}
-					else if(this._last_sent_data[i] != data)
-						is_equal = false;
-					if(is_equal)
-							continue;
+                if (only_send_changes) {
+                    var is_equal = true;
+                    if (
+                        data &&
+                        data.length &&
+                        prev_data &&
+                        prev_data.length == data.length &&
+                        data.constructor !== String
+                    ) {
+                        for (var j = 0; j < data.length; ++j)
+                            if (prev_data[j] != data[j]) {
+                                is_equal = false;
+                                break;
+                            }
+                    } else if (this._last_sent_data[i] != data)
+                        is_equal = false;
+                    if (is_equal) continue;
                 }
                 this._server.sendMessage({ type: 0, channel: i, data: data });
-				if( data.length && data.constructor !== String )
-				{
-					if( this._last_sent_data[i] )
-					{
-						this._last_sent_data[i].length = data.length;
-						for(var j = 0; j < data.length; ++j)
-							this._last_sent_data[i][j] = data[j];
-					}
-					else //create
-					{
-						if(data.constructor === Array)
-							this._last_sent_data[i] = data.concat();
-						else
-							this._last_sent_data[i] = new data.constructor( data );
-					}
-				}
-				else
-	                this._last_sent_data[i] = data; //should be cloned
+                if (data.length && data.constructor !== String) {
+                    if (this._last_sent_data[i]) {
+                        this._last_sent_data[i].length = data.length;
+                        for (var j = 0; j < data.length; ++j)
+                            this._last_sent_data[i][j] = data[j];
+                    } //create
+                    else {
+                        if (data.constructor === Array)
+                            this._last_sent_data[i] = data.concat();
+                        else
+                            this._last_sent_data[i] = new data.constructor(
+                                data
+                            );
+                    }
+                } else this._last_sent_data[i] = data; //should be cloned
             }
         }
 
@@ -271,7 +271,7 @@
         }
     };
 
-    LGSillyClient.prototype.connectSocket = function() {
+    LGSillyClient.prototype.connectSocket = function () {
         var that = this;
         if (typeof SillyClient == "undefined") {
             if (!this._error) {
@@ -284,11 +284,11 @@
         }
 
         this._server = new SillyClient();
-        this._server.on_ready = function() {
+        this._server.on_ready = function () {
             console.log("ready");
             that.boxcolor = "#6C6";
         };
-        this._server.on_message = function(id, msg) {
+        this._server.on_message = function (id, msg) {
             var data = null;
             try {
                 data = JSON.parse(msg);
@@ -318,11 +318,11 @@
             }
             that.boxcolor = "#AFA";
         };
-        this._server.on_error = function(e) {
+        this._server.on_error = function (e) {
             console.log("couldnt connect to websocket");
             that.boxcolor = "#E88";
         };
-        this._server.on_close = function(e) {
+        this._server.on_close = function (e) {
             console.log("connection closed");
             that.boxcolor = "#000";
         };
@@ -339,25 +339,25 @@
         }
     };
 
-    LGSillyClient.prototype.send = function(data) {
+    LGSillyClient.prototype.send = function (data) {
         if (!this._server || !this._server.is_connected) {
             return;
         }
         this._server.sendMessage({ type: 1, data: data });
     };
 
-    LGSillyClient.prototype.onAction = function(action, param) {
+    LGSillyClient.prototype.onAction = function (action, param) {
         if (!this._server || !this._server.is_connected) {
             return;
         }
         this._server.sendMessage({ type: 1, action: action, data: param });
     };
 
-    LGSillyClient.prototype.onGetInputs = function() {
+    LGSillyClient.prototype.onGetInputs = function () {
         return [["in", 0]];
     };
 
-    LGSillyClient.prototype.onGetOutputs = function() {
+    LGSillyClient.prototype.onGetOutputs = function () {
         return [["out", 0]];
     };
 
