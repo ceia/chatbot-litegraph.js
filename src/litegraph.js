@@ -8470,9 +8470,9 @@ LGraphNode.prototype.executeAction = function(action)
             }
 
             //circle
-            ctx.beginPath();
-            ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
-            ctx.fill();
+            // ctx.beginPath();
+            // ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
+            // ctx.fill();
         }
 
         //render flowing points

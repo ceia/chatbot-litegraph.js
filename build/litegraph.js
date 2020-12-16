@@ -8470,9 +8470,9 @@ LGraphNode.prototype.executeAction = function(action)
             }
 
             //circle
-            ctx.beginPath();
-            ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
-            ctx.fill();
+            // ctx.beginPath();
+            // ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
+            // ctx.fill();
         }
 
         //render flowing points
@@ -11868,7 +11868,7 @@ if (typeof exports != "undefined") {
 }
 
 //basic nodes
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     //Constant
@@ -11880,7 +11880,7 @@ if (typeof exports != "undefined") {
     Time.title = "Time";
     Time.desc = "Time";
 
-    Time.prototype.onExecute = function() {
+    Time.prototype.onExecute = function () {
         this.setOutputData(0, this.graph.globaltime * 1000);
         this.setOutputData(1, this.graph.globaltime);
     };
@@ -11901,15 +11901,19 @@ if (typeof exports != "undefined") {
 
         this.subgraph.onTrigger = this.onSubgraphTrigger.bind(this);
 
-		//nodes input node added inside
+        //nodes input node added inside
         this.subgraph.onInputAdded = this.onSubgraphNewInput.bind(this);
         this.subgraph.onInputRenamed = this.onSubgraphRenamedInput.bind(this);
-        this.subgraph.onInputTypeChanged = this.onSubgraphTypeChangeInput.bind(this);
+        this.subgraph.onInputTypeChanged = this.onSubgraphTypeChangeInput.bind(
+            this
+        );
         this.subgraph.onInputRemoved = this.onSubgraphRemovedInput.bind(this);
 
         this.subgraph.onOutputAdded = this.onSubgraphNewOutput.bind(this);
         this.subgraph.onOutputRenamed = this.onSubgraphRenamedOutput.bind(this);
-        this.subgraph.onOutputTypeChanged = this.onSubgraphTypeChangeOutput.bind(this);
+        this.subgraph.onOutputTypeChanged = this.onSubgraphTypeChangeOutput.bind(
+            this
+        );
         this.subgraph.onOutputRemoved = this.onSubgraphRemovedOutput.bind(this);
     }
 
@@ -11917,11 +11921,11 @@ if (typeof exports != "undefined") {
     Subgraph.desc = "Graph inside a node";
     Subgraph.title_color = "#334";
 
-    Subgraph.prototype.onGetInputs = function() {
+    Subgraph.prototype.onGetInputs = function () {
         return [["enabled", "boolean"]];
     };
 
-	/*
+    /*
     Subgraph.prototype.onDrawTitle = function(ctx) {
         if (this.flags.collapsed) {
             return;
@@ -11940,14 +11944,14 @@ if (typeof exports != "undefined") {
     };
 	*/
 
-    Subgraph.prototype.onDblClick = function(e, pos, graphcanvas) {
+    Subgraph.prototype.onDblClick = function (e, pos, graphcanvas) {
         var that = this;
-        setTimeout(function() {
+        setTimeout(function () {
             graphcanvas.openSubgraph(that.subgraph);
         }, 10);
     };
 
-	/*
+    /*
     Subgraph.prototype.onMouseDown = function(e, pos, graphcanvas) {
         if (
             !this.flags.collapsed &&
@@ -11962,11 +11966,11 @@ if (typeof exports != "undefined") {
     };
 	*/
 
-    Subgraph.prototype.onAction = function(action, param) {
+    Subgraph.prototype.onAction = function (action, param) {
         this.subgraph.onAction(action, param);
     };
 
-    Subgraph.prototype.onExecute = function() {
+    Subgraph.prototype.onExecute = function () {
         this.enabled = this.getInputOrProperty("enabled");
         if (!this.enabled) {
             return;
@@ -11994,61 +11998,79 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Subgraph.prototype.sendEventToAllNodes = function(eventname, param, mode) {
+    Subgraph.prototype.sendEventToAllNodes = function (eventname, param, mode) {
         if (this.enabled) {
             this.subgraph.sendEventToAllNodes(eventname, param, mode);
         }
     };
 
-	Subgraph.prototype.onDrawBackground = function(ctx, graphcanvas, canvas, pos)
-	{
-		if(this.flags.collapsed)
-			return;
+    Subgraph.prototype.onDrawBackground = function (
+        ctx,
+        graphcanvas,
+        canvas,
+        pos
+    ) {
+        if (this.flags.collapsed) return;
 
-		var y = this.size[1] - LiteGraph.NODE_TITLE_HEIGHT + 0.5;
+        var y = this.size[1] - LiteGraph.NODE_TITLE_HEIGHT + 0.5;
 
-		//button
-		var over = LiteGraph.isInsideRectangle(pos[0],pos[1],this.pos[0],this.pos[1] + y,this.size[0],LiteGraph.NODE_TITLE_HEIGHT);
-		ctx.fillStyle = over ? "#555" : "#222";
-		ctx.beginPath();
-		if (this._shape == LiteGraph.BOX_SHAPE)
-			ctx.rect(0, y, this.size[0]+1, LiteGraph.NODE_TITLE_HEIGHT);
-		else
-			ctx.roundRect( 0, y, this.size[0]+1, LiteGraph.NODE_TITLE_HEIGHT, 0, 8);
-		ctx.fill();
+        //button
+        var over = LiteGraph.isInsideRectangle(
+            pos[0],
+            pos[1],
+            this.pos[0],
+            this.pos[1] + y,
+            this.size[0],
+            LiteGraph.NODE_TITLE_HEIGHT
+        );
+        ctx.fillStyle = over ? "#555" : "#222";
+        ctx.beginPath();
+        if (this._shape == LiteGraph.BOX_SHAPE)
+            ctx.rect(0, y, this.size[0] + 1, LiteGraph.NODE_TITLE_HEIGHT);
+        else
+            ctx.roundRect(
+                0,
+                y,
+                this.size[0] + 1,
+                LiteGraph.NODE_TITLE_HEIGHT,
+                0,
+                8
+            );
+        ctx.fill();
 
-		//button
-		ctx.textAlign = "center";
-		ctx.font = "24px Arial";
-		ctx.fillStyle = over ? "#DDD" : "#999";
-		ctx.fillText( "+", this.size[0] * 0.5, y + 24 );
-	}
+        //button
+        ctx.textAlign = "center";
+        ctx.font = "24px Arial";
+        ctx.fillStyle = over ? "#DDD" : "#999";
+        ctx.fillText("+", this.size[0] * 0.5, y + 24);
+    };
 
-	Subgraph.prototype.onMouseDown = function(e, localpos, graphcanvas)
-	{
-		var y = this.size[1] - LiteGraph.NODE_TITLE_HEIGHT + 0.5;
-		if(localpos[1] > y)
-		{
-			graphcanvas.showSubgraphPropertiesDialog(this);
-		}
-	}
+    Subgraph.prototype.onMouseDown = function (e, localpos, graphcanvas) {
+        var y = this.size[1] - LiteGraph.NODE_TITLE_HEIGHT + 0.5;
+        if (localpos[1] > y) {
+            graphcanvas.showSubgraphPropertiesDialog(this);
+        }
+    };
 
-	Subgraph.prototype.computeSize = function()
-	{
-		var num_inputs = this.inputs ? this.inputs.length : 0;
-		var num_outputs = this.outputs ? this.outputs.length : 0;
-		return [ 200, Math.max(num_inputs,num_outputs) * LiteGraph.NODE_SLOT_HEIGHT + LiteGraph.NODE_TITLE_HEIGHT ];
-	}
+    Subgraph.prototype.computeSize = function () {
+        var num_inputs = this.inputs ? this.inputs.length : 0;
+        var num_outputs = this.outputs ? this.outputs.length : 0;
+        return [
+            200,
+            Math.max(num_inputs, num_outputs) * LiteGraph.NODE_SLOT_HEIGHT +
+                LiteGraph.NODE_TITLE_HEIGHT,
+        ];
+    };
 
     //**** INPUTS ***********************************
-    Subgraph.prototype.onSubgraphTrigger = function(event, param) {
+    Subgraph.prototype.onSubgraphTrigger = function (event, param) {
         var slot = this.findOutputSlot(event);
         if (slot != -1) {
             this.triggerSlot(slot);
         }
     };
 
-    Subgraph.prototype.onSubgraphNewInput = function(name, type) {
+    Subgraph.prototype.onSubgraphNewInput = function (name, type) {
         var slot = this.findInputSlot(name);
         if (slot == -1) {
             //add input to the node
@@ -12056,7 +12078,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Subgraph.prototype.onSubgraphRenamedInput = function(oldname, name) {
+    Subgraph.prototype.onSubgraphRenamedInput = function (oldname, name) {
         var slot = this.findInputSlot(oldname);
         if (slot == -1) {
             return;
@@ -12065,7 +12087,7 @@ if (typeof exports != "undefined") {
         info.name = name;
     };
 
-    Subgraph.prototype.onSubgraphTypeChangeInput = function(name, type) {
+    Subgraph.prototype.onSubgraphTypeChangeInput = function (name, type) {
         var slot = this.findInputSlot(name);
         if (slot == -1) {
             return;
@@ -12074,7 +12096,7 @@ if (typeof exports != "undefined") {
         info.type = type;
     };
 
-    Subgraph.prototype.onSubgraphRemovedInput = function(name) {
+    Subgraph.prototype.onSubgraphRemovedInput = function (name) {
         var slot = this.findInputSlot(name);
         if (slot == -1) {
             return;
@@ -12083,14 +12105,14 @@ if (typeof exports != "undefined") {
     };
 
     //**** OUTPUTS ***********************************
-    Subgraph.prototype.onSubgraphNewOutput = function(name, type) {
+    Subgraph.prototype.onSubgraphNewOutput = function (name, type) {
         var slot = this.findOutputSlot(name);
         if (slot == -1) {
             this.addOutput(name, type);
         }
     };
 
-    Subgraph.prototype.onSubgraphRenamedOutput = function(oldname, name) {
+    Subgraph.prototype.onSubgraphRenamedOutput = function (oldname, name) {
         var slot = this.findOutputSlot(oldname);
         if (slot == -1) {
             return;
@@ -12099,7 +12121,7 @@ if (typeof exports != "undefined") {
         info.name = name;
     };
 
-    Subgraph.prototype.onSubgraphTypeChangeOutput = function(name, type) {
+    Subgraph.prototype.onSubgraphTypeChangeOutput = function (name, type) {
         var slot = this.findOutputSlot(name);
         if (slot == -1) {
             return;
@@ -12108,7 +12130,7 @@ if (typeof exports != "undefined") {
         info.type = type;
     };
 
-    Subgraph.prototype.onSubgraphRemovedOutput = function(name) {
+    Subgraph.prototype.onSubgraphRemovedOutput = function (name) {
         var slot = this.findInputSlot(name);
         if (slot == -1) {
             return;
@@ -12117,30 +12139,30 @@ if (typeof exports != "undefined") {
     };
     // *****************************************************
 
-    Subgraph.prototype.getExtraMenuOptions = function(graphcanvas) {
+    Subgraph.prototype.getExtraMenuOptions = function (graphcanvas) {
         var that = this;
         return [
             {
                 content: "Open",
-                callback: function() {
+                callback: function () {
                     graphcanvas.openSubgraph(that.subgraph);
-                }
-            }
+                },
+            },
         ];
     };
 
-    Subgraph.prototype.onResize = function(size) {
+    Subgraph.prototype.onResize = function (size) {
         size[1] += 20;
     };
 
-    Subgraph.prototype.serialize = function() {
+    Subgraph.prototype.serialize = function () {
         var data = LiteGraph.LGraphNode.prototype.serialize.call(this);
         data.subgraph = this.subgraph.serialize();
         return data;
     };
     //no need to define node.configure, the default method detects node.subgraph and passes the object to node.subgraph.configure()
 
-    Subgraph.prototype.clone = function() {
+    Subgraph.prototype.clone = function () {
         var node = LiteGraph.createNode(this.type);
         var data = this.serialize();
         delete data["id"];
@@ -12150,94 +12172,82 @@ if (typeof exports != "undefined") {
         return node;
     };
 
-	Subgraph.prototype.buildFromNodes = function(nodes)
-	{
-		//clear all?
-		//TODO
+    Subgraph.prototype.buildFromNodes = function (nodes) {
+        //clear all?
+        //TODO
 
-		//nodes that connect data between parent graph and subgraph
-		var subgraph_inputs = [];
-		var subgraph_outputs = [];
+        //nodes that connect data between parent graph and subgraph
+        var subgraph_inputs = [];
+        var subgraph_outputs = [];
 
-		//mark inner nodes
-		var ids = {};
-		var min_x = 0;
-		var max_x = 0;
-		for(var i = 0; i < nodes.length; ++i)
-		{
-			var node = nodes[i];
-			ids[ node.id ] = node;
-			min_x = Math.min( node.pos[0], min_x );
-			max_x = Math.max( node.pos[0], min_x );
-		}
-		
-		var last_input_y = 0;
-		var last_output_y = 0;
+        //mark inner nodes
+        var ids = {};
+        var min_x = 0;
+        var max_x = 0;
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
+            ids[node.id] = node;
+            min_x = Math.min(node.pos[0], min_x);
+            max_x = Math.max(node.pos[0], min_x);
+        }
 
-		for(var i = 0; i < nodes.length; ++i)
-		{
-			var node = nodes[i];
-			//check inputs
-			if( node.inputs )
-				for(var j = 0; j < node.inputs.length; ++j)
-				{
-					var input = node.inputs[j];
-					if( !input || !input.link )
-						continue;
-					var link = node.graph.links[ input.link ];
-					if(!link)
-						continue;
-					if( ids[ link.origin_id ] )
-						continue;
-					//this.addInput(input.name,link.type);
-					this.subgraph.addInput(input.name,link.type);
-					/*
+        var last_input_y = 0;
+        var last_output_y = 0;
+
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
+            //check inputs
+            if (node.inputs)
+                for (var j = 0; j < node.inputs.length; ++j) {
+                    var input = node.inputs[j];
+                    if (!input || !input.link) continue;
+                    var link = node.graph.links[input.link];
+                    if (!link) continue;
+                    if (ids[link.origin_id]) continue;
+                    //this.addInput(input.name,link.type);
+                    this.subgraph.addInput(input.name, link.type);
+                    /*
 					var input_node = LiteGraph.createNode("graph/input");
 					this.subgraph.add( input_node );
 					input_node.pos = [min_x - 200, last_input_y ];
 					last_input_y += 100;
 					*/
-				}
+                }
 
-			//check outputs
-			if( node.outputs )
-				for(var j = 0; j < node.outputs.length; ++j)
-				{
-					var output = node.outputs[j];
-					if( !output || !output.links || !output.links.length )
-						continue;
-					var is_external = false;
-					for(var k = 0; k < output.links.length; ++k)
-					{
-						var link = node.graph.links[ output.links[k] ];
-						if(!link)
-							continue;
-						if( ids[ link.target_id ] )
-							continue;
-						is_external = true;
-						break;
-					}
-					if(!is_external)
-						continue;
-					//this.addOutput(output.name,output.type);
-					/*
+            //check outputs
+            if (node.outputs)
+                for (var j = 0; j < node.outputs.length; ++j) {
+                    var output = node.outputs[j];
+                    if (!output || !output.links || !output.links.length)
+                        continue;
+                    var is_external = false;
+                    for (var k = 0; k < output.links.length; ++k) {
+                        var link = node.graph.links[output.links[k]];
+                        if (!link) continue;
+                        if (ids[link.target_id]) continue;
+                        is_external = true;
+                        break;
+                    }
+                    if (!is_external) continue;
+                    //this.addOutput(output.name,output.type);
+                    /*
 					var output_node = LiteGraph.createNode("graph/output");
 					this.subgraph.add( output_node );
 					output_node.pos = [max_x + 50, last_output_y ];
 					last_output_y += 100;
 					*/
-				}
-		}
+                }
+        }
 
-		//detect inputs and outputs
-			//split every connection in two data_connection nodes
-			//keep track of internal connections
-			//connect external connections
+        //detect inputs and outputs
+        //split every connection in two data_connection nodes
+        //keep track of internal connections
+        //connect external connections
 
-		//clone nodes inside subgraph and try to reconnect them
+        //clone nodes inside subgraph and try to reconnect them
 
-		//connect edge subgraph nodes to extarnal connections nodes
-	}
+        //connect edge subgraph nodes to extarnal connections nodes
+    };
 
     LiteGraph.Subgraph = Subgraph;
     LiteGraph.registerNodeType("graph/subgraph", Subgraph);
@@ -12248,10 +12258,10 @@ if (typeof exports != "undefined") {
 
         this.name_in_graph = "";
         this.properties = {
-			name: "",
-			type: "number",
-			value: 0
-		}; 
+            name: "",
+            type: "number",
+            value: 0,
+        };
 
         var that = this;
 
@@ -12259,19 +12269,19 @@ if (typeof exports != "undefined") {
             "text",
             "Name",
             this.properties.name,
-            function(v) {
+            function (v) {
                 if (!v) {
                     return;
                 }
-                that.setProperty("name",v);
+                that.setProperty("name", v);
             }
         );
         this.type_widget = this.addWidget(
             "text",
             "Type",
             this.properties.type,
-            function(v) {
-				that.setProperty("type",v);
+            function (v) {
+                that.setProperty("type", v);
             }
         );
 
@@ -12279,8 +12289,8 @@ if (typeof exports != "undefined") {
             "number",
             "Value",
             this.properties.value,
-            function(v) {
-                that.setProperty("value",v);
+            function (v) {
+                that.setProperty("value", v);
             }
         );
 
@@ -12291,109 +12301,95 @@ if (typeof exports != "undefined") {
     GraphInput.title = "Input";
     GraphInput.desc = "Input of the graph";
 
-	GraphInput.prototype.onConfigure = function()
-	{
-		this.updateType();
-	}
+    GraphInput.prototype.onConfigure = function () {
+        this.updateType();
+    };
 
-	//ensures the type in the node output and the type in the associated graph input are the same
-	GraphInput.prototype.updateType = function()
-	{
-		var type = this.properties.type;
-		this.type_widget.value = type;
+    //ensures the type in the node output and the type in the associated graph input are the same
+    GraphInput.prototype.updateType = function () {
+        var type = this.properties.type;
+        this.type_widget.value = type;
 
-		//update output
-		if(this.outputs[0].type != type)
-		{
-	        if (!LiteGraph.isValidConnection(this.outputs[0].type,type))
-				this.disconnectOutput(0);
-			this.outputs[0].type = type;
-		}
+        //update output
+        if (this.outputs[0].type != type) {
+            if (!LiteGraph.isValidConnection(this.outputs[0].type, type))
+                this.disconnectOutput(0);
+            this.outputs[0].type = type;
+        }
 
-		//update widget
-		if(type == "number")
-		{
-			this.value_widget.type = "number";
-			this.value_widget.value = 0;
-		}
-		else if(type == "boolean")
-		{
-			this.value_widget.type = "toggle";
-			this.value_widget.value = true;
-		}
-		else if(type == "string")
-		{
-			this.value_widget.type = "text";
-			this.value_widget.value = "";
-		}
-		else
-		{
-			this.value_widget.type = null;
-			this.value_widget.value = null;
-		}
-		this.properties.value = this.value_widget.value;
+        //update widget
+        if (type == "number") {
+            this.value_widget.type = "number";
+            this.value_widget.value = 0;
+        } else if (type == "boolean") {
+            this.value_widget.type = "toggle";
+            this.value_widget.value = true;
+        } else if (type == "string") {
+            this.value_widget.type = "text";
+            this.value_widget.value = "";
+        } else {
+            this.value_widget.type = null;
+            this.value_widget.value = null;
+        }
+        this.properties.value = this.value_widget.value;
 
-		//update graph
-		if (this.graph && this.name_in_graph) {
-			this.graph.changeInputType(this.name_in_graph, type);
-		}
-	}
+        //update graph
+        if (this.graph && this.name_in_graph) {
+            this.graph.changeInputType(this.name_in_graph, type);
+        }
+    };
 
-	//this is executed AFTER the property has changed
-	GraphInput.prototype.onPropertyChanged = function(name,v)
-	{
-		if( name == "name" )
-		{
-			if (v == "" || v == this.name_in_graph || v == "enabled") {
-				return false;
-			}
-			if(this.graph)
-			{
-				if (this.name_in_graph) {
-					//already added
-					this.graph.renameInput( this.name_in_graph, v );
-				} else {
-					this.graph.addInput( v, this.properties.type );
-				}
-			} //what if not?!
-			this.name_widget.value = v;
-			this.name_in_graph = v;
-		}
-		else if( name == "type" )
-		{
-			this.updateType();
-		}
-		else if( name == "value" )
-		{
-		}
-	}
+    //this is executed AFTER the property has changed
+    GraphInput.prototype.onPropertyChanged = function (name, v) {
+        if (name == "name") {
+            if (v == "" || v == this.name_in_graph || v == "enabled") {
+                return false;
+            }
+            if (this.graph) {
+                if (this.name_in_graph) {
+                    //already added
+                    this.graph.renameInput(this.name_in_graph, v);
+                } else {
+                    this.graph.addInput(v, this.properties.type);
+                }
+            } //what if not?!
+            this.name_widget.value = v;
+            this.name_in_graph = v;
+        } else if (name == "type") {
+            this.updateType();
+        } else if (name == "value") {
+        }
+    };
 
-    GraphInput.prototype.getTitle = function() {
+    GraphInput.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this.properties.name;
         }
         return this.title;
     };
 
-    GraphInput.prototype.onAction = function(action, param) {
+    GraphInput.prototype.onAction = function (action, param) {
         if (this.properties.type == LiteGraph.EVENT) {
             this.triggerSlot(0, param);
         }
     };
 
-    GraphInput.prototype.onExecute = function() {
+    GraphInput.prototype.onExecute = function () {
         var name = this.properties.name;
         //read from global input
         var data = this.graph.inputs[name];
         if (!data) {
-            this.setOutputData(0, this.properties.value );
-			return;
+            this.setOutputData(0, this.properties.value);
+            return;
         }
 
-        this.setOutputData(0, data.value !== undefined ? data.value : this.properties.value );
+        this.setOutputData(
+            0,
+            data.value !== undefined ? data.value : this.properties.value
+        );
     };
 
-    GraphInput.prototype.onRemoved = function() {
+    GraphInput.prototype.onRemoved = function () {
         if (this.name_in_graph) {
             this.graph.removeInput(this.name_in_graph);
         }
@@ -12411,10 +12407,10 @@ if (typeof exports != "undefined") {
         var that = this;
 
         Object.defineProperty(this.properties, "name", {
-            get: function() {
+            get: function () {
                 return that.name_in_graph;
             },
-            set: function(v) {
+            set: function (v) {
                 if (v == "" || v == that.name_in_graph) {
                     return;
                 }
@@ -12427,19 +12423,19 @@ if (typeof exports != "undefined") {
                 that.name_widget.value = v;
                 that.name_in_graph = v;
             },
-            enumerable: true
+            enumerable: true,
         });
 
         Object.defineProperty(this.properties, "type", {
-            get: function() {
+            get: function () {
                 return that.inputs[0].type;
             },
-            set: function(v) {
+            set: function (v) {
                 if (v == "action" || v == "event") {
                     v = LiteGraph.ACTION;
                 }
-		        if (!LiteGraph.isValidConnection(that.inputs[0].type,v))
-					that.disconnectInput(0);
+                if (!LiteGraph.isValidConnection(that.inputs[0].type, v))
+                    that.disconnectInput(0);
                 that.inputs[0].type = v;
                 if (that.name_in_graph) {
                     //already added
@@ -12450,11 +12446,21 @@ if (typeof exports != "undefined") {
                 }
                 that.type_widget.value = v || "";
             },
-            enumerable: true
+            enumerable: true,
         });
 
-        this.name_widget = this.addWidget("text","Name",this.properties.name,"name");
-        this.type_widget = this.addWidget("text","Type",this.properties.type,"type");
+        this.name_widget = this.addWidget(
+            "text",
+            "Name",
+            this.properties.name,
+            "name"
+        );
+        this.type_widget = this.addWidget(
+            "text",
+            "Type",
+            this.properties.type,
+            "type"
+        );
         this.widgets_up = true;
         this.size = [180, 60];
     }
@@ -12462,24 +12468,24 @@ if (typeof exports != "undefined") {
     GraphOutput.title = "Output";
     GraphOutput.desc = "Output of the graph";
 
-    GraphOutput.prototype.onExecute = function() {
+    GraphOutput.prototype.onExecute = function () {
         this._value = this.getInputData(0);
         this.graph.setOutputData(this.properties.name, this._value);
     };
 
-    GraphOutput.prototype.onAction = function(action, param) {
+    GraphOutput.prototype.onAction = function (action, param) {
         if (this.properties.type == LiteGraph.ACTION) {
             this.graph.trigger(this.properties.name, param);
         }
     };
 
-    GraphOutput.prototype.onRemoved = function() {
+    GraphOutput.prototype.onRemoved = function () {
         if (this.name_in_graph) {
             this.graph.removeOutput(this.name_in_graph);
         }
     };
 
-    GraphOutput.prototype.getTitle = function() {
+    GraphOutput.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this.properties.name;
         }
@@ -12493,7 +12499,7 @@ if (typeof exports != "undefined") {
     function ConstantNumber() {
         this.addOutput("value", "number");
         this.addProperty("value", 1.0);
-        this.widget = this.addWidget("number","value",1,"value");
+        this.widget = this.addWidget("number", "value", 1, "value");
         this.widgets_up = true;
         this.size = [180, 30];
     }
@@ -12501,23 +12507,22 @@ if (typeof exports != "undefined") {
     ConstantNumber.title = "Const Number";
     ConstantNumber.desc = "Constant number";
 
-    ConstantNumber.prototype.onExecute = function() {
+    ConstantNumber.prototype.onExecute = function () {
         this.setOutputData(0, parseFloat(this.properties["value"]));
     };
 
-    ConstantNumber.prototype.getTitle = function() {
+    ConstantNumber.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this.properties.value;
         }
         return this.title;
     };
 
-	ConstantNumber.prototype.setValue = function(v)
-	{
-		this.setProperty("value",v);
-	}
+    ConstantNumber.prototype.setValue = function (v) {
+        this.setProperty("value", v);
+    };
 
-    ConstantNumber.prototype.onDrawBackground = function(ctx) {
+    ConstantNumber.prototype.onDrawBackground = function (ctx) {
         //show the current value
         this.outputs[0].label = this.properties["value"].toFixed(3);
     };
@@ -12527,7 +12532,7 @@ if (typeof exports != "undefined") {
     function ConstantBoolean() {
         this.addOutput("", "boolean");
         this.addProperty("value", true);
-        this.widget = this.addWidget("toggle","value",true,"value");
+        this.widget = this.addWidget("toggle", "value", true, "value");
         this.widgets_up = true;
         this.size = [140, 30];
     }
@@ -12536,27 +12541,26 @@ if (typeof exports != "undefined") {
     ConstantBoolean.desc = "Constant boolean";
     ConstantBoolean.prototype.getTitle = ConstantNumber.prototype.getTitle;
 
-    ConstantBoolean.prototype.onExecute = function() {
+    ConstantBoolean.prototype.onExecute = function () {
         this.setOutputData(0, this.properties["value"]);
     };
 
-	ConstantBoolean.prototype.setValue = ConstantNumber.prototype.setValue;
+    ConstantBoolean.prototype.setValue = ConstantNumber.prototype.setValue;
 
-	ConstantBoolean.prototype.onGetInputs = function() {
-		return [["toggle", LiteGraph.ACTION]];
-	};
+    ConstantBoolean.prototype.onGetInputs = function () {
+        return [["toggle", LiteGraph.ACTION]];
+    };
 
-	ConstantBoolean.prototype.onAction = function(action)
-	{
-		this.setValue( !this.properties.value );
-	}
+    ConstantBoolean.prototype.onAction = function (action) {
+        this.setValue(!this.properties.value);
+    };
 
     LiteGraph.registerNodeType("basic/boolean", ConstantBoolean);
 
     function ConstantString() {
         this.addOutput("", "string");
         this.addProperty("value", "");
-        this.widget = this.addWidget("text","value","","value");  //link to property value
+        this.widget = this.addWidget("text", "value", "", "value"); //link to property value
         this.widgets_up = true;
         this.size = [180, 30];
     }
@@ -12566,22 +12570,20 @@ if (typeof exports != "undefined") {
 
     ConstantString.prototype.getTitle = ConstantNumber.prototype.getTitle;
 
-    ConstantString.prototype.onExecute = function() {
+    ConstantString.prototype.onExecute = function () {
         this.setOutputData(0, this.properties["value"]);
     };
 
-	ConstantString.prototype.setValue = ConstantNumber.prototype.setValue;
+    ConstantString.prototype.setValue = ConstantNumber.prototype.setValue;
 
-	ConstantString.prototype.onDropFile = function(file)
-	{
-		var that = this;
-		var reader = new FileReader();
-		reader.onload = function(e)
-		{
-			that.setProperty("value",e.target.result);
-		}
-		reader.readAsText(file);
-	}
+    ConstantString.prototype.onDropFile = function (file) {
+        var that = this;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            that.setProperty("value", e.target.result);
+        };
+        reader.readAsText(file);
+    };
 
     LiteGraph.registerNodeType("basic/string", ConstantString);
 
@@ -12590,104 +12592,99 @@ if (typeof exports != "undefined") {
         this.addOutput("", "");
         this.addProperty("url", "");
         this.addProperty("type", "text");
-        this.widget = this.addWidget("text","url","","url");
+        this.widget = this.addWidget("text", "url", "", "url");
         this._data = null;
     }
 
     ConstantFile.title = "Const File";
     ConstantFile.desc = "Fetches a file from an url";
-    ConstantFile["@type"] = { type: "enum", values: ["text","arraybuffer","blob","json"] };
-
-    ConstantFile.prototype.onPropertyChanged = function(name, value) {
-        if (name == "url")
-		{
-			if( value == null || value == "")
-				this._data = null;
-			else
-			{
-				this.fetchFile(value);
-			}
-		}
-	}
-
-    ConstantFile.prototype.onExecute = function() {
-		var url = this.getInputData(0) || this.properties.url;
-		if(url && (url != this._url || this._type != this.properties.type))
-			this.fetchFile(url);
-        this.setOutputData(0, this._data );
+    ConstantFile["@type"] = {
+        type: "enum",
+        values: ["text", "arraybuffer", "blob", "json"],
     };
 
-	ConstantFile.prototype.setValue = ConstantNumber.prototype.setValue;
+    ConstantFile.prototype.onPropertyChanged = function (name, value) {
+        if (name == "url") {
+            if (value == null || value == "") this._data = null;
+            else {
+                this.fetchFile(value);
+            }
+        }
+    };
 
-    ConstantFile.prototype.fetchFile = function(url) {
-		var that = this;
-		if(!url || url.constructor !== String)
-		{
-			that._data = null;
+    ConstantFile.prototype.onExecute = function () {
+        var url = this.getInputData(0) || this.properties.url;
+        if (url && (url != this._url || this._type != this.properties.type))
+            this.fetchFile(url);
+        this.setOutputData(0, this._data);
+    };
+
+    ConstantFile.prototype.setValue = ConstantNumber.prototype.setValue;
+
+    ConstantFile.prototype.fetchFile = function (url) {
+        var that = this;
+        if (!url || url.constructor !== String) {
+            that._data = null;
             that.boxcolor = null;
-			return;
-		}
+            return;
+        }
 
-		this._url = url;
-		this._type = this.properties.type;
+        this._url = url;
+        this._type = this.properties.type;
         if (url.substr(0, 4) == "http" && LiteGraph.proxy) {
             url = LiteGraph.proxy + url.substr(url.indexOf(":") + 3);
         }
-		fetch(url)
-		.then(function(response) {
-			if(!response.ok)
-				 throw new Error("File not found");
+        fetch(url)
+            .then(function (response) {
+                if (!response.ok) throw new Error("File not found");
 
-			if(that.properties.type == "arraybuffer")
-				return response.arrayBuffer();
-			else if(that.properties.type == "text")
-				return response.text();
-			else if(that.properties.type == "json")
-				return response.json();
-			else if(that.properties.type == "blob")
-				return response.blob();
-		})
-		.then(function(data) {
-			that._data = data;
-            that.boxcolor = "#AEA";
-		})
-		.catch(function(error) {
-			that._data = null;
-            that.boxcolor = "red";
-			console.error("error fetching file:",url);
-		});
+                if (that.properties.type == "arraybuffer")
+                    return response.arrayBuffer();
+                else if (that.properties.type == "text") return response.text();
+                else if (that.properties.type == "json") return response.json();
+                else if (that.properties.type == "blob") return response.blob();
+            })
+            .then(function (data) {
+                that._data = data;
+                that.boxcolor = "#AEA";
+            })
+            .catch(function (error) {
+                that._data = null;
+                that.boxcolor = "red";
+                console.error("error fetching file:", url);
+            });
     };
 
-	ConstantFile.prototype.onDropFile = function(file)
-	{
-		var that = this;
-		this._url = file.name;
-		this._type = this.properties.type;
-		this.properties.url = file.name;
-		var reader = new FileReader();
-		reader.onload = function(e)
-		{
+    ConstantFile.prototype.onDropFile = function (file) {
+        var that = this;
+        this._url = file.name;
+        this._type = this.properties.type;
+        this.properties.url = file.name;
+        var reader = new FileReader();
+        reader.onload = function (e) {
             that.boxcolor = "#AEA";
-			var v = e.target.result;
-			if( that.properties.type == "json" )
-				v = JSON.parse(v);
-			that._data = v;
-		}
-		if(that.properties.type == "arraybuffer")
-			reader.readAsArrayBuffer(file);
-		else if(that.properties.type == "text" || that.properties.type == "json")
-			reader.readAsText(file);
-		else if(that.properties.type == "blob")
-			return reader.readAsBinaryString(file);
-	}
+            var v = e.target.result;
+            if (that.properties.type == "json") v = JSON.parse(v);
+            that._data = v;
+        };
+        if (that.properties.type == "arraybuffer")
+            reader.readAsArrayBuffer(file);
+        else if (
+            that.properties.type == "text" ||
+            that.properties.type == "json"
+        )
+            reader.readAsText(file);
+        else if (that.properties.type == "blob")
+            return reader.readAsBinaryString(file);
+    };
 
     LiteGraph.registerNodeType("basic/file", ConstantFile);
 
-	//to store json objects
+    //to store json objects
     function ConstantData() {
         this.addOutput("", "");
         this.addProperty("value", "");
-        this.widget = this.addWidget("text","json","","value");
+        this.widget = this.addWidget("text", "json", "", "value");
         this.widgets_up = true;
         this.size = [140, 30];
         this._value = null;
@@ -12696,7 +12693,7 @@ if (typeof exports != "undefined") {
     ConstantData.title = "Const Data";
     ConstantData.desc = "Constant Data";
 
-    ConstantData.prototype.onPropertyChanged = function(name, value) {
+    ConstantData.prototype.onPropertyChanged = function (name, value) {
         this.widget.value = value;
         if (value == null || value == "") {
             return;
@@ -12710,21 +12707,21 @@ if (typeof exports != "undefined") {
         }
     };
 
-    ConstantData.prototype.onExecute = function() {
+    ConstantData.prototype.onExecute = function () {
         this.setOutputData(0, this._value);
     };
 
-	ConstantData.prototype.setValue = ConstantNumber.prototype.setValue;
+    ConstantData.prototype.setValue = ConstantNumber.prototype.setValue;
 
     LiteGraph.registerNodeType("basic/data", ConstantData);
 
-	//to store json objects
+    //to store json objects
     function ConstantArray() {
         this.addInput("", "");
         this.addOutput("", "array");
         this.addOutput("length", "number");
         this.addProperty("value", "");
-        this.widget = this.addWidget("text","array","","value");
+        this.widget = this.addWidget("text", "array", "", "value");
         this.widgets_up = true;
         this.size = [140, 50];
         this._value = null;
@@ -12733,38 +12730,34 @@ if (typeof exports != "undefined") {
     ConstantArray.title = "Const Array";
     ConstantArray.desc = "Constant Array";
 
-    ConstantArray.prototype.onPropertyChanged = function(name, value) {
+    ConstantArray.prototype.onPropertyChanged = function (name, value) {
         this.widget.value = value;
         if (value == null || value == "") {
             return;
         }
 
         try {
-			if(value[0] != "[")
-	            this._value = JSON.parse("[" + value + "]");
-			else
-	            this._value = JSON.parse(value);
+            if (value[0] != "[") this._value = JSON.parse("[" + value + "]");
+            else this._value = JSON.parse(value);
             this.boxcolor = "#AEA";
         } catch (err) {
             this.boxcolor = "red";
         }
     };
 
-    ConstantArray.prototype.onExecute = function() {
+    ConstantArray.prototype.onExecute = function () {
         var v = this.getInputData(0);
-		if(v && v.length) //clone
-		{
-			if(!this._value)
-				this._value = new Array();
-			this._value.length = v.length;
-			for(var i = 0; i < v.length; ++i)
-				this._value[i] = v[i];
-		}
-		this.setOutputData(0, this._value);
-		this.setOutputData(1, this._value ? ( this._value.length || 0) : 0 );
+        if (v && v.length) {
+            //clone
+            if (!this._value) this._value = new Array();
+            this._value.length = v.length;
+            for (var i = 0; i < v.length; ++i) this._value[i] = v[i];
+        }
+        this.setOutputData(0, this._value);
+        this.setOutputData(1, this._value ? this._value.length || 0 : 0);
     };
 
-	ConstantArray.prototype.setValue = ConstantNumber.prototype.setValue;
+    ConstantArray.prototype.setValue = ConstantNumber.prototype.setValue;
 
     LiteGraph.registerNodeType("basic/array", ConstantArray);
 
@@ -12772,53 +12765,44 @@ if (typeof exports != "undefined") {
         this.addInput("array", "array,table,string");
         this.addInput("index", "number");
         this.addOutput("value", "");
-		this.addProperty("index",0);
+        this.addProperty("index", 0);
     }
 
     ArrayElement.title = "Array[i]";
     ArrayElement.desc = "Returns an element from an array";
 
-    ArrayElement.prototype.onExecute = function() {
+    ArrayElement.prototype.onExecute = function () {
         var array = this.getInputData(0);
         var index = this.getInputData(1);
-		if(index == null)
-			index = this.properties.index;
-		if(array == null || index == null )
-			return;
-        this.setOutputData(0, array[Math.floor(Number(index))] );
+        if (index == null) index = this.properties.index;
+        if (array == null || index == null) return;
+        this.setOutputData(0, array[Math.floor(Number(index))]);
     };
 
     LiteGraph.registerNodeType("basic/array[]", ArrayElement);
-
-
 
     function TableElement() {
         this.addInput("table", "table");
         this.addInput("row", "number");
         this.addInput("col", "number");
         this.addOutput("value", "");
-		this.addProperty("row",0);
-		this.addProperty("column",0);
+        this.addProperty("row", 0);
+        this.addProperty("column", 0);
     }
 
     TableElement.title = "Table[row][col]";
     TableElement.desc = "Returns an element from a table";
 
-    TableElement.prototype.onExecute = function() {
+    TableElement.prototype.onExecute = function () {
         var table = this.getInputData(0);
         var row = this.getInputData(1);
         var col = this.getInputData(2);
-		if(row == null)
-			row = this.properties.row;
-		if(col == null)
-			col = this.properties.column;
-		if(table == null || row == null || col == null)
-			return;
-		var row = table[Math.floor(Number(row))];
-		if(row)
-	        this.setOutputData(0, row[Math.floor(Number(col))] );
-		else
-	        this.setOutputData(0, null );
+        if (row == null) row = this.properties.row;
+        if (col == null) col = this.properties.column;
+        if (table == null || row == null || col == null) return;
+        var row = table[Math.floor(Number(row))];
+        if (row) this.setOutputData(0, row[Math.floor(Number(col))]);
+        else this.setOutputData(0, null);
     };
 
     LiteGraph.registerNodeType("basic/table[][]", TableElement);
@@ -12827,7 +12811,12 @@ if (typeof exports != "undefined") {
         this.addInput("obj", "");
         this.addOutput("", "");
         this.addProperty("value", "");
-        this.widget = this.addWidget("text","prop.","",this.setValue.bind(this) );
+        this.widget = this.addWidget(
+            "text",
+            "prop.",
+            "",
+            this.setValue.bind(this)
+        );
         this.widgets_up = true;
         this.size = [140, 30];
         this._value = null;
@@ -12836,23 +12825,23 @@ if (typeof exports != "undefined") {
     ObjectProperty.title = "Object property";
     ObjectProperty.desc = "Outputs the property of an object";
 
-    ObjectProperty.prototype.setValue = function(v) {
+    ObjectProperty.prototype.setValue = function (v) {
         this.properties.value = v;
         this.widget.value = v;
     };
 
-    ObjectProperty.prototype.getTitle = function() {
+    ObjectProperty.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return "in." + this.properties.value;
         }
         return this.title;
     };
 
-    ObjectProperty.prototype.onPropertyChanged = function(name, value) {
+    ObjectProperty.prototype.onPropertyChanged = function (name, value) {
         this.widget.value = value;
     };
 
-    ObjectProperty.prototype.onExecute = function() {
+    ObjectProperty.prototype.onExecute = function () {
         var data = this.getInputData(0);
         if (data != null) {
             this.setOutputData(0, data[this.properties.value]);
@@ -12870,10 +12859,10 @@ if (typeof exports != "undefined") {
     ObjectKeys.title = "Object keys";
     ObjectKeys.desc = "Outputs an array with the keys of an object";
 
-    ObjectKeys.prototype.onExecute = function() {
+    ObjectKeys.prototype.onExecute = function () {
         var data = this.getInputData(0);
         if (data != null) {
-            this.setOutputData(0, Object.keys(data) );
+            this.setOutputData(0, Object.keys(data));
         }
     };
 
@@ -12883,154 +12872,146 @@ if (typeof exports != "undefined") {
         this.addInput("A", "object");
         this.addInput("B", "object");
         this.addOutput("", "object");
-		this._result = {};
-		var that = this;
-		this.addWidget("button","clear","",function(){
-			that._result = {};
-		});
-		this.size = this.computeSize();
+        this._result = {};
+        var that = this;
+        this.addWidget("button", "clear", "", function () {
+            that._result = {};
+        });
+        this.size = this.computeSize();
     }
 
     MergeObjects.title = "Merge Objects";
     MergeObjects.desc = "Creates an object copying properties from others";
 
-    MergeObjects.prototype.onExecute = function() {
+    MergeObjects.prototype.onExecute = function () {
         var A = this.getInputData(0);
         var B = this.getInputData(1);
-		var C = this._result;
-		if(A)
-			for(var i in A)
-				C[i] = A[i];
-		if(B)
-			for(var i in B)
-				C[i] = B[i];
-		this.setOutputData(0,C);
+        var C = this._result;
+        if (A) for (var i in A) C[i] = A[i];
+        if (B) for (var i in B) C[i] = B[i];
+        this.setOutputData(0, C);
     };
 
-    LiteGraph.registerNodeType("basic/merge_objects", MergeObjects );
+    LiteGraph.registerNodeType("basic/merge_objects", MergeObjects);
 
     //Store as variable
     function Variable() {
         this.size = [60, 30];
         this.addInput("in");
         this.addOutput("out");
-		this.properties = { varname: "myname", container: Variable.LITEGRAPH };
+        this.properties = { varname: "myname", container: Variable.LITEGRAPH };
         this.value = null;
     }
 
     Variable.title = "Variable";
     Variable.desc = "store/read variable value";
 
-	Variable.LITEGRAPH = 0; //between all graphs
-	Variable.GRAPH = 1;	//only inside this graph
-	Variable.GLOBALSCOPE = 2;	//attached to Window
+    Variable.LITEGRAPH = 0; //between all graphs
+    Variable.GRAPH = 1; //only inside this graph
+    Variable.GLOBALSCOPE = 2; //attached to Window
 
-    Variable["@container"] = { type: "enum", values: {"litegraph":Variable.LITEGRAPH, "graph":Variable.GRAPH,"global": Variable.GLOBALSCOPE} };
-
-    Variable.prototype.onExecute = function() {
-		var container = this.getContainer();
-
-		if(this.isInputConnected(0))
-		{
-			this.value = this.getInputData(0);
-			container[ this.properties.varname ] = this.value;
-			this.setOutputData(0, this.value );
-			return;
-		}
-
-		this.setOutputData( 0, container[ this.properties.varname ] );
+    Variable["@container"] = {
+        type: "enum",
+        values: {
+            litegraph: Variable.LITEGRAPH,
+            graph: Variable.GRAPH,
+            global: Variable.GLOBALSCOPE,
+        },
     };
 
-	Variable.prototype.getContainer = function()
-	{
-		switch(this.properties.container)
-		{
-			case Variable.GRAPH:
-				if(this.graph)
-					return this.graph.vars;
-				return {};
-				break;
-			case Variable.GLOBALSCOPE:
-				return global;
-				break;
-			case Variable.LITEGRAPH:
-			default:
-				return LiteGraph.Globals;
-				break;
-		}
-	}
+    Variable.prototype.onExecute = function () {
+        var container = this.getContainer();
 
-    Variable.prototype.getTitle = function() {
+        if (this.isInputConnected(0)) {
+            this.value = this.getInputData(0);
+            container[this.properties.varname] = this.value;
+            this.setOutputData(0, this.value);
+            return;
+        }
+
+        this.setOutputData(0, container[this.properties.varname]);
+    };
+
+    Variable.prototype.getContainer = function () {
+        switch (this.properties.container) {
+            case Variable.GRAPH:
+                if (this.graph) return this.graph.vars;
+                return {};
+                break;
+            case Variable.GLOBALSCOPE:
+                return global;
+                break;
+            case Variable.LITEGRAPH:
+            default:
+                return LiteGraph.Globals;
+                break;
+        }
+    };
+
+    Variable.prototype.getTitle = function () {
         return this.properties.varname;
     };
 
     LiteGraph.registerNodeType("basic/variable", Variable);
 
     function length(v) {
-        if(v && v.length != null)
-			return Number(v.length);
-		return 0;
+        if (v && v.length != null) return Number(v.length);
+        return 0;
     }
 
-    LiteGraph.wrapFunctionAsNode(
-        "basic/length",
-        length,
-        [""],
-        "number"
-    );
+    LiteGraph.wrapFunctionAsNode("basic/length", length, [""], "number");
 
-	function DownloadData() {
+    function DownloadData() {
         this.size = [60, 30];
-        this.addInput("data", 0 );
-        this.addInput("download", LiteGraph.ACTION );
-		this.properties = { filename: "data.json" };
+        this.addInput("data", 0);
+        this.addInput("download", LiteGraph.ACTION);
+        this.properties = { filename: "data.json" };
         this.value = null;
-		var that = this;
-		this.addWidget("button","Download","", function(v){
-			if(!that.value)
-				return;
-			that.downloadAsFile();
-		});
+        var that = this;
+        this.addWidget("button", "Download", "", function (v) {
+            if (!that.value) return;
+            that.downloadAsFile();
+        });
     }
 
     DownloadData.title = "Download";
     DownloadData.desc = "Download some data";
 
-	DownloadData.prototype.downloadAsFile = function()
-	{
-		if(this.value == null)
-			return;
+    DownloadData.prototype.downloadAsFile = function () {
+        if (this.value == null) return;
 
-		var str = null;
-		if(this.value.constructor === String)
-			str = this.value;
-		else
-			str = JSON.stringify(this.value);
+        var str = null;
+        if (this.value.constructor === String) str = this.value;
+        else str = JSON.stringify(this.value);
 
-		var file = new Blob([str]);
-		var url = URL.createObjectURL( file );
-		var element = document.createElement("a");
-		element.setAttribute('href', url);
-		element.setAttribute('download', this.properties.filename );
-		element.style.display = 'none';
-		document.body.appendChild(element);
-		element.click();
-		document.body.removeChild(element);
-		setTimeout( function(){ URL.revokeObjectURL( url ); }, 1000*60 ); //wait one minute to revoke url
-	}
+        var file = new Blob([str]);
+        var url = URL.createObjectURL(file);
+        var element = document.createElement("a");
+        element.setAttribute("href", url);
+        element.setAttribute("download", this.properties.filename);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        setTimeout(function () {
+            URL.revokeObjectURL(url);
+        }, 1000 * 60); //wait one minute to revoke url
+    };
 
-    DownloadData.prototype.onAction = function(action, param) {
-		var that = this;
-		setTimeout( function(){ that.downloadAsFile(); }, 100); //deferred to avoid blocking the renderer with the popup
-	}
+    DownloadData.prototype.onAction = function (action, param) {
+        var that = this;
+        setTimeout(function () {
+            that.downloadAsFile();
+        }, 100); //deferred to avoid blocking the renderer with the popup
+    };
 
-    DownloadData.prototype.onExecute = function() {
+    DownloadData.prototype.onExecute = function () {
         if (this.inputs[0]) {
             this.value = this.getInputData(0);
         }
     };
 
-    DownloadData.prototype.getTitle = function() {
+    DownloadData.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this.properties.filename;
         }
@@ -13038,8 +13019,6 @@ if (typeof exports != "undefined") {
     };
 
     LiteGraph.registerNodeType("basic/download", DownloadData);
-
-
 
     //Watch a value in the editor
     function Watch() {
@@ -13051,20 +13030,20 @@ if (typeof exports != "undefined") {
     Watch.title = "Watch";
     Watch.desc = "Show value of input";
 
-    Watch.prototype.onExecute = function() {
+    Watch.prototype.onExecute = function () {
         if (this.inputs[0]) {
             this.value = this.getInputData(0);
         }
     };
 
-    Watch.prototype.getTitle = function() {
+    Watch.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this.inputs[0].label;
         }
         return this.title;
     };
 
-    Watch.toString = function(o) {
+    Watch.toString = function (o) {
         if (o == null) {
             return "null";
         } else if (o.constructor === Number) {
@@ -13081,7 +13060,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Watch.prototype.onDrawBackground = function(ctx) {
+    Watch.prototype.onDrawBackground = function (ctx) {
         //show the current value
         this.inputs[0].label = Watch.toString(this.value);
     };
@@ -13098,7 +13077,7 @@ if (typeof exports != "undefined") {
     Cast.title = "Cast";
     Cast.desc = "Allows to connect different types";
 
-    Cast.prototype.onExecute = function() {
+    Cast.prototype.onExecute = function () {
         this.setOutputData(0, this.getInputData(0));
     };
 
@@ -13116,7 +13095,7 @@ if (typeof exports != "undefined") {
     Console.title = "Console";
     Console.desc = "Show value inside the console";
 
-    Console.prototype.onAction = function(action, param) {
+    Console.prototype.onAction = function (action, param) {
         if (action == "log") {
             console.log(param);
         } else if (action == "warn") {
@@ -13126,7 +13105,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Console.prototype.onExecute = function() {
+    Console.prototype.onExecute = function () {
         var msg = this.getInputData(1);
         if (msg !== null) {
             this.properties.msg = msg;
@@ -13134,11 +13113,11 @@ if (typeof exports != "undefined") {
         console.log(msg);
     };
 
-    Console.prototype.onGetInputs = function() {
+    Console.prototype.onGetInputs = function () {
         return [
             ["log", LiteGraph.ACTION],
             ["warn", LiteGraph.ACTION],
-            ["error", LiteGraph.ACTION]
+            ["error", LiteGraph.ACTION],
         ];
     };
 
@@ -13150,7 +13129,7 @@ if (typeof exports != "undefined") {
         this.addProperty("msg", "");
         this.addInput("", LiteGraph.EVENT);
         var that = this;
-        this.widget = this.addWidget("text", "Text", "", function(v) {
+        this.widget = this.addWidget("text", "Text", "", function (v) {
             that.properties.msg = v;
         });
         this.widgets_up = true;
@@ -13161,13 +13140,13 @@ if (typeof exports != "undefined") {
     Alert.desc = "Show an alert window";
     Alert.color = "#510";
 
-    Alert.prototype.onConfigure = function(o) {
+    Alert.prototype.onConfigure = function (o) {
         this.widget.value = o.properties.msg;
     };
 
-    Alert.prototype.onAction = function(action, param) {
+    Alert.prototype.onAction = function (action, param) {
         var msg = this.properties.msg;
-        setTimeout(function() {
+        setTimeout(function () {
             alert(msg);
         }, 10);
     };
@@ -13186,28 +13165,32 @@ if (typeof exports != "undefined") {
         this.data = {};
     }
 
-    NodeScript.prototype.onConfigure = function(o) {
+    NodeScript.prototype.onConfigure = function (o) {
         if (o.properties.onExecute && LiteGraph.allow_scripts)
             this.compileCode(o.properties.onExecute);
-		else
-			console.warn("Script not compiled, LiteGraph.allow_scripts is false");
+        else
+            console.warn(
+                "Script not compiled, LiteGraph.allow_scripts is false"
+            );
     };
 
     NodeScript.title = "Script";
     NodeScript.desc = "executes a code (max 100 characters)";
 
     NodeScript.widgets_info = {
-        onExecute: { type: "code" }
+        onExecute: { type: "code" },
     };
 
-    NodeScript.prototype.onPropertyChanged = function(name, value) {
+    NodeScript.prototype.onPropertyChanged = function (name, value) {
         if (name == "onExecute" && LiteGraph.allow_scripts)
             this.compileCode(value);
-		else
-			console.warn("Script not compiled, LiteGraph.allow_scripts is false");
+        else
+            console.warn(
+                "Script not compiled, LiteGraph.allow_scripts is false"
+            );
     };
 
-    NodeScript.prototype.compileCode = function(code) {
+    NodeScript.prototype.compileCode = function (code) {
         this._func = null;
         if (code.length > 256) {
             console.warn("Script too long, max 256 chars");
@@ -13219,7 +13202,7 @@ if (typeof exports != "undefined") {
                 "document",
                 "eval",
                 "nodescript",
-                "function"
+                "function",
             ]; //bad security solution
             for (var i = 0; i < forbidden_words.length; ++i) {
                 if (code_low.indexOf(forbidden_words[i]) != -1) {
@@ -13236,7 +13219,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    NodeScript.prototype.onExecute = function() {
+    NodeScript.prototype.onExecute = function () {
         if (!this._func) {
             return;
         }
@@ -13252,7 +13235,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    NodeScript.prototype.onGetOutputs = function() {
+    NodeScript.prototype.onGetOutputs = function () {
         return [["C", ""]];
     };
 
@@ -13260,7 +13243,7 @@ if (typeof exports != "undefined") {
 })(this);
 
 //event related nodes
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     //Show value inside the debug console
@@ -13272,7 +13255,7 @@ if (typeof exports != "undefined") {
     LogEvent.title = "Log Event";
     LogEvent.desc = "Log event in console";
 
-    LogEvent.prototype.onAction = function(action, param) {
+    LogEvent.prototype.onAction = function (action, param) {
         console.log(action, param);
     };
 
@@ -13285,26 +13268,24 @@ if (typeof exports != "undefined") {
         this.addOutput("true", LiteGraph.EVENT);
         this.addOutput("change", LiteGraph.EVENT);
         this.addOutput("false", LiteGraph.EVENT);
-		this.properties = { only_on_change: true };
-		this.prev = 0;
+        this.properties = { only_on_change: true };
+        this.prev = 0;
     }
 
     TriggerEvent.title = "TriggerEvent";
     TriggerEvent.desc = "Triggers event if input evaluates to true";
 
-    TriggerEvent.prototype.onExecute = function(action, param) {
-		var v = this.getInputData(0);
-		var changed = (v != this.prev);
-		if(this.prev === 0)
-			changed = false;
-		var must_resend = (changed && this.properties.only_on_change) || (!changed && !this.properties.only_on_change);
-		if(v && must_resend )
-	        this.triggerSlot(0, param);
-		if(!v && must_resend)
-	        this.triggerSlot(2, param);
-		if(changed)
-	        this.triggerSlot(1, param);
-		this.prev = v;
+    TriggerEvent.prototype.onExecute = function (action, param) {
+        var v = this.getInputData(0);
+        var changed = v != this.prev;
+        if (this.prev === 0) changed = false;
+        var must_resend =
+            (changed && this.properties.only_on_change) ||
+            (!changed && !this.properties.only_on_change);
+        if (v && must_resend) this.triggerSlot(0, param);
+        if (!v && must_resend) this.triggerSlot(2, param);
+        if (changed) this.triggerSlot(1, param);
+        this.prev = v;
     };
 
     LiteGraph.registerNodeType("events/trigger", TriggerEvent);
@@ -13330,11 +13311,11 @@ if (typeof exports != "undefined") {
     Sequencer.title = "Sequencer";
     Sequencer.desc = "Trigger events when an event arrives";
 
-    Sequencer.prototype.getTitle = function() {
+    Sequencer.prototype.getTitle = function () {
         return "";
     };
 
-    Sequencer.prototype.onAction = function(action, param) {
+    Sequencer.prototype.onAction = function (action, param) {
         if (this.outputs) {
             for (var i = 0; i < this.outputs.length; ++i) {
                 this.triggerSlot(i, param);
@@ -13352,14 +13333,14 @@ if (typeof exports != "undefined") {
         this.properties = {
             equal_to: "",
             has_property: "",
-            property_equal_to: ""
+            property_equal_to: "",
         };
     }
 
     FilterEvent.title = "Filter Event";
     FilterEvent.desc = "Blocks events that do not match the filter";
 
-    FilterEvent.prototype.onAction = function(action, param) {
+    FilterEvent.prototype.onAction = function (action, param) {
         if (param == null) {
             return;
         }
@@ -13387,26 +13368,26 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerNodeType("events/filter", FilterEvent);
 
-
     function EventBranch() {
         this.addInput("in", LiteGraph.ACTION);
         this.addInput("cond", "boolean");
         this.addOutput("true", LiteGraph.EVENT);
         this.addOutput("false", LiteGraph.EVENT);
         this.size = [120, 60];
-		this._value = false;
+        this._value = false;
     }
 
     EventBranch.title = "Branch";
-    EventBranch.desc = "If condition is true, outputs triggers true, otherwise false";
+    EventBranch.desc =
+        "If condition is true, outputs triggers true, otherwise false";
 
-    EventBranch.prototype.onExecute = function() {
-		this._value = this.getInputData(1);
-	}
+    EventBranch.prototype.onExecute = function () {
+        this._value = this.getInputData(1);
+    };
 
-    EventBranch.prototype.onAction = function(action, param) {
-		this.triggerSlot(this._value ? 0 : 1);
-	}
+    EventBranch.prototype.onAction = function (action, param) {
+        this.triggerSlot(this._value ? 0 : 1);
+    };
 
     LiteGraph.registerNodeType("events/branch", EventBranch);
 
@@ -13423,14 +13404,14 @@ if (typeof exports != "undefined") {
     EventCounter.title = "Counter";
     EventCounter.desc = "Counts events";
 
-    EventCounter.prototype.getTitle = function() {
+    EventCounter.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return String(this.num);
         }
         return this.title;
     };
 
-    EventCounter.prototype.onAction = function(action, param) {
+    EventCounter.prototype.onAction = function (action, param) {
         var v = this.num;
         if (action == "inc") {
             this.num += 1;
@@ -13444,7 +13425,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    EventCounter.prototype.onDrawBackground = function(ctx) {
+    EventCounter.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -13454,7 +13435,7 @@ if (typeof exports != "undefined") {
         ctx.fillText(this.num, this.size[0] * 0.5, this.size[1] * 0.5);
     };
 
-    EventCounter.prototype.onExecute = function() {
+    EventCounter.prototype.onExecute = function () {
         this.setOutputData(1, this.num);
     };
 
@@ -13473,7 +13454,7 @@ if (typeof exports != "undefined") {
     DelayEvent.title = "Delay";
     DelayEvent.desc = "Delays one event";
 
-    DelayEvent.prototype.onAction = function(action, param) {
+    DelayEvent.prototype.onAction = function (action, param) {
         var time = this.properties.time_in_ms;
         if (time <= 0) {
             this.trigger(null, param);
@@ -13482,7 +13463,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    DelayEvent.prototype.onExecute = function() {
+    DelayEvent.prototype.onExecute = function () {
         var dt = this.graph.elapsed_time * 1000; //in ms
 
         if (this.isInputConnected(1)) {
@@ -13505,8 +13486,11 @@ if (typeof exports != "undefined") {
         }
     };
 
-    DelayEvent.prototype.onGetInputs = function() {
-        return [["event", LiteGraph.ACTION], ["time_in_ms", "number"]];
+    DelayEvent.prototype.onGetInputs = function () {
+        return [
+            ["event", LiteGraph.ACTION],
+            ["time_in_ms", "number"],
+        ];
     };
 
     LiteGraph.registerNodeType("events/delay", DelayEvent);
@@ -13524,25 +13508,25 @@ if (typeof exports != "undefined") {
     TimerEvent.title = "Timer";
     TimerEvent.desc = "Sends an event every N milliseconds";
 
-    TimerEvent.prototype.onStart = function() {
+    TimerEvent.prototype.onStart = function () {
         this.time = 0;
     };
 
-    TimerEvent.prototype.getTitle = function() {
+    TimerEvent.prototype.getTitle = function () {
         return "Timer: " + this.last_interval.toString() + "ms";
     };
 
     TimerEvent.on_color = "#AAA";
     TimerEvent.off_color = "#222";
 
-    TimerEvent.prototype.onDrawBackground = function() {
+    TimerEvent.prototype.onDrawBackground = function () {
         this.boxcolor = this.triggered
             ? TimerEvent.on_color
             : TimerEvent.off_color;
         this.triggered = false;
     };
 
-    TimerEvent.prototype.onExecute = function() {
+    TimerEvent.prototype.onExecute = function () {
         var dt = this.graph.elapsed_time * 1000; //in ms
 
         var trigger = this.time == 0;
@@ -13571,11 +13555,11 @@ if (typeof exports != "undefined") {
         }
     };
 
-    TimerEvent.prototype.onGetInputs = function() {
+    TimerEvent.prototype.onGetInputs = function () {
         return [["interval", "number"]];
     };
 
-    TimerEvent.prototype.onGetOutputs = function() {
+    TimerEvent.prototype.onGetOutputs = function () {
         return [["tick", "boolean"]];
     };
 
@@ -13585,40 +13569,44 @@ if (typeof exports != "undefined") {
         this.addInput("data", "");
         this.addInput("assign", LiteGraph.ACTION);
         this.addOutput("data", "");
-		this._last_value = null;
-		this.properties = { data: null, serialize: true };
-		var that = this;
-		this.addWidget("button","store","",function(){
-			that.properties.data = that._last_value;
-		});
+        this._last_value = null;
+        this.properties = { data: null, serialize: true };
+        var that = this;
+        this.addWidget("button", "store", "", function () {
+            that.properties.data = that._last_value;
+        });
     }
 
     DataStore.title = "Data Store";
     DataStore.desc = "Stores data and only changes when event is received";
 
-	DataStore.prototype.onExecute = function()
-	{
-		this._last_value = this.getInputData(0);
-		this.setOutputData(0, this.properties.data );
-	}
-
-    DataStore.prototype.onAction = function(action, param) {
-		this.properties.data = this._last_value;
+    DataStore.prototype.onExecute = function () {
+        this._last_value = this.getInputData(0);
+        this.setOutputData(0, this.properties.data);
     };
 
-	DataStore.prototype.onSerialize = function(o)
-	{
-		if(o.data == null)
-			return;
-		if(this.properties.serialize == false || (o.data.constructor !== String && o.data.constructor !== Number && o.data.constructor !== Boolean && o.data.constructor !== Array && o.data.constructor !== Object ))
-			o.data = null;
-	}
+    DataStore.prototype.onAction = function (action, param) {
+        this.properties.data = this._last_value;
+    };
+
+    DataStore.prototype.onSerialize = function (o) {
+        if (o.data == null) return;
+        if (
+            this.properties.serialize == false ||
+            (o.data.constructor !== String &&
+                o.data.constructor !== Number &&
+                o.data.constructor !== Boolean &&
+                o.data.constructor !== Array &&
+                o.data.constructor !== Object)
+        )
+            o.data = null;
+    };
 
     LiteGraph.registerNodeType("basic/data_store", DataStore);
 })(this);
 
 //widgets
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     /* Button ****************/
@@ -13637,7 +13625,7 @@ if (typeof exports != "undefined") {
     WidgetButton.desc = "Triggers an event";
 
     WidgetButton.font = "Arial";
-    WidgetButton.prototype.onDrawForeground = function(ctx) {
+    WidgetButton.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -13682,7 +13670,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    WidgetButton.prototype.onMouseDown = function(e, local_pos) {
+    WidgetButton.prototype.onMouseDown = function (e, local_pos) {
         if (
             local_pos[0] > 1 &&
             local_pos[1] > 1 &&
@@ -13695,11 +13683,11 @@ if (typeof exports != "undefined") {
         }
     };
 
-    WidgetButton.prototype.onExecute = function() {
+    WidgetButton.prototype.onExecute = function () {
         this.setOutputData(1, this.clicked);
     };
 
-    WidgetButton.prototype.onMouseUp = function(e) {
+    WidgetButton.prototype.onMouseUp = function (e) {
         this.clicked = false;
     };
 
@@ -13717,7 +13705,7 @@ if (typeof exports != "undefined") {
     WidgetToggle.title = "Toggle";
     WidgetToggle.desc = "Toggles between true or false";
 
-    WidgetToggle.prototype.onDrawForeground = function(ctx) {
+    WidgetToggle.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -13746,12 +13734,12 @@ if (typeof exports != "undefined") {
         ctx.textAlign = "left";
     };
 
-    WidgetToggle.prototype.onAction = function(action) {
+    WidgetToggle.prototype.onAction = function (action) {
         this.properties.value = !this.properties.value;
         this.trigger("e", this.properties.value);
     };
 
-    WidgetToggle.prototype.onExecute = function() {
+    WidgetToggle.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v != null) {
             this.properties.value = v;
@@ -13759,7 +13747,7 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, this.properties.value);
     };
 
-    WidgetToggle.prototype.onMouseDown = function(e, local_pos) {
+    WidgetToggle.prototype.onMouseDown = function (e, local_pos) {
         if (
             local_pos[0] > 1 &&
             local_pos[1] > 1 &&
@@ -13793,7 +13781,7 @@ if (typeof exports != "undefined") {
     WidgetNumber.pixels_threshold = 10;
     WidgetNumber.markers_color = "#666";
 
-    WidgetNumber.prototype.onDrawForeground = function(ctx) {
+    WidgetNumber.prototype.onDrawForeground = function (ctx) {
         var x = this.size[0] * 0.5;
         var h = this.size[1];
         if (h > 30) {
@@ -13823,16 +13811,16 @@ if (typeof exports != "undefined") {
         );
     };
 
-    WidgetNumber.prototype.onExecute = function() {
+    WidgetNumber.prototype.onExecute = function () {
         this.setOutputData(0, this.properties.value);
     };
 
-    WidgetNumber.prototype.onPropertyChanged = function(name, value) {
+    WidgetNumber.prototype.onPropertyChanged = function (name, value) {
         var t = (this.properties.step + "").split(".");
         this._precision = t.length > 1 ? t[1].length : 0;
     };
 
-    WidgetNumber.prototype.onMouseDown = function(e, pos) {
+    WidgetNumber.prototype.onMouseDown = function (e, pos) {
         if (pos[1] < 0) {
             return;
         }
@@ -13844,7 +13832,7 @@ if (typeof exports != "undefined") {
         return true;
     };
 
-    WidgetNumber.prototype.onMouseMove = function(e) {
+    WidgetNumber.prototype.onMouseMove = function (e) {
         if (!this.mouse_captured) {
             return;
         }
@@ -13872,7 +13860,7 @@ if (typeof exports != "undefined") {
         this.setDirtyCanvas(true);
     };
 
-    WidgetNumber.prototype.onMouseUp = function(e, pos) {
+    WidgetNumber.prototype.onMouseUp = function (e, pos) {
         if (e.click_time < 200) {
             var steps = pos[1] > this.size[1] * 0.5 ? -1 : 1;
             this.properties.value = Math.clamp(
@@ -13892,46 +13880,47 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerNodeType("widget/number", WidgetNumber);
 
-
     /* Combo ****************/
 
     function WidgetCombo() {
         this.addOutput("", "string");
         this.addOutput("change", LiteGraph.EVENT);
         this.size = [80, 60];
-        this.properties = { value: "A", values:"A;B;C" };
+        this.properties = { value: "A", values: "A;B;C" };
         this.old_y = -1;
         this.mouse_captured = false;
-		this._values = this.properties.values.split(";");
-		var that = this;
+        this._values = this.properties.values.split(";");
+        var that = this;
         this.widgets_up = true;
-		this.widget = this.addWidget("combo","", this.properties.value, function(v){
-			that.properties.value = v;
-            that.triggerSlot(1, v);
-		}, { property: "value", values: this._values } );
+        this.widget = this.addWidget(
+            "combo",
+            "",
+            this.properties.value,
+            function (v) {
+                that.properties.value = v;
+                that.triggerSlot(1, v);
+            },
+            { property: "value", values: this._values }
+        );
     }
 
     WidgetCombo.title = "Combo";
     WidgetCombo.desc = "Widget to select from a list";
 
-    WidgetCombo.prototype.onExecute = function() {
-        this.setOutputData( 0, this.properties.value );
+    WidgetCombo.prototype.onExecute = function () {
+        this.setOutputData(0, this.properties.value);
     };
 
-    WidgetCombo.prototype.onPropertyChanged = function(name, value) {
-		if(name == "values")
-		{
-			this._values = value.split(";");
-			this.widget.options.values = this._values;
-		}
-		else if(name == "value")
-		{
-			this.widget.value = value;
-		}
-	};
+    WidgetCombo.prototype.onPropertyChanged = function (name, value) {
+        if (name == "values") {
+            this._values = value.split(";");
+            this.widget.options.values = this._values;
+        } else if (name == "value") {
+            this.widget.value = value;
+        }
+    };
 
     LiteGraph.registerNodeType("widget/combo", WidgetCombo);
-
 
     /* Knob ****************/
 
@@ -13943,7 +13932,7 @@ if (typeof exports != "undefined") {
             max: 1,
             value: 0.5,
             color: "#7AF",
-            precision: 2
+            precision: 2,
         };
         this.value = -1;
     }
@@ -13952,7 +13941,7 @@ if (typeof exports != "undefined") {
     WidgetKnob.desc = "Circular controller";
     WidgetKnob.size = [80, 100];
 
-    WidgetKnob.prototype.onDrawForeground = function(ctx) {
+    WidgetKnob.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -14031,16 +14020,16 @@ if (typeof exports != "undefined") {
         );
     };
 
-    WidgetKnob.prototype.onExecute = function() {
+    WidgetKnob.prototype.onExecute = function () {
         this.setOutputData(0, this.properties.value);
         this.boxcolor = LiteGraph.colorToString([
             this.value,
             this.value,
-            this.value
+            this.value,
         ]);
     };
 
-    WidgetKnob.prototype.onMouseDown = function(e) {
+    WidgetKnob.prototype.onMouseDown = function (e) {
         this.center = [this.size[0] * 0.5, this.size[1] * 0.5 + 20];
         this.radius = this.size[0] * 0.5;
         if (
@@ -14057,7 +14046,7 @@ if (typeof exports != "undefined") {
         return true;
     };
 
-    WidgetKnob.prototype.onMouseMove = function(e) {
+    WidgetKnob.prototype.onMouseMove = function (e) {
         if (!this.oldmouse) {
             return;
         }
@@ -14079,14 +14068,14 @@ if (typeof exports != "undefined") {
         this.setDirtyCanvas(true);
     };
 
-    WidgetKnob.prototype.onMouseUp = function(e) {
+    WidgetKnob.prototype.onMouseUp = function (e) {
         if (this.oldmouse) {
             this.oldmouse = null;
             this.captureInput(false);
         }
     };
 
-    WidgetKnob.prototype.onPropertyChanged = function(name, value) {
+    WidgetKnob.prototype.onPropertyChanged = function (name, value) {
         if (name == "min" || name == "max" || name == "value") {
             this.properties[name] = parseFloat(value);
             return true; //block
@@ -14102,7 +14091,7 @@ if (typeof exports != "undefined") {
             value: 0.5,
             min: 0,
             max: 1,
-            text: "V"
+            text: "V",
         };
         var that = this;
         this.size = [140, 40];
@@ -14110,7 +14099,7 @@ if (typeof exports != "undefined") {
             "slider",
             "V",
             this.properties.value,
-            function(v) {
+            function (v) {
                 that.properties.value = v;
             },
             this.properties
@@ -14120,13 +14109,13 @@ if (typeof exports != "undefined") {
 
     WidgetSliderGUI.title = "Inner Slider";
 
-    WidgetSliderGUI.prototype.onPropertyChanged = function(name, value) {
+    WidgetSliderGUI.prototype.onPropertyChanged = function (name, value) {
         if (name == "value") {
             this.slider.value = value;
         }
     };
 
-    WidgetSliderGUI.prototype.onExecute = function() {
+    WidgetSliderGUI.prototype.onExecute = function () {
         this.setOutputData(0, this.properties.value);
     };
 
@@ -14143,7 +14132,7 @@ if (typeof exports != "undefined") {
     WidgetHSlider.title = "H.Slider";
     WidgetHSlider.desc = "Linear slider controller";
 
-    WidgetHSlider.prototype.onDrawForeground = function(ctx) {
+    WidgetHSlider.prototype.onDrawForeground = function (ctx) {
         if (this.value == -1) {
             this.value =
                 (this.properties.value - this.properties.min) /
@@ -14162,7 +14151,7 @@ if (typeof exports != "undefined") {
         ctx.fill();
     };
 
-    WidgetHSlider.prototype.onExecute = function() {
+    WidgetHSlider.prototype.onExecute = function () {
         this.properties.value =
             this.properties.min +
             (this.properties.max - this.properties.min) * this.value;
@@ -14170,11 +14159,11 @@ if (typeof exports != "undefined") {
         this.boxcolor = LiteGraph.colorToString([
             this.value,
             this.value,
-            this.value
+            this.value,
         ]);
     };
 
-    WidgetHSlider.prototype.onMouseDown = function(e) {
+    WidgetHSlider.prototype.onMouseDown = function (e) {
         if (e.canvasY - this.pos[1] < 0) {
             return false;
         }
@@ -14184,7 +14173,7 @@ if (typeof exports != "undefined") {
         return true;
     };
 
-    WidgetHSlider.prototype.onMouseMove = function(e) {
+    WidgetHSlider.prototype.onMouseMove = function (e) {
         if (!this.oldmouse) {
             return;
         }
@@ -14206,12 +14195,12 @@ if (typeof exports != "undefined") {
         this.setDirtyCanvas(true);
     };
 
-    WidgetHSlider.prototype.onMouseUp = function(e) {
+    WidgetHSlider.prototype.onMouseUp = function (e) {
         this.oldmouse = null;
         this.captureInput(false);
     };
 
-    WidgetHSlider.prototype.onMouseLeave = function(e) {
+    WidgetHSlider.prototype.onMouseLeave = function (e) {
         //this.oldmouse = null;
     };
 
@@ -14226,14 +14215,14 @@ if (typeof exports != "undefined") {
     WidgetProgress.title = "Progress";
     WidgetProgress.desc = "Shows data in linear progress";
 
-    WidgetProgress.prototype.onExecute = function() {
+    WidgetProgress.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v != undefined) {
             this.properties["value"] = v;
         }
     };
 
-    WidgetProgress.prototype.onDrawForeground = function(ctx) {
+    WidgetProgress.prototype.onDrawForeground = function (ctx) {
         //border
         ctx.lineWidth = 1;
         ctx.fillStyle = this.properties.color;
@@ -14256,7 +14245,7 @@ if (typeof exports != "undefined") {
             color: "#AAA",
             align: "left",
             glowSize: 0,
-            decimals: 1
+            decimals: 1,
         };
     }
 
@@ -14265,10 +14254,10 @@ if (typeof exports != "undefined") {
     WidgetText.widgets = [
         { name: "resize", text: "Resize box", type: "button" },
         { name: "led_text", text: "LED", type: "minibutton" },
-        { name: "normal_text", text: "Normal", type: "minibutton" }
+        { name: "normal_text", text: "Normal", type: "minibutton" },
     ];
 
-    WidgetText.prototype.onDrawForeground = function(ctx) {
+    WidgetText.prototype.onDrawForeground = function (ctx) {
         //ctx.fillStyle="#000";
         //ctx.fillRect(0,0,100,60);
         ctx.fillStyle = this.properties["color"];
@@ -14292,7 +14281,7 @@ if (typeof exports != "undefined") {
 
         if (typeof this.str == "string") {
             var lines = this.str.split("\\n");
-            for (var i=0; i < lines.length; i++) {
+            for (var i = 0; i < lines.length; i++) {
                 ctx.fillText(
                     lines[i],
                     this.properties["align"] == "left" ? 15 : this.size[0] - 15,
@@ -14306,7 +14295,7 @@ if (typeof exports != "undefined") {
         ctx.textAlign = "left";
     };
 
-    WidgetText.prototype.onExecute = function() {
+    WidgetText.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v != null) {
             this.properties["value"] = v;
@@ -14314,7 +14303,7 @@ if (typeof exports != "undefined") {
         //this.setDirtyCanvas(true);
     };
 
-    WidgetText.prototype.resize = function() {
+    WidgetText.prototype.resize = function () {
         if (!this.last_ctx) {
             return;
         }
@@ -14323,7 +14312,7 @@ if (typeof exports != "undefined") {
         this.last_ctx.font =
             this.properties["fontsize"] + "px " + this.properties["font"];
         var max = 0;
-        for (var i=0; i < lines.length; i++) {
+        for (var i = 0; i < lines.length; i++) {
             var w = this.last_ctx.measureText(lines[i]).width;
             if (max < w) {
                 max = w;
@@ -14335,7 +14324,7 @@ if (typeof exports != "undefined") {
         this.setDirtyCanvas(true);
     };
 
-    WidgetText.prototype.onPropertyChanged = function(name, value) {
+    WidgetText.prototype.onPropertyChanged = function (name, value) {
         this.properties[name] = value;
         this.str = typeof value == "number" ? value.toFixed(3) : value;
         //this.resize();
@@ -14351,7 +14340,7 @@ if (typeof exports != "undefined") {
             bgcolorTop: "#f0f0f0",
             bgcolorBottom: "#e0e0e0",
             shadowSize: 2,
-            borderRadius: 3
+            borderRadius: 3,
         };
     }
 
@@ -14359,7 +14348,7 @@ if (typeof exports != "undefined") {
     WidgetPanel.desc = "Non interactive panel";
     WidgetPanel.widgets = [{ name: "update", text: "Update", type: "button" }];
 
-    WidgetPanel.prototype.createGradient = function(ctx) {
+    WidgetPanel.prototype.createGradient = function (ctx) {
         if (
             this.properties["bgcolorTop"] == "" ||
             this.properties["bgcolorBottom"] == ""
@@ -14373,7 +14362,7 @@ if (typeof exports != "undefined") {
         this.lineargradient.addColorStop(1, this.properties["bgcolorBottom"]);
     };
 
-    WidgetPanel.prototype.onDrawForeground = function(ctx) {
+    WidgetPanel.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -14415,7 +14404,7 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("widget/panel", WidgetPanel);
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function GamepadInput() {
@@ -14454,10 +14443,10 @@ if (typeof exports != "undefined") {
         "start",
         "ls",
         "rs",
-        "home"
+        "home",
     ];
 
-    GamepadInput.prototype.onExecute = function() {
+    GamepadInput.prototype.onExecute = function () {
         //get gamepad
         var gamepad = this.getGamepad();
         var threshold = this.properties.threshold || 0.0;
@@ -14606,10 +14595,36 @@ if (typeof exports != "undefined") {
         }
     };
 
-	GamepadInput.mapping = {a:0,b:1,x:2,y:3,lb:4,rb:5,lt:6,rt:7,back:8,start:9,ls:10,rs:11 };
-	GamepadInput.mapping_array = ["a","b","x","y","lb","rb","lt","rt","back","start","ls","rs"];
+    GamepadInput.mapping = {
+        a: 0,
+        b: 1,
+        x: 2,
+        y: 3,
+        lb: 4,
+        rb: 5,
+        lt: 6,
+        rt: 7,
+        back: 8,
+        start: 9,
+        ls: 10,
+        rs: 11,
+    };
+    GamepadInput.mapping_array = [
+        "a",
+        "b",
+        "x",
+        "y",
+        "lb",
+        "rb",
+        "lt",
+        "rt",
+        "back",
+        "start",
+        "ls",
+        "rs",
+    ];
 
-    GamepadInput.prototype.getGamepad = function() {
+    GamepadInput.prototype.getGamepad = function () {
         var getGamepads =
             navigator.getGamepads ||
             navigator.webkitGetGamepads ||
@@ -14636,7 +14651,7 @@ if (typeof exports != "undefined") {
                     axes: [],
                     buttons: {},
                     hat: "",
-                    hatmap: GamepadInput.CENTER
+                    hatmap: GamepadInput.CENTER,
                 };
             }
 
@@ -14652,51 +14667,54 @@ if (typeof exports != "undefined") {
             for (var j = 0; j < gamepad.buttons.length; j++) {
                 this._current_buttons[j] = gamepad.buttons[j].pressed;
 
-				if(j < 12)
-				{
-					xbox.buttons[ GamepadInput.mapping_array[j] ] = gamepad.buttons[j].pressed;
-					if(gamepad.buttons[j].was_pressed)
-						this.trigger( GamepadInput.mapping_array[j] + "_button_event" );
-				}
-				else //mapping of XBOX
-					switch ( j ) //I use a switch to ensure that a player with another gamepad could play
-					{
-						case 12:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "up";
-								xbox.hatmap |= GamepadInput.UP;
-							}
-							break;
-						case 13:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "down";
-								xbox.hatmap |= GamepadInput.DOWN;
-							}
-							break;
-						case 14:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "left";
-								xbox.hatmap |= GamepadInput.LEFT;
-							}
-							break;
-						case 15:
-							if (gamepad.buttons[j].pressed) {
-								xbox.hat += "right";
-								xbox.hatmap |= GamepadInput.RIGHT;
-							}
-							break;
-						case 16:
-							xbox.buttons["home"] = gamepad.buttons[j].pressed;
-							break;
-						default:
-					}
+                if (j < 12) {
+                    xbox.buttons[GamepadInput.mapping_array[j]] =
+                        gamepad.buttons[j].pressed;
+                    if (gamepad.buttons[j].was_pressed)
+                        this.trigger(
+                            GamepadInput.mapping_array[j] + "_button_event"
+                        );
+                } //mapping of XBOX
+                else
+                    switch (
+                        j //I use a switch to ensure that a player with another gamepad could play
+                    ) {
+                        case 12:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "up";
+                                xbox.hatmap |= GamepadInput.UP;
+                            }
+                            break;
+                        case 13:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "down";
+                                xbox.hatmap |= GamepadInput.DOWN;
+                            }
+                            break;
+                        case 14:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "left";
+                                xbox.hatmap |= GamepadInput.LEFT;
+                            }
+                            break;
+                        case 15:
+                            if (gamepad.buttons[j].pressed) {
+                                xbox.hat += "right";
+                                xbox.hatmap |= GamepadInput.RIGHT;
+                            }
+                            break;
+                        case 16:
+                            xbox.buttons["home"] = gamepad.buttons[j].pressed;
+                            break;
+                        default:
+                    }
             }
             gamepad.xbox = xbox;
             return gamepad;
         }
     };
 
-    GamepadInput.prototype.onDrawBackground = function(ctx) {
+    GamepadInput.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -14727,7 +14745,7 @@ if (typeof exports != "undefined") {
         }
     };
 
-    GamepadInput.prototype.onGetOutputs = function() {
+    GamepadInput.prototype.onGetOutputs = function () {
         return [
             ["left_axis", "vec2"],
             ["right_axis", "vec2"],
@@ -14747,29 +14765,29 @@ if (typeof exports != "undefined") {
             ["rs_button", "number"],
             ["start_button", "number"],
             ["back_button", "number"],
-            ["a_button_event", LiteGraph.EVENT ],
-            ["b_button_event", LiteGraph.EVENT ],
-            ["x_button_event", LiteGraph.EVENT ],
-            ["y_button_event", LiteGraph.EVENT ],
-            ["lb_button_event", LiteGraph.EVENT ],
-            ["rb_button_event", LiteGraph.EVENT ],
-            ["ls_button_event", LiteGraph.EVENT ],
-            ["rs_button_event", LiteGraph.EVENT ],
-            ["start_button_event", LiteGraph.EVENT ],
-            ["back_button_event", LiteGraph.EVENT ],
+            ["a_button_event", LiteGraph.EVENT],
+            ["b_button_event", LiteGraph.EVENT],
+            ["x_button_event", LiteGraph.EVENT],
+            ["y_button_event", LiteGraph.EVENT],
+            ["lb_button_event", LiteGraph.EVENT],
+            ["rb_button_event", LiteGraph.EVENT],
+            ["ls_button_event", LiteGraph.EVENT],
+            ["rs_button_event", LiteGraph.EVENT],
+            ["start_button_event", LiteGraph.EVENT],
+            ["back_button_event", LiteGraph.EVENT],
             ["hat_left", "number"],
             ["hat_right", "number"],
             ["hat_up", "number"],
             ["hat_down", "number"],
             ["hat", "number"],
-            ["button_pressed", LiteGraph.EVENT]
+            ["button_pressed", LiteGraph.EVENT],
         ];
     };
 
     LiteGraph.registerNodeType("input/gamepad", GamepadInput);
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     //Converter
@@ -14781,7 +14799,7 @@ if (typeof exports != "undefined") {
     Converter.title = "Converter";
     Converter.desc = "type A to type B";
 
-    Converter.prototype.onExecute = function() {
+    Converter.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -14835,12 +14853,12 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Converter.prototype.onGetOutputs = function() {
+    Converter.prototype.onGetOutputs = function () {
         return [
             ["number", "number"],
             ["vec2", "vec2"],
             ["vec3", "vec3"],
-            ["vec4", "vec4"]
+            ["vec4", "vec4"],
         ];
     };
 
@@ -14856,7 +14874,7 @@ if (typeof exports != "undefined") {
     Bypass.title = "Bypass";
     Bypass.desc = "removes the type";
 
-    Bypass.prototype.onExecute = function() {
+    Bypass.prototype.onExecute = function () {
         var v = this.getInputData(0);
         this.setOutputData(0, v);
     };
@@ -14871,7 +14889,7 @@ if (typeof exports != "undefined") {
     ToNumber.title = "to Number";
     ToNumber.desc = "Cast to number";
 
-    ToNumber.prototype.onExecute = function() {
+    ToNumber.prototype.onExecute = function () {
         var v = this.getInputData(0);
         this.setOutputData(0, Number(v));
     };
@@ -14895,14 +14913,14 @@ if (typeof exports != "undefined") {
     MathRange.title = "Range";
     MathRange.desc = "Convert a number from one range to another";
 
-    MathRange.prototype.getTitle = function() {
+    MathRange.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return (this._last_v || 0).toFixed(2);
         }
         return this.title;
     };
 
-    MathRange.prototype.onExecute = function() {
+    MathRange.prototype.onExecute = function () {
         if (this.inputs) {
             for (var i = 0; i < this.inputs.length; i++) {
                 var input = this.inputs[i];
@@ -14923,7 +14941,7 @@ if (typeof exports != "undefined") {
         var in_max = this.properties.in_max;
         var out_min = this.properties.out_min;
         var out_max = this.properties.out_max;
-		/*
+        /*
 		if( in_min > in_max )
 		{
 			in_min = in_max;
@@ -14936,12 +14954,13 @@ if (typeof exports != "undefined") {
 		}
 		*/
 
-        this._last_v = ((v - in_min) / (in_max - in_min)) * (out_max - out_min) + out_min;
+        this._last_v =
+            ((v - in_min) / (in_max - in_min)) * (out_max - out_min) + out_min;
         this.setOutputData(0, this._last_v);
-        this.setOutputData(1, Math.clamp( this._last_v, out_min, out_max ));
+        this.setOutputData(1, Math.clamp(this._last_v, out_min, out_max));
     };
 
-    MathRange.prototype.onDrawBackground = function(ctx) {
+    MathRange.prototype.onDrawBackground = function (ctx) {
         //show the current value
         if (this._last_v) {
             this.outputs[0].label = this._last_v.toFixed(3);
@@ -14950,12 +14969,12 @@ if (typeof exports != "undefined") {
         }
     };
 
-    MathRange.prototype.onGetInputs = function() {
+    MathRange.prototype.onGetInputs = function () {
         return [
             ["in_min", "number"],
             ["in_max", "number"],
             ["out_min", "number"],
-            ["out_max", "number"]
+            ["out_max", "number"],
         ];
     };
 
@@ -14971,7 +14990,7 @@ if (typeof exports != "undefined") {
     MathRand.title = "Rand";
     MathRand.desc = "Random number";
 
-    MathRand.prototype.onExecute = function() {
+    MathRand.prototype.onExecute = function () {
         if (this.inputs) {
             for (var i = 0; i < this.inputs.length; i++) {
                 var input = this.inputs[i];
@@ -14989,13 +15008,16 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, this._last_v);
     };
 
-    MathRand.prototype.onDrawBackground = function(ctx) {
+    MathRand.prototype.onDrawBackground = function (ctx) {
         //show the current value
         this.outputs[0].label = (this._last_v || 0).toFixed(3);
     };
 
-    MathRand.prototype.onGetInputs = function() {
-        return [["min", "number"], ["max", "number"]];
+    MathRand.prototype.onGetInputs = function () {
+        return [
+            ["min", "number"],
+            ["max", "number"],
+        ];
     };
 
     LiteGraph.registerNodeType("math/rand", MathRand);
@@ -15018,7 +15040,7 @@ if (typeof exports != "undefined") {
     MathNoise.desc = "Random number with temporal continuity";
     MathNoise.data = null;
 
-    MathNoise.getValue = function(f, smooth) {
+    MathNoise.getValue = function (f, smooth) {
         if (!MathNoise.data) {
             MathNoise.data = new Float32Array(1024);
             for (var i = 0; i < MathNoise.data.length; ++i) {
@@ -15039,31 +15061,33 @@ if (typeof exports != "undefined") {
         return r1 * (1 - f) + r2 * f;
     };
 
-    MathNoise.prototype.onExecute = function() {
+    MathNoise.prototype.onExecute = function () {
         var f = this.getInputData(0) || 0;
-		var iterations = this.properties.octaves || 1;
-		var r = 0;
-		var amp = 1;
-		var seed = this.properties.seed || 0;
-		f += seed;
-		var speed = this.properties.speed || 1;
-		var total_amp = 0;
-		for(var i = 0; i < iterations; ++i)
-		{
-			r += MathNoise.getValue(f * (1+i) * speed, this.properties.smooth) * amp;
-			total_amp += amp;
-			amp *= this.properties.persistence;
-			if(amp < 0.001)
-				break;
-		}
-		r /= total_amp;
+        var iterations = this.properties.octaves || 1;
+        var r = 0;
+        var amp = 1;
+        var seed = this.properties.seed || 0;
+        f += seed;
+        var speed = this.properties.speed || 1;
+        var total_amp = 0;
+        for (var i = 0; i < iterations; ++i) {
+            r +=
+                MathNoise.getValue(
+                    f * (1 + i) * speed,
+                    this.properties.smooth
+                ) * amp;
+            total_amp += amp;
+            amp *= this.properties.persistence;
+            if (amp < 0.001) break;
+        }
+        r /= total_amp;
         var min = this.properties.min;
         var max = this.properties.max;
         this._last_v = r * (max - min) + min;
         this.setOutputData(0, this._last_v);
     };
 
-    MathNoise.prototype.onDrawBackground = function(ctx) {
+    MathNoise.prototype.onDrawBackground = function (ctx) {
         //show the current value
         this.outputs[0].label = (this._last_v || 0).toFixed(3);
     };
@@ -15084,7 +15108,7 @@ if (typeof exports != "undefined") {
     MathSpikes.title = "Spikes";
     MathSpikes.desc = "spike every random time";
 
-    MathSpikes.prototype.onExecute = function() {
+    MathSpikes.prototype.onExecute = function () {
         var dt = this.graph.elapsed_time; //in secs
 
         this._remaining_time -= dt;
@@ -15124,7 +15148,7 @@ if (typeof exports != "undefined") {
     MathClamp.desc = "Clamp number between min and max";
     //MathClamp.filter = "shader";
 
-    MathClamp.prototype.onExecute = function() {
+    MathClamp.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15134,7 +15158,7 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, v);
     };
 
-    MathClamp.prototype.getCode = function(lang) {
+    MathClamp.prototype.getCode = function (lang) {
         var code = "";
         if (this.isInputConnected(0)) {
             code +=
@@ -15161,7 +15185,7 @@ if (typeof exports != "undefined") {
     MathLerp.title = "Lerp";
     MathLerp.desc = "Linear Interpolation";
 
-    MathLerp.prototype.onExecute = function() {
+    MathLerp.prototype.onExecute = function () {
         var v1 = this.getInputData(0);
         if (v1 == null) {
             v1 = 0;
@@ -15181,7 +15205,7 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, v1 * (1 - f) + v2 * f);
     };
 
-    MathLerp.prototype.onGetInputs = function() {
+    MathLerp.prototype.onGetInputs = function () {
         return [["f", "number"]];
     };
 
@@ -15197,7 +15221,7 @@ if (typeof exports != "undefined") {
     MathAbs.title = "Abs";
     MathAbs.desc = "Absolute";
 
-    MathAbs.prototype.onExecute = function() {
+    MathAbs.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15217,7 +15241,7 @@ if (typeof exports != "undefined") {
     MathFloor.title = "Floor";
     MathFloor.desc = "Floor number to remove fractional part";
 
-    MathFloor.prototype.onExecute = function() {
+    MathFloor.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15237,7 +15261,7 @@ if (typeof exports != "undefined") {
     MathFrac.title = "Frac";
     MathFrac.desc = "Returns fractional part";
 
-    MathFrac.prototype.onExecute = function() {
+    MathFrac.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15258,7 +15282,7 @@ if (typeof exports != "undefined") {
     MathSmoothStep.title = "Smoothstep";
     MathSmoothStep.desc = "Smoothstep";
 
-    MathSmoothStep.prototype.onExecute = function() {
+    MathSmoothStep.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v === undefined) {
             return;
@@ -15288,7 +15312,7 @@ if (typeof exports != "undefined") {
     MathScale.title = "Scale";
     MathScale.desc = "v * factor";
 
-    MathScale.prototype.onExecute = function() {
+    MathScale.prototype.onExecute = function () {
         var value = this.getInputData(0);
         if (value != null) {
             this.setOutputData(0, value * this.properties.factor);
@@ -15297,24 +15321,23 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerNodeType("math/scale", MathScale);
 
-	//Gate
-	function Gate() {
-		this.addInput("v","boolean");
-		this.addInput("A");
-		this.addInput("B");
-		this.addOutput("out");
-	}
+    //Gate
+    function Gate() {
+        this.addInput("v", "boolean");
+        this.addInput("A");
+        this.addInput("B");
+        this.addOutput("out");
+    }
 
-	Gate.title = "Gate";
-	Gate.desc = "if v is true, then outputs A, otherwise B";
+    Gate.title = "Gate";
+    Gate.desc = "if v is true, then outputs A, otherwise B";
 
-	Gate.prototype.onExecute = function() {
-		var v = this.getInputData(0);
-		this.setOutputData(0, this.getInputData( v ? 1 : 2 ));
-	};
+    Gate.prototype.onExecute = function () {
+        var v = this.getInputData(0);
+        this.setOutputData(0, this.getInputData(v ? 1 : 2));
+    };
 
-	LiteGraph.registerNodeType("math/gate", Gate);
-
+    LiteGraph.registerNodeType("math/gate", Gate);
 
     //Math Average
     function MathAverageFilter() {
@@ -15329,7 +15352,7 @@ if (typeof exports != "undefined") {
     MathAverageFilter.title = "Average";
     MathAverageFilter.desc = "Average Filter";
 
-    MathAverageFilter.prototype.onExecute = function() {
+    MathAverageFilter.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             v = 0;
@@ -15351,7 +15374,7 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, avr / num_samples);
     };
 
-    MathAverageFilter.prototype.onPropertyChanged = function(name, value) {
+    MathAverageFilter.prototype.onPropertyChanged = function (name, value) {
         if (value < 1) {
             value = 1;
         }
@@ -15380,7 +15403,7 @@ if (typeof exports != "undefined") {
     MathTendTo.title = "TendTo";
     MathTendTo.desc = "moves the output value always closer to the input";
 
-    MathTendTo.prototype.onExecute = function() {
+    MathTendTo.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             v = 0;
@@ -15404,62 +15427,95 @@ if (typeof exports != "undefined") {
         this.addProperty("A", 1);
         this.addProperty("B", 1);
         this.addProperty("OP", "+", "enum", { values: MathOperation.values });
-		this._func = function(A,B) { return A + B; };
-		this._result = []; //only used for arrays
+        this._func = function (A, B) {
+            return A + B;
+        };
+        this._result = []; //only used for arrays
     }
 
     MathOperation.values = ["+", "-", "*", "/", "%", "^", "max", "min"];
 
-	MathOperation.title = "Operation";
+    MathOperation.title = "Operation";
     MathOperation.desc = "Easy math operators";
     MathOperation["@OP"] = {
         type: "enum",
         title: "operation",
-        values: MathOperation.values
+        values: MathOperation.values,
     };
     MathOperation.size = [100, 60];
 
-    MathOperation.prototype.getTitle = function() {
-		if(this.properties.OP == "max" || this.properties.OP == "min")
-			return this.properties.OP + "(A,B)";
+    MathOperation.prototype.getTitle = function () {
+        if (this.properties.OP == "max" || this.properties.OP == "min")
+            return this.properties.OP + "(A,B)";
         return "A " + this.properties.OP + " B";
     };
 
-    MathOperation.prototype.setValue = function(v) {
+    MathOperation.prototype.setValue = function (v) {
         if (typeof v == "string") {
             v = parseFloat(v);
         }
         this.properties["value"] = v;
     };
 
-    MathOperation.prototype.onPropertyChanged = function(name, value)
-	{
-		if (name != "OP")
-			return;
+    MathOperation.prototype.onPropertyChanged = function (name, value) {
+        if (name != "OP") return;
         switch (this.properties.OP) {
-            case "+": this._func = function(A,B) { return A + B; }; break;
-            case "-": this._func = function(A,B) { return A - B; }; break;
+            case "+":
+                this._func = function (A, B) {
+                    return A + B;
+                };
+                break;
+            case "-":
+                this._func = function (A, B) {
+                    return A - B;
+                };
+                break;
             case "x":
             case "X":
-            case "*": this._func = function(A,B) { return A * B; }; break;
-            case "/": this._func = function(A,B) { return A / B; }; break;
-            case "%": this._func = function(A,B) { return A % B; }; break;
-            case "^": this._func = function(A,B) { return Math.pow(A, B); }; break;
-            case "max": this._func = function(A,B) { return Math.max(A, B); }; break;
-            case "min": this._func = function(A,B) { return Math.min(A, B); }; break;
-			default: 
-				console.warn("Unknown operation: " + this.properties.OP);
-				this._func = function(A) { return A; };
-				break;
+            case "*":
+                this._func = function (A, B) {
+                    return A * B;
+                };
+                break;
+            case "/":
+                this._func = function (A, B) {
+                    return A / B;
+                };
+                break;
+            case "%":
+                this._func = function (A, B) {
+                    return A % B;
+                };
+                break;
+            case "^":
+                this._func = function (A, B) {
+                    return Math.pow(A, B);
+                };
+                break;
+            case "max":
+                this._func = function (A, B) {
+                    return Math.max(A, B);
+                };
+                break;
+            case "min":
+                this._func = function (A, B) {
+                    return Math.min(A, B);
+                };
+                break;
+            default:
+                console.warn("Unknown operation: " + this.properties.OP);
+                this._func = function (A) {
+                    return A;
+                };
+                break;
         }
-	}
+    };
 
-    MathOperation.prototype.onExecute = function() {
+    MathOperation.prototype.onExecute = function () {
         var A = this.getInputData(0);
         var B = this.getInputData(1);
-        if ( A != null ) {
-			if( A.constructor === Number )
-	            this.properties["A"] = A;
+        if (A != null) {
+            if (A.constructor === Number) this.properties["A"] = A;
         } else {
             A = this.properties["A"];
         }
@@ -15470,29 +15526,22 @@ if (typeof exports != "undefined") {
             B = this.properties["B"];
         }
 
-		var result;
-		if(A.constructor === Number)
-		{
-	        result = 0;
-			result = this._func(A,B);
-		}
-		else if(A.constructor === Array)
-		{
-			result = this._result;
-			result.length = A.length;
-			for(var i = 0; i < A.length; ++i)
-				result[i] = this._func(A[i],B);
-		}
-		else
-		{
-			result = {};
-			for(var i in A)
-				result[i] = this._func(A[i],B);
-		}
-	    this.setOutputData(0, result);
+        var result;
+        if (A.constructor === Number) {
+            result = 0;
+            result = this._func(A, B);
+        } else if (A.constructor === Array) {
+            result = this._result;
+            result.length = A.length;
+            for (var i = 0; i < A.length; ++i) result[i] = this._func(A[i], B);
+        } else {
+            result = {};
+            for (var i in A) result[i] = this._func(A[i], B);
+        }
+        this.setOutputData(0, result);
     };
 
-    MathOperation.prototype.onDrawBackground = function(ctx) {
+    MathOperation.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -15511,15 +15560,14 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("math/operation", MathOperation);
 
     LiteGraph.registerSearchboxExtra("math/operation", "MAX", {
-        properties: {OP:"max"},
-        title: "MAX()"
+        properties: { OP: "max" },
+        title: "MAX()",
     });
 
     LiteGraph.registerSearchboxExtra("math/operation", "MIN", {
-        properties: {OP:"min"},
-        title: "MIN()"
+        properties: { OP: "min" },
+        title: "MIN()",
     });
-
 
     //Math compare
     function MathCompare() {
@@ -15534,7 +15582,7 @@ if (typeof exports != "undefined") {
     MathCompare.title = "Compare";
     MathCompare.desc = "compares between two values";
 
-    MathCompare.prototype.onExecute = function() {
+    MathCompare.prototype.onExecute = function () {
         var A = this.getInputData(0);
         var B = this.getInputData(1);
         if (A !== undefined) {
@@ -15579,14 +15627,14 @@ if (typeof exports != "undefined") {
         }
     };
 
-    MathCompare.prototype.onGetOutputs = function() {
+    MathCompare.prototype.onGetOutputs = function () {
         return [
             ["A==B", "boolean"],
             ["A!=B", "boolean"],
             ["A>B", "boolean"],
             ["A<B", "boolean"],
             ["A>=B", "boolean"],
-            ["A<=B", "boolean"]
+            ["A<=B", "boolean"],
         ];
     };
 
@@ -15594,27 +15642,27 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerSearchboxExtra("math/compare", "==", {
         outputs: [["A==B", "boolean"]],
-        title: "A==B"
+        title: "A==B",
     });
     LiteGraph.registerSearchboxExtra("math/compare", "!=", {
         outputs: [["A!=B", "boolean"]],
-        title: "A!=B"
+        title: "A!=B",
     });
     LiteGraph.registerSearchboxExtra("math/compare", ">", {
         outputs: [["A>B", "boolean"]],
-        title: "A>B"
+        title: "A>B",
     });
     LiteGraph.registerSearchboxExtra("math/compare", "<", {
         outputs: [["A<B", "boolean"]],
-        title: "A<B"
+        title: "A<B",
     });
     LiteGraph.registerSearchboxExtra("math/compare", ">=", {
         outputs: [["A>=B", "boolean"]],
-        title: "A>=B"
+        title: "A>=B",
     });
     LiteGraph.registerSearchboxExtra("math/compare", "<=", {
         outputs: [["A<=B", "boolean"]],
-        title: "A<=B"
+        title: "A<=B",
     });
 
     function MathCondition() {
@@ -15625,26 +15673,29 @@ if (typeof exports != "undefined") {
         this.addProperty("A", 1);
         this.addProperty("B", 1);
         this.addProperty("OP", ">", "enum", { values: MathCondition.values });
-		this.addWidget("combo","Cond.",this.properties.OP,{ property: "OP", values: MathCondition.values } );
+        this.addWidget("combo", "Cond.", this.properties.OP, {
+            property: "OP",
+            values: MathCondition.values,
+        });
 
         this.size = [80, 60];
     }
 
-    MathCondition.values = [">", "<", "==", "!=", "<=", ">=", "||", "&&" ];
+    MathCondition.values = [">", "<", "==", "!=", "<=", ">=", "||", "&&"];
     MathCondition["@OP"] = {
         type: "enum",
         title: "operation",
-        values: MathCondition.values
+        values: MathCondition.values,
     };
 
     MathCondition.title = "Condition";
     MathCondition.desc = "evaluates condition between A and B";
 
-    MathCondition.prototype.getTitle = function() {
+    MathCondition.prototype.getTitle = function () {
         return "A " + this.properties.OP + " B";
     };
 
-    MathCondition.prototype.onExecute = function() {
+    MathCondition.prototype.onExecute = function () {
         var A = this.getInputData(0);
         if (A === undefined) {
             A = this.properties.A;
@@ -15693,7 +15744,6 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerNodeType("math/condition", MathCondition);
 
-
     function MathBranch() {
         this.addInput("in", "");
         this.addInput("cond", "boolean");
@@ -15703,26 +15753,23 @@ if (typeof exports != "undefined") {
     }
 
     MathBranch.title = "Branch";
-    MathBranch.desc = "If condition is true, outputs IN in true, otherwise in false";
+    MathBranch.desc =
+        "If condition is true, outputs IN in true, otherwise in false";
 
-    MathBranch.prototype.onExecute = function() {
+    MathBranch.prototype.onExecute = function () {
         var V = this.getInputData(0);
         var cond = this.getInputData(1);
 
-		if(cond)
-		{
-			this.setOutputData(0, V);
-			this.setOutputData(1, null);
-		}
-		else
-		{
-			this.setOutputData(0, null);
-			this.setOutputData(1, V);
-		}
-	}
+        if (cond) {
+            this.setOutputData(0, V);
+            this.setOutputData(1, null);
+        } else {
+            this.setOutputData(0, null);
+            this.setOutputData(1, V);
+        }
+    };
 
     LiteGraph.registerNodeType("math/branch", MathBranch);
-
 
     function MathAccumulate() {
         this.addInput("inc", "number");
@@ -15734,7 +15781,7 @@ if (typeof exports != "undefined") {
     MathAccumulate.title = "Accumulate";
     MathAccumulate.desc = "Increments a value every time";
 
-    MathAccumulate.prototype.onExecute = function() {
+    MathAccumulate.prototype.onExecute = function () {
         if (this.properties.value === null) {
             this.properties.value = 0;
         }
@@ -15764,7 +15811,7 @@ if (typeof exports != "undefined") {
     MathTrigonometry.desc = "Sin Cos Tan";
     //MathTrigonometry.filter = "shader";
 
-    MathTrigonometry.prototype.onExecute = function() {
+    MathTrigonometry.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             v = 0;
@@ -15807,18 +15854,22 @@ if (typeof exports != "undefined") {
         }
     };
 
-    MathTrigonometry.prototype.onGetInputs = function() {
-        return [["v", "number"], ["amplitude", "number"], ["offset", "number"]];
+    MathTrigonometry.prototype.onGetInputs = function () {
+        return [
+            ["v", "number"],
+            ["amplitude", "number"],
+            ["offset", "number"],
+        ];
     };
 
-    MathTrigonometry.prototype.onGetOutputs = function() {
+    MathTrigonometry.prototype.onGetOutputs = function () {
         return [
             ["sin", "number"],
             ["cos", "number"],
             ["tan", "number"],
             ["asin", "number"],
             ["acos", "number"],
-            ["atan", "number"]
+            ["atan", "number"],
         ];
     };
 
@@ -15826,15 +15877,15 @@ if (typeof exports != "undefined") {
 
     LiteGraph.registerSearchboxExtra("math/trigonometry", "SIN()", {
         outputs: [["sin", "number"]],
-        title: "SIN()"
+        title: "SIN()",
     });
     LiteGraph.registerSearchboxExtra("math/trigonometry", "COS()", {
         outputs: [["cos", "number"]],
-        title: "COS()"
+        title: "COS()",
     });
     LiteGraph.registerSearchboxExtra("math/trigonometry", "TAN()", {
         outputs: [["tan", "number"]],
-        title: "TAN()"
+        title: "TAN()",
     });
 
     //math library for safe math operations without eval
@@ -15847,13 +15898,18 @@ if (typeof exports != "undefined") {
             "text",
             "F(x,y)",
             this.properties.formula,
-            function(v, canvas, node) {
+            function (v, canvas, node) {
                 node.properties.formula = v;
             }
         );
-        this.addWidget("toggle", "allow", LiteGraph.allow_scripts, function(v) {
-            LiteGraph.allow_scripts = v;
-        });
+        this.addWidget(
+            "toggle",
+            "allow",
+            LiteGraph.allow_scripts,
+            function (v) {
+                LiteGraph.allow_scripts = v;
+            }
+        );
         this._func = null;
     }
 
@@ -15861,13 +15917,13 @@ if (typeof exports != "undefined") {
     MathFormula.desc = "Compute formula";
     MathFormula.size = [160, 100];
 
-    MathAverageFilter.prototype.onPropertyChanged = function(name, value) {
+    MathAverageFilter.prototype.onPropertyChanged = function (name, value) {
         if (name == "formula") {
             this.code_widget.value = value;
         }
     };
 
-    MathFormula.prototype.onExecute = function() {
+    MathFormula.prototype.onExecute = function () {
         if (!LiteGraph.allow_scripts) {
             return;
         }
@@ -15907,11 +15963,11 @@ if (typeof exports != "undefined") {
         this.setOutputData(0, value);
     };
 
-    MathFormula.prototype.getTitle = function() {
+    MathFormula.prototype.getTitle = function () {
         return this._func_code || "Formula";
     };
 
-    MathFormula.prototype.onDrawBackground = function() {
+    MathFormula.prototype.onDrawBackground = function () {
         var f = this.properties["formula"];
         if (this.outputs && this.outputs.length) {
             this.outputs[0].label = f;
@@ -15929,7 +15985,7 @@ if (typeof exports != "undefined") {
     Math3DVec2ToXY.title = "Vec2->XY";
     Math3DVec2ToXY.desc = "vector 2 to components";
 
-    Math3DVec2ToXY.prototype.onExecute = function() {
+    Math3DVec2ToXY.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15942,7 +15998,10 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("math3d/vec2-to-xy", Math3DVec2ToXY);
 
     function Math3DXYToVec2() {
-        this.addInputs([["x", "number"], ["y", "number"]]);
+        this.addInputs([
+            ["x", "number"],
+            ["y", "number"],
+        ]);
         this.addOutput("vec2", "vec2");
         this.properties = { x: 0, y: 0 };
         this._data = new Float32Array(2);
@@ -15951,7 +16010,7 @@ if (typeof exports != "undefined") {
     Math3DXYToVec2.title = "XY->Vec2";
     Math3DXYToVec2.desc = "components to vector2";
 
-    Math3DXYToVec2.prototype.onExecute = function() {
+    Math3DXYToVec2.prototype.onExecute = function () {
         var x = this.getInputData(0);
         if (x == null) {
             x = this.properties.x;
@@ -15980,7 +16039,7 @@ if (typeof exports != "undefined") {
     Math3DVec3ToXYZ.title = "Vec3->XYZ";
     Math3DVec3ToXYZ.desc = "vector 3 to components";
 
-    Math3DVec3ToXYZ.prototype.onExecute = function() {
+    Math3DVec3ToXYZ.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -15994,7 +16053,11 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("math3d/vec3-to-xyz", Math3DVec3ToXYZ);
 
     function Math3DXYZToVec3() {
-        this.addInputs([["x", "number"], ["y", "number"], ["z", "number"]]);
+        this.addInputs([
+            ["x", "number"],
+            ["y", "number"],
+            ["z", "number"],
+        ]);
         this.addOutput("vec3", "vec3");
         this.properties = { x: 0, y: 0, z: 0 };
         this._data = new Float32Array(3);
@@ -16003,7 +16066,7 @@ if (typeof exports != "undefined") {
     Math3DXYZToVec3.title = "XYZ->Vec3";
     Math3DXYZToVec3.desc = "components to vector3";
 
-    Math3DXYZToVec3.prototype.onExecute = function() {
+    Math3DXYZToVec3.prototype.onExecute = function () {
         var x = this.getInputData(0);
         if (x == null) {
             x = this.properties.x;
@@ -16038,7 +16101,7 @@ if (typeof exports != "undefined") {
     Math3DVec4ToXYZW.title = "Vec4->XYZW";
     Math3DVec4ToXYZW.desc = "vector 4 to components";
 
-    Math3DVec4ToXYZW.prototype.onExecute = function() {
+    Math3DVec4ToXYZW.prototype.onExecute = function () {
         var v = this.getInputData(0);
         if (v == null) {
             return;
@@ -16057,7 +16120,7 @@ if (typeof exports != "undefined") {
             ["x", "number"],
             ["y", "number"],
             ["z", "number"],
-            ["w", "number"]
+            ["w", "number"],
         ]);
         this.addOutput("vec4", "vec4");
         this.properties = { x: 0, y: 0, z: 0, w: 0 };
@@ -16067,7 +16130,7 @@ if (typeof exports != "undefined") {
     Math3DXYZWToVec4.title = "XYZW->Vec4";
     Math3DXYZWToVec4.desc = "components to vector4";
 
-    Math3DXYZWToVec4.prototype.onExecute = function() {
+    Math3DXYZWToVec4.prototype.onExecute = function () {
         var x = this.getInputData(0);
         if (x == null) {
             x = this.properties.x;
@@ -16095,10 +16158,9 @@ if (typeof exports != "undefined") {
     };
 
     LiteGraph.registerNodeType("math3d/xyzw-to-vec4", Math3DXYZWToVec4);
-
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function Selector() {
@@ -16115,7 +16177,7 @@ if (typeof exports != "undefined") {
     Selector.title = "Selector";
     Selector.desc = "selects an output";
 
-    Selector.prototype.onDrawBackground = function(ctx) {
+    Selector.prototype.onDrawBackground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -16128,10 +16190,9 @@ if (typeof exports != "undefined") {
         ctx.fill();
     };
 
-    Selector.prototype.onExecute = function() {
+    Selector.prototype.onExecute = function () {
         var sel = this.getInputData(0);
-        if (sel == null || sel.constructor !== Number)
-            sel = 0;
+        if (sel == null || sel.constructor !== Number) sel = 0;
         this.selected = sel = Math.round(sel) % (this.inputs.length - 1);
         var v = this.getInputData(sel + 1);
         if (v !== undefined) {
@@ -16139,15 +16200,20 @@ if (typeof exports != "undefined") {
         }
     };
 
-    Selector.prototype.onGetInputs = function() {
-        return [["E", 0], ["F", 0], ["G", 0], ["H", 0]];
+    Selector.prototype.onGetInputs = function () {
+        return [
+            ["E", 0],
+            ["F", 0],
+            ["G", 0],
+            ["H", 0],
+        ];
     };
 
     LiteGraph.registerNodeType("logic/selector", Selector);
 
     function Sequence() {
         this.properties = {
-            sequence: "A,B,C"
+            sequence: "A,B,C",
         };
         this.addInput("index", "number");
         this.addInput("seq");
@@ -16160,13 +16226,13 @@ if (typeof exports != "undefined") {
     Sequence.title = "Sequence";
     Sequence.desc = "select one element from a sequence from a string";
 
-    Sequence.prototype.onPropertyChanged = function(name, value) {
+    Sequence.prototype.onPropertyChanged = function (name, value) {
         if (name == "sequence") {
             this.values = value.split(",");
         }
     };
 
-    Sequence.prototype.onExecute = function() {
+    Sequence.prototype.onExecute = function () {
         var seq = this.getInputData(1);
         if (seq && seq != this.current_sequence) {
             this.values = seq.split(",");
@@ -16184,682 +16250,687 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("logic/sequence", Sequence);
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
-	var LGraphCanvas = global.LGraphCanvas;
+    var LGraphCanvas = global.LGraphCanvas;
 
     //Works with Litegl.js to create WebGL nodes
     global.LGraphTexture = null;
 
-    if (typeof GL == "undefined")
-		return;
-
-	LGraphCanvas.link_type_colors["Texture"] = "#987";
-
-	function LGraphTexture() {
-		this.addOutput("tex", "Texture");
-		this.addOutput("name", "string");
-		this.properties = { name: "", filter: true };
-		this.size = [
-			LGraphTexture.image_preview_size,
-			LGraphTexture.image_preview_size
-		];
-	}
-
-	global.LGraphTexture = LGraphTexture;
-
-	LGraphTexture.title = "Texture";
-	LGraphTexture.desc = "Texture";
-	LGraphTexture.widgets_info = {
-		name: { widget: "texture" },
-		filter: { widget: "checkbox" }
-	};
-
-	//REPLACE THIS TO INTEGRATE WITH YOUR FRAMEWORK
-	LGraphTexture.loadTextureCallback = null; //function in charge of loading textures when not present in the container
-	LGraphTexture.image_preview_size = 256;
-
-	//flags to choose output texture type
-	LGraphTexture.UNDEFINED = 0; //not specified
-	LGraphTexture.PASS_THROUGH = 1; //do not apply FX (like disable but passing the in to the out)
-	LGraphTexture.COPY = 2; //create new texture with the same properties as the origin texture
-	LGraphTexture.LOW = 3; //create new texture with low precision (byte)
-	LGraphTexture.HIGH = 4; //create new texture with high precision (half-float)
-	LGraphTexture.REUSE = 5; //reuse input texture
-	LGraphTexture.DEFAULT = 2; //use the default
-
-	LGraphTexture.MODE_VALUES = {
-		"undefined": LGraphTexture.UNDEFINED,
-		"pass through": LGraphTexture.PASS_THROUGH,
-		copy: LGraphTexture.COPY,
-		low: LGraphTexture.LOW,
-		high: LGraphTexture.HIGH,
-		reuse: LGraphTexture.REUSE,
-		default: LGraphTexture.DEFAULT
-	};
-
-	//returns the container where all the loaded textures are stored (overwrite if you have a Resources Manager)
-	LGraphTexture.getTexturesContainer = function() {
-		return gl.textures;
-	};
-
-	//process the loading of a texture (overwrite it if you have a Resources Manager)
-	LGraphTexture.loadTexture = function(name, options) {
-		options = options || {};
-		var url = name;
-		if (url.substr(0, 7) == "http://") {
-			if (LiteGraph.proxy) {
-				//proxy external files
-				url = LiteGraph.proxy + url.substr(7);
-			}
-		}
-
-		var container = LGraphTexture.getTexturesContainer();
-		var tex = (container[name] = GL.Texture.fromURL(url, options));
-		return tex;
-	};
-
-	LGraphTexture.getTexture = function(name) {
-		var container = this.getTexturesContainer();
-
-		if (!container) {
-			throw "Cannot load texture, container of textures not found";
-		}
-
-		var tex = container[name];
-		if (!tex && name && name[0] != ":") {
-			return this.loadTexture(name);
-		}
-
-		return tex;
-	};
-
-	//used to compute the appropiate output texture
-	LGraphTexture.getTargetTexture = function(origin, target, mode) {
-		if (!origin) {
-			throw "LGraphTexture.getTargetTexture expects a reference texture";
-		}
-
-		var tex_type = null;
-
-		switch (mode) {
-			case LGraphTexture.LOW:
-				tex_type = gl.UNSIGNED_BYTE;
-				break;
-			case LGraphTexture.HIGH:
-				tex_type = gl.HIGH_PRECISION_FORMAT;
-				break;
-			case LGraphTexture.REUSE:
-				return origin;
-				break;
-			case LGraphTexture.COPY:
-			default:
-				tex_type = origin ? origin.type : gl.UNSIGNED_BYTE;
-				break;
-		}
-
-		if (
-			!target ||
-			target.width != origin.width ||
-			target.height != origin.height ||
-			target.type != tex_type ||
-			target.format != origin.format 
-		) {
-			target = new GL.Texture(origin.width, origin.height, {
-				type: tex_type,
-				format: origin.format,
-				filter: gl.LINEAR
-			});
-		}
-
-		return target;
-	};
-
-	LGraphTexture.getTextureType = function(precision, ref_texture) {
-		var type = ref_texture ? ref_texture.type : gl.UNSIGNED_BYTE;
-		switch (precision) {
-			case LGraphTexture.HIGH:
-				type = gl.HIGH_PRECISION_FORMAT;
-				break;
-			case LGraphTexture.LOW:
-				type = gl.UNSIGNED_BYTE;
-				break;
-			//no default
-		}
-		return type;
-	};
-
-	LGraphTexture.getWhiteTexture = function() {
-		if (this._white_texture) {
-			return this._white_texture;
-		}
-		var texture = (this._white_texture = GL.Texture.fromMemory(
-			1,
-			1,
-			[255, 255, 255, 255],
-			{ format: gl.RGBA, wrap: gl.REPEAT, filter: gl.NEAREST }
-		));
-		return texture;
-	};
-
-	LGraphTexture.getNoiseTexture = function() {
-		if (this._noise_texture) {
-			return this._noise_texture;
-		}
-
-		var noise = new Uint8Array(512 * 512 * 4);
-		for (var i = 0; i < 512 * 512 * 4; ++i) {
-			noise[i] = Math.random() * 255;
-		}
-
-		var texture = GL.Texture.fromMemory(512, 512, noise, {
-			format: gl.RGBA,
-			wrap: gl.REPEAT,
-			filter: gl.NEAREST
-		});
-		this._noise_texture = texture;
-		return texture;
-	};
-
-	LGraphTexture.prototype.onDropFile = function(data, filename, file) {
-		if (!data) {
-			this._drop_texture = null;
-			this.properties.name = "";
-		} else {
-			var texture = null;
-			if (typeof data == "string") {
-				texture = GL.Texture.fromURL(data);
-			} else if (filename.toLowerCase().indexOf(".dds") != -1) {
-				texture = GL.Texture.fromDDSInMemory(data);
-			} else {
-				var blob = new Blob([file]);
-				var url = URL.createObjectURL(blob);
-				texture = GL.Texture.fromURL(url);
-			}
-
-			this._drop_texture = texture;
-			this.properties.name = filename;
-		}
-	};
-
-	LGraphTexture.prototype.getExtraMenuOptions = function(graphcanvas) {
-		var that = this;
-		if (!this._drop_texture) {
-			return;
-		}
-		return [
-			{
-				content: "Clear",
-				callback: function() {
-					that._drop_texture = null;
-					that.properties.name = "";
-				}
-			}
-		];
-	};
-
-	LGraphTexture.prototype.onExecute = function() {
-		var tex = null;
-		if (this.isOutputConnected(1)) {
-			tex = this.getInputData(0);
-		}
-
-		if (!tex && this._drop_texture) {
-			tex = this._drop_texture;
-		}
-
-		if (!tex && this.properties.name) {
-			tex = LGraphTexture.getTexture(this.properties.name);
-		}
-
-		if (!tex) {
-			this.setOutputData( 0, null );
-			this.setOutputData( 1, "" );
-			return;
-		}
-
-		this._last_tex = tex;
-
-		if (this.properties.filter === false) {
-			tex.setParameter(gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-		} else {
-			tex.setParameter(gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		}
-
-		this.setOutputData( 0, tex );
-		this.setOutputData( 1, tex.fullpath || tex.filename );
-
-		for (var i = 2; i < this.outputs.length; i++) {
-			var output = this.outputs[i];
-			if (!output) {
-				continue;
-			}
-			var v = null;
-			if (output.name == "width") {
-				v = tex.width;
-			} else if (output.name == "height") {
-				v = tex.height;
-			} else if (output.name == "aspect") {
-				v = tex.width / tex.height;
-			}
-			this.setOutputData(i, v);
-		}
-	};
-
-	LGraphTexture.prototype.onResourceRenamed = function(
-		old_name,
-		new_name
-	) {
-		if (this.properties.name == old_name) {
-			this.properties.name = new_name;
-		}
-	};
-
-	LGraphTexture.prototype.onDrawBackground = function(ctx) {
-		if (this.flags.collapsed || this.size[1] <= 20) {
-			return;
-		}
-
-		if (this._drop_texture && ctx.webgl) {
-			ctx.drawImage(
-				this._drop_texture,
-				0,
-				0,
-				this.size[0],
-				this.size[1]
-			);
-			//this._drop_texture.renderQuad(this.pos[0],this.pos[1],this.size[0],this.size[1]);
-			return;
-		}
-
-		//Different texture? then get it from the GPU
-		if (this._last_preview_tex != this._last_tex) {
-			if (ctx.webgl) {
-				this._canvas = this._last_tex;
-			} else {
-				var tex_canvas = LGraphTexture.generateLowResTexturePreview(
-					this._last_tex
-				);
-				if (!tex_canvas) {
-					return;
-				}
-
-				this._last_preview_tex = this._last_tex;
-				this._canvas = cloneCanvas(tex_canvas);
-			}
-		}
-
-		if (!this._canvas) {
-			return;
-		}
-
-		//render to graph canvas
-		ctx.save();
-		if (!ctx.webgl) {
-			//reverse image
-			ctx.translate(0, this.size[1]);
-			ctx.scale(1, -1);
-		}
-		ctx.drawImage(this._canvas, 0, 0, this.size[0], this.size[1]);
-		ctx.restore();
-	};
-
-	//very slow, used at your own risk
-	LGraphTexture.generateLowResTexturePreview = function(tex) {
-		if (!tex) {
-			return null;
-		}
-
-		var size = LGraphTexture.image_preview_size;
-		var temp_tex = tex;
-
-		if (tex.format == gl.DEPTH_COMPONENT) {
-			return null;
-		} //cannot generate from depth
-
-		//Generate low-level version in the GPU to speed up
-		if (tex.width > size || tex.height > size) {
-			temp_tex = this._preview_temp_tex;
-			if (!this._preview_temp_tex) {
-				temp_tex = new GL.Texture(size, size, {
-					minFilter: gl.NEAREST
-				});
-				this._preview_temp_tex = temp_tex;
-			}
-
-			//copy
-			tex.copyTo(temp_tex);
-			tex = temp_tex;
-		}
-
-		//create intermediate canvas with lowquality version
-		var tex_canvas = this._preview_canvas;
-		if (!tex_canvas) {
-			tex_canvas = createCanvas(size, size);
-			this._preview_canvas = tex_canvas;
-		}
-
-		if (temp_tex) {
-			temp_tex.toCanvas(tex_canvas);
-		}
-		return tex_canvas;
-	};
-
-	LGraphTexture.prototype.getResources = function(res) {
-		if(this.properties.name)
-			res[this.properties.name] = GL.Texture;
-		return res;
-	};
-
-	LGraphTexture.prototype.onGetInputs = function() {
-		return [["in", "Texture"]];
-	};
-
-	LGraphTexture.prototype.onGetOutputs = function() {
-		return [
-			["width", "number"],
-			["height", "number"],
-			["aspect", "number"]
-		];
-	};
-
-	//used to replace shader code
-	LGraphTexture.replaceCode = function( code, context )
-	{
-		return code.replace(/\{\{[a-zA-Z0-9_]*\}\}/g, function(v){
-			v = v.replace( /[\{\}]/g, "" );
-			return context[v] || "";
-		});
-	}
-
-	LiteGraph.registerNodeType("texture/texture", LGraphTexture);
-
-	//**************************
-	function LGraphTexturePreview() {
-		this.addInput("Texture", "Texture");
-		this.properties = { flipY: false };
-		this.size = [
-			LGraphTexture.image_preview_size,
-			LGraphTexture.image_preview_size
-		];
-	}
-
-	LGraphTexturePreview.title = "Preview";
-	LGraphTexturePreview.desc = "Show a texture in the graph canvas";
-	LGraphTexturePreview.allow_preview = false;
-
-	LGraphTexturePreview.prototype.onDrawBackground = function(ctx) {
-		if (this.flags.collapsed) {
-			return;
-		}
-
-		if (!ctx.webgl && !LGraphTexturePreview.allow_preview) {
-			return;
-		} //not working well
-
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
-
-		var tex_canvas = null;
-
-		if (!tex.handle && ctx.webgl) {
-			tex_canvas = tex;
-		} else {
-			tex_canvas = LGraphTexture.generateLowResTexturePreview(tex);
-		}
-
-		//render to graph canvas
-		ctx.save();
-		if (this.properties.flipY) {
-			ctx.translate(0, this.size[1]);
-			ctx.scale(1, -1);
-		}
-		ctx.drawImage(tex_canvas, 0, 0, this.size[0], this.size[1]);
-		ctx.restore();
-	};
-
-	LiteGraph.registerNodeType("texture/preview", LGraphTexturePreview);
-
-	//**************************************
-
-	function LGraphTextureSave() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("tex", "Texture");
-		this.addOutput("name", "string");
-		this.properties = { name: "", generate_mipmaps: false };
-	}
-
-	LGraphTextureSave.title = "Save";
-	LGraphTextureSave.desc = "Save a texture in the repository";
-
-	LGraphTextureSave.prototype.getPreviewTexture = function()
-	{
-		return this._texture;
-	}
-
-	LGraphTextureSave.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
-
-		if (this.properties.generate_mipmaps) {
-			tex.bind(0);
-			tex.setParameter( gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR );
-			gl.generateMipmap(tex.texture_type);
-			tex.unbind(0);
-		}
-
-		if (this.properties.name) {
-			//for cases where we want to perform something when storing it
-			if (LGraphTexture.storeTexture) {
-				LGraphTexture.storeTexture(this.properties.name, tex);
-			} else {
-				var container = LGraphTexture.getTexturesContainer();
-				container[this.properties.name] = tex;
-			}
-		}
-
-		this._texture = tex;
-		this.setOutputData(0, tex);
-		this.setOutputData(1, this.properties.name);
-	};
-
-	LiteGraph.registerNodeType("texture/save", LGraphTextureSave);
-
-	//****************************************************
-
-	function LGraphTextureOperation() {
-		this.addInput("Texture", "Texture");
-		this.addInput("TextureB", "Texture");
-		this.addInput("value", "number");
-		this.addOutput("Texture", "Texture");
-		this.help = "<p>pixelcode must be vec3, uvcode must be vec2, is optional</p>\
+    if (typeof GL == "undefined") return;
+
+    LGraphCanvas.link_type_colors["Texture"] = "#987";
+
+    function LGraphTexture() {
+        this.addOutput("tex", "Texture");
+        this.addOutput("name", "string");
+        this.properties = { name: "", filter: true };
+        this.size = [
+            LGraphTexture.image_preview_size,
+            LGraphTexture.image_preview_size,
+        ];
+    }
+
+    global.LGraphTexture = LGraphTexture;
+
+    LGraphTexture.title = "Texture";
+    LGraphTexture.desc = "Texture";
+    LGraphTexture.widgets_info = {
+        name: { widget: "texture" },
+        filter: { widget: "checkbox" },
+    };
+
+    //REPLACE THIS TO INTEGRATE WITH YOUR FRAMEWORK
+    LGraphTexture.loadTextureCallback = null; //function in charge of loading textures when not present in the container
+    LGraphTexture.image_preview_size = 256;
+
+    //flags to choose output texture type
+    LGraphTexture.UNDEFINED = 0; //not specified
+    LGraphTexture.PASS_THROUGH = 1; //do not apply FX (like disable but passing the in to the out)
+    LGraphTexture.COPY = 2; //create new texture with the same properties as the origin texture
+    LGraphTexture.LOW = 3; //create new texture with low precision (byte)
+    LGraphTexture.HIGH = 4; //create new texture with high precision (half-float)
+    LGraphTexture.REUSE = 5; //reuse input texture
+    LGraphTexture.DEFAULT = 2; //use the default
+
+    LGraphTexture.MODE_VALUES = {
+        undefined: LGraphTexture.UNDEFINED,
+        "pass through": LGraphTexture.PASS_THROUGH,
+        copy: LGraphTexture.COPY,
+        low: LGraphTexture.LOW,
+        high: LGraphTexture.HIGH,
+        reuse: LGraphTexture.REUSE,
+        default: LGraphTexture.DEFAULT,
+    };
+
+    //returns the container where all the loaded textures are stored (overwrite if you have a Resources Manager)
+    LGraphTexture.getTexturesContainer = function () {
+        return gl.textures;
+    };
+
+    //process the loading of a texture (overwrite it if you have a Resources Manager)
+    LGraphTexture.loadTexture = function (name, options) {
+        options = options || {};
+        var url = name;
+        if (url.substr(0, 7) == "http://") {
+            if (LiteGraph.proxy) {
+                //proxy external files
+                url = LiteGraph.proxy + url.substr(7);
+            }
+        }
+
+        var container = LGraphTexture.getTexturesContainer();
+        var tex = (container[name] = GL.Texture.fromURL(url, options));
+        return tex;
+    };
+
+    LGraphTexture.getTexture = function (name) {
+        var container = this.getTexturesContainer();
+
+        if (!container) {
+            throw "Cannot load texture, container of textures not found";
+        }
+
+        var tex = container[name];
+        if (!tex && name && name[0] != ":") {
+            return this.loadTexture(name);
+        }
+
+        return tex;
+    };
+
+    //used to compute the appropiate output texture
+    LGraphTexture.getTargetTexture = function (origin, target, mode) {
+        if (!origin) {
+            throw "LGraphTexture.getTargetTexture expects a reference texture";
+        }
+
+        var tex_type = null;
+
+        switch (mode) {
+            case LGraphTexture.LOW:
+                tex_type = gl.UNSIGNED_BYTE;
+                break;
+            case LGraphTexture.HIGH:
+                tex_type = gl.HIGH_PRECISION_FORMAT;
+                break;
+            case LGraphTexture.REUSE:
+                return origin;
+                break;
+            case LGraphTexture.COPY:
+            default:
+                tex_type = origin ? origin.type : gl.UNSIGNED_BYTE;
+                break;
+        }
+
+        if (
+            !target ||
+            target.width != origin.width ||
+            target.height != origin.height ||
+            target.type != tex_type ||
+            target.format != origin.format
+        ) {
+            target = new GL.Texture(origin.width, origin.height, {
+                type: tex_type,
+                format: origin.format,
+                filter: gl.LINEAR,
+            });
+        }
+
+        return target;
+    };
+
+    LGraphTexture.getTextureType = function (precision, ref_texture) {
+        var type = ref_texture ? ref_texture.type : gl.UNSIGNED_BYTE;
+        switch (precision) {
+            case LGraphTexture.HIGH:
+                type = gl.HIGH_PRECISION_FORMAT;
+                break;
+            case LGraphTexture.LOW:
+                type = gl.UNSIGNED_BYTE;
+                break;
+            //no default
+        }
+        return type;
+    };
+
+    LGraphTexture.getWhiteTexture = function () {
+        if (this._white_texture) {
+            return this._white_texture;
+        }
+        var texture = (this._white_texture = GL.Texture.fromMemory(
+            1,
+            1,
+            [255, 255, 255, 255],
+            { format: gl.RGBA, wrap: gl.REPEAT, filter: gl.NEAREST }
+        ));
+        return texture;
+    };
+
+    LGraphTexture.getNoiseTexture = function () {
+        if (this._noise_texture) {
+            return this._noise_texture;
+        }
+
+        var noise = new Uint8Array(512 * 512 * 4);
+        for (var i = 0; i < 512 * 512 * 4; ++i) {
+            noise[i] = Math.random() * 255;
+        }
+
+        var texture = GL.Texture.fromMemory(512, 512, noise, {
+            format: gl.RGBA,
+            wrap: gl.REPEAT,
+            filter: gl.NEAREST,
+        });
+        this._noise_texture = texture;
+        return texture;
+    };
+
+    LGraphTexture.prototype.onDropFile = function (data, filename, file) {
+        if (!data) {
+            this._drop_texture = null;
+            this.properties.name = "";
+        } else {
+            var texture = null;
+            if (typeof data == "string") {
+                texture = GL.Texture.fromURL(data);
+            } else if (filename.toLowerCase().indexOf(".dds") != -1) {
+                texture = GL.Texture.fromDDSInMemory(data);
+            } else {
+                var blob = new Blob([file]);
+                var url = URL.createObjectURL(blob);
+                texture = GL.Texture.fromURL(url);
+            }
+
+            this._drop_texture = texture;
+            this.properties.name = filename;
+        }
+    };
+
+    LGraphTexture.prototype.getExtraMenuOptions = function (graphcanvas) {
+        var that = this;
+        if (!this._drop_texture) {
+            return;
+        }
+        return [
+            {
+                content: "Clear",
+                callback: function () {
+                    that._drop_texture = null;
+                    that.properties.name = "";
+                },
+            },
+        ];
+    };
+
+    LGraphTexture.prototype.onExecute = function () {
+        var tex = null;
+        if (this.isOutputConnected(1)) {
+            tex = this.getInputData(0);
+        }
+
+        if (!tex && this._drop_texture) {
+            tex = this._drop_texture;
+        }
+
+        if (!tex && this.properties.name) {
+            tex = LGraphTexture.getTexture(this.properties.name);
+        }
+
+        if (!tex) {
+            this.setOutputData(0, null);
+            this.setOutputData(1, "");
+            return;
+        }
+
+        this._last_tex = tex;
+
+        if (this.properties.filter === false) {
+            tex.setParameter(gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        } else {
+            tex.setParameter(gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        }
+
+        this.setOutputData(0, tex);
+        this.setOutputData(1, tex.fullpath || tex.filename);
+
+        for (var i = 2; i < this.outputs.length; i++) {
+            var output = this.outputs[i];
+            if (!output) {
+                continue;
+            }
+            var v = null;
+            if (output.name == "width") {
+                v = tex.width;
+            } else if (output.name == "height") {
+                v = tex.height;
+            } else if (output.name == "aspect") {
+                v = tex.width / tex.height;
+            }
+            this.setOutputData(i, v);
+        }
+    };
+
+    LGraphTexture.prototype.onResourceRenamed = function (old_name, new_name) {
+        if (this.properties.name == old_name) {
+            this.properties.name = new_name;
+        }
+    };
+
+    LGraphTexture.prototype.onDrawBackground = function (ctx) {
+        if (this.flags.collapsed || this.size[1] <= 20) {
+            return;
+        }
+
+        if (this._drop_texture && ctx.webgl) {
+            ctx.drawImage(this._drop_texture, 0, 0, this.size[0], this.size[1]);
+            //this._drop_texture.renderQuad(this.pos[0],this.pos[1],this.size[0],this.size[1]);
+            return;
+        }
+
+        //Different texture? then get it from the GPU
+        if (this._last_preview_tex != this._last_tex) {
+            if (ctx.webgl) {
+                this._canvas = this._last_tex;
+            } else {
+                var tex_canvas = LGraphTexture.generateLowResTexturePreview(
+                    this._last_tex
+                );
+                if (!tex_canvas) {
+                    return;
+                }
+
+                this._last_preview_tex = this._last_tex;
+                this._canvas = cloneCanvas(tex_canvas);
+            }
+        }
+
+        if (!this._canvas) {
+            return;
+        }
+
+        //render to graph canvas
+        ctx.save();
+        if (!ctx.webgl) {
+            //reverse image
+            ctx.translate(0, this.size[1]);
+            ctx.scale(1, -1);
+        }
+        ctx.drawImage(this._canvas, 0, 0, this.size[0], this.size[1]);
+        ctx.restore();
+    };
+
+    //very slow, used at your own risk
+    LGraphTexture.generateLowResTexturePreview = function (tex) {
+        if (!tex) {
+            return null;
+        }
+
+        var size = LGraphTexture.image_preview_size;
+        var temp_tex = tex;
+
+        if (tex.format == gl.DEPTH_COMPONENT) {
+            return null;
+        } //cannot generate from depth
+
+        //Generate low-level version in the GPU to speed up
+        if (tex.width > size || tex.height > size) {
+            temp_tex = this._preview_temp_tex;
+            if (!this._preview_temp_tex) {
+                temp_tex = new GL.Texture(size, size, {
+                    minFilter: gl.NEAREST,
+                });
+                this._preview_temp_tex = temp_tex;
+            }
+
+            //copy
+            tex.copyTo(temp_tex);
+            tex = temp_tex;
+        }
+
+        //create intermediate canvas with lowquality version
+        var tex_canvas = this._preview_canvas;
+        if (!tex_canvas) {
+            tex_canvas = createCanvas(size, size);
+            this._preview_canvas = tex_canvas;
+        }
+
+        if (temp_tex) {
+            temp_tex.toCanvas(tex_canvas);
+        }
+        return tex_canvas;
+    };
+
+    LGraphTexture.prototype.getResources = function (res) {
+        if (this.properties.name) res[this.properties.name] = GL.Texture;
+        return res;
+    };
+
+    LGraphTexture.prototype.onGetInputs = function () {
+        return [["in", "Texture"]];
+    };
+
+    LGraphTexture.prototype.onGetOutputs = function () {
+        return [
+            ["width", "number"],
+            ["height", "number"],
+            ["aspect", "number"],
+        ];
+    };
+
+    //used to replace shader code
+    LGraphTexture.replaceCode = function (code, context) {
+        return code.replace(/\{\{[a-zA-Z0-9_]*\}\}/g, function (v) {
+            v = v.replace(/[\{\}]/g, "");
+            return context[v] || "";
+        });
+    };
+
+    LiteGraph.registerNodeType("texture/texture", LGraphTexture);
+
+    //**************************
+    function LGraphTexturePreview() {
+        this.addInput("Texture", "Texture");
+        this.properties = { flipY: false };
+        this.size = [
+            LGraphTexture.image_preview_size,
+            LGraphTexture.image_preview_size,
+        ];
+    }
+
+    LGraphTexturePreview.title = "Preview";
+    LGraphTexturePreview.desc = "Show a texture in the graph canvas";
+    LGraphTexturePreview.allow_preview = false;
+
+    LGraphTexturePreview.prototype.onDrawBackground = function (ctx) {
+        if (this.flags.collapsed) {
+            return;
+        }
+
+        if (!ctx.webgl && !LGraphTexturePreview.allow_preview) {
+            return;
+        } //not working well
+
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
+
+        var tex_canvas = null;
+
+        if (!tex.handle && ctx.webgl) {
+            tex_canvas = tex;
+        } else {
+            tex_canvas = LGraphTexture.generateLowResTexturePreview(tex);
+        }
+
+        //render to graph canvas
+        ctx.save();
+        if (this.properties.flipY) {
+            ctx.translate(0, this.size[1]);
+            ctx.scale(1, -1);
+        }
+        ctx.drawImage(tex_canvas, 0, 0, this.size[0], this.size[1]);
+        ctx.restore();
+    };
+
+    LiteGraph.registerNodeType("texture/preview", LGraphTexturePreview);
+
+    //**************************************
+
+    function LGraphTextureSave() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("tex", "Texture");
+        this.addOutput("name", "string");
+        this.properties = { name: "", generate_mipmaps: false };
+    }
+
+    LGraphTextureSave.title = "Save";
+    LGraphTextureSave.desc = "Save a texture in the repository";
+
+    LGraphTextureSave.prototype.getPreviewTexture = function () {
+        return this._texture;
+    };
+
+    LGraphTextureSave.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
+
+        if (this.properties.generate_mipmaps) {
+            tex.bind(0);
+            tex.setParameter(gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+            gl.generateMipmap(tex.texture_type);
+            tex.unbind(0);
+        }
+
+        if (this.properties.name) {
+            //for cases where we want to perform something when storing it
+            if (LGraphTexture.storeTexture) {
+                LGraphTexture.storeTexture(this.properties.name, tex);
+            } else {
+                var container = LGraphTexture.getTexturesContainer();
+                container[this.properties.name] = tex;
+            }
+        }
+
+        this._texture = tex;
+        this.setOutputData(0, tex);
+        this.setOutputData(1, this.properties.name);
+    };
+
+    LiteGraph.registerNodeType("texture/save", LGraphTextureSave);
+
+    //****************************************************
+
+    function LGraphTextureOperation() {
+        this.addInput("Texture", "Texture");
+        this.addInput("TextureB", "Texture");
+        this.addInput("value", "number");
+        this.addOutput("Texture", "Texture");
+        this.help =
+            "<p>pixelcode must be vec3, uvcode must be vec2, is optional</p>\
 		<p><strong>uv:</strong> tex. coords</p><p><strong>color:</strong> texture <strong>colorB:</strong> textureB</p><p><strong>time:</strong> scene time <strong>value:</strong> input value</p><p>For multiline you must type: result = ...</p>";
 
-		this.properties = {
-			value: 1,
-			pixelcode: "color + colorB * value",
-			uvcode: "",
-			precision: LGraphTexture.DEFAULT
-		};
+        this.properties = {
+            value: 1,
+            pixelcode: "color + colorB * value",
+            uvcode: "",
+            precision: LGraphTexture.DEFAULT,
+        };
 
-		this.has_error = false;
-	}
+        this.has_error = false;
+    }
 
-	LGraphTextureOperation.widgets_info = {
-		uvcode: { widget: "code" },
-		pixelcode: { widget: "code" },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureOperation.widgets_info = {
+        uvcode: { widget: "code" },
+        pixelcode: { widget: "code" },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureOperation.title = "Operation";
-	LGraphTextureOperation.desc = "Texture shader operation";
+    LGraphTextureOperation.title = "Operation";
+    LGraphTextureOperation.desc = "Texture shader operation";
 
-	LGraphTextureOperation.presets = {};
+    LGraphTextureOperation.presets = {};
 
-	LGraphTextureOperation.prototype.getExtraMenuOptions = function(
-		graphcanvas
-	) {
-		var that = this;
-		var txt = !that.properties.show ? "Show Texture" : "Hide Texture";
-		return [
-			{
-				content: txt,
-				callback: function() {
-					that.properties.show = !that.properties.show;
-				}
-			}
-		];
-	};
+    LGraphTextureOperation.prototype.getExtraMenuOptions = function (
+        graphcanvas
+    ) {
+        var that = this;
+        var txt = !that.properties.show ? "Show Texture" : "Hide Texture";
+        return [
+            {
+                content: txt,
+                callback: function () {
+                    that.properties.show = !that.properties.show;
+                },
+            },
+        ];
+    };
 
-	LGraphTextureOperation.prototype.onPropertyChanged = function()
-	{
-		this.has_error = false;
-	}
+    LGraphTextureOperation.prototype.onPropertyChanged = function () {
+        this.has_error = false;
+    };
 
-	LGraphTextureOperation.prototype.onDrawBackground = function(ctx) {
-		if (
-			this.flags.collapsed ||
-			this.size[1] <= 20 ||
-			!this.properties.show
-		) {
-			return;
-		}
+    LGraphTextureOperation.prototype.onDrawBackground = function (ctx) {
+        if (
+            this.flags.collapsed ||
+            this.size[1] <= 20 ||
+            !this.properties.show
+        ) {
+            return;
+        }
 
-		if (!this._tex) {
-			return;
-		}
+        if (!this._tex) {
+            return;
+        }
 
-		//only works if using a webgl renderer
-		if (this._tex.gl != ctx) {
-			return;
-		}
+        //only works if using a webgl renderer
+        if (this._tex.gl != ctx) {
+            return;
+        }
 
-		//render to graph canvas
-		ctx.save();
-		ctx.drawImage(this._tex, 0, 0, this.size[0], this.size[1]);
-		ctx.restore();
-	};
+        //render to graph canvas
+        ctx.save();
+        ctx.drawImage(this._tex, 0, 0, this.size[0], this.size[1]);
+        ctx.restore();
+    };
 
-	LGraphTextureOperation.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
+    LGraphTextureOperation.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var texB = this.getInputData(1);
+        var texB = this.getInputData(1);
 
-		if (!this.properties.uvcode && !this.properties.pixelcode) {
-			return;
-		}
+        if (!this.properties.uvcode && !this.properties.pixelcode) {
+            return;
+        }
 
-		var width = 512;
-		var height = 512;
-		if (tex) {
-			width = tex.width;
-			height = tex.height;
-		} else if (texB) {
-			width = texB.width;
-			height = texB.height;
-		}
+        var width = 512;
+        var height = 512;
+        if (tex) {
+            width = tex.width;
+            height = tex.height;
+        } else if (texB) {
+            width = texB.width;
+            height = texB.height;
+        }
 
-		if(!texB)
-			texB = GL.Texture.getWhiteTexture();
+        if (!texB) texB = GL.Texture.getWhiteTexture();
 
-		var type = LGraphTexture.getTextureType( this.properties.precision, tex );
+        var type = LGraphTexture.getTextureType(this.properties.precision, tex);
 
-		if (!tex && !this._tex) {
-			this._tex = new GL.Texture(width, height, { type: type, format: gl.RGBA, filter: gl.LINEAR });
-		} else {
-			this._tex = LGraphTexture.getTargetTexture( tex || this._tex, this._tex, this.properties.precision );
-		}
+        if (!tex && !this._tex) {
+            this._tex = new GL.Texture(width, height, {
+                type: type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        } else {
+            this._tex = LGraphTexture.getTargetTexture(
+                tex || this._tex,
+                this._tex,
+                this.properties.precision
+            );
+        }
 
-		var uvcode = "";
-		if (this.properties.uvcode) {
-			uvcode = "uv = " + this.properties.uvcode;
-			if (this.properties.uvcode.indexOf(";") != -1) {
-				//there are line breaks, means multiline code
-				uvcode = this.properties.uvcode;
-			}
-		}
+        var uvcode = "";
+        if (this.properties.uvcode) {
+            uvcode = "uv = " + this.properties.uvcode;
+            if (this.properties.uvcode.indexOf(";") != -1) {
+                //there are line breaks, means multiline code
+                uvcode = this.properties.uvcode;
+            }
+        }
 
-		var pixelcode = "";
-		if (this.properties.pixelcode) {
-			pixelcode = "result = " + this.properties.pixelcode;
-			if (this.properties.pixelcode.indexOf(";") != -1) {
-				//there are line breaks, means multiline code
-				pixelcode = this.properties.pixelcode;
-			}
-		}
+        var pixelcode = "";
+        if (this.properties.pixelcode) {
+            pixelcode = "result = " + this.properties.pixelcode;
+            if (this.properties.pixelcode.indexOf(";") != -1) {
+                //there are line breaks, means multiline code
+                pixelcode = this.properties.pixelcode;
+            }
+        }
 
-		var shader = this._shader;
+        var shader = this._shader;
 
-		if ( !this.has_error && (!shader || this._shader_code != uvcode + "|" + pixelcode) ) {
+        if (
+            !this.has_error &&
+            (!shader || this._shader_code != uvcode + "|" + pixelcode)
+        ) {
+            var final_pixel_code = LGraphTexture.replaceCode(
+                LGraphTextureOperation.pixel_shader,
+                { UV_CODE: uvcode, PIXEL_CODE: pixelcode }
+            );
 
-			var final_pixel_code = LGraphTexture.replaceCode( LGraphTextureOperation.pixel_shader, { UV_CODE:uvcode, PIXEL_CODE:pixelcode });
+            try {
+                shader = new GL.Shader(
+                    Shader.SCREEN_VERTEX_SHADER,
+                    final_pixel_code
+                );
+                this.boxcolor = "#00FF00";
+            } catch (err) {
+                //console.log("Error compiling shader: ", err, final_pixel_code );
+                GL.Shader.dumpErrorToConsole(
+                    err,
+                    Shader.SCREEN_VERTEX_SHADER,
+                    final_pixel_code
+                );
+                this.boxcolor = "#FF0000";
+                this.has_error = true;
+                return;
+            }
+            this._shader = shader;
+            this._shader_code = uvcode + "|" + pixelcode;
+        }
 
-			try {
-				shader = new GL.Shader( Shader.SCREEN_VERTEX_SHADER, final_pixel_code );
-				this.boxcolor = "#00FF00";
-			} catch (err) {
-				//console.log("Error compiling shader: ", err, final_pixel_code );
-				GL.Shader.dumpErrorToConsole(err,Shader.SCREEN_VERTEX_SHADER, final_pixel_code);
-				this.boxcolor = "#FF0000";
-				this.has_error = true;
-				return;
-			}
-			this._shader = shader;
-			this._shader_code = uvcode + "|" + pixelcode;
-		}
+        if (!this._shader) return;
 
-		if(!this._shader)
-			return;
+        var value = this.getInputData(2);
+        if (value != null) {
+            this.properties.value = value;
+        } else {
+            value = parseFloat(this.properties.value);
+        }
 
-		var value = this.getInputData(2);
-		if (value != null) {
-			this.properties.value = value;
-		} else {
-			value = parseFloat(this.properties.value);
-		}
+        var time = this.graph.getTime();
 
-		var time = this.graph.getTime();
+        this._tex.drawTo(function () {
+            gl.disable(gl.DEPTH_TEST);
+            gl.disable(gl.CULL_FACE);
+            gl.disable(gl.BLEND);
+            if (tex) {
+                tex.bind(0);
+            }
+            if (texB) {
+                texB.bind(1);
+            }
+            var mesh = Mesh.getScreenQuad();
+            shader
+                .uniforms({
+                    u_texture: 0,
+                    u_textureB: 1,
+                    value: value,
+                    texSize: [width, height, 1 / width, 1 / height],
+                    time: time,
+                })
+                .draw(mesh);
+        });
 
-		this._tex.drawTo(function() {
-			gl.disable(gl.DEPTH_TEST);
-			gl.disable(gl.CULL_FACE);
-			gl.disable(gl.BLEND);
-			if (tex) {
-				tex.bind(0);
-			}
-			if (texB) {
-				texB.bind(1);
-			}
-			var mesh = Mesh.getScreenQuad();
-			shader
-				.uniforms({
-					u_texture: 0,
-					u_textureB: 1,
-					value: value,
-					texSize: [width, height,1/width,1/height],
-					time: time
-				})
-				.draw(mesh);
-		});
+        this.setOutputData(0, this._tex);
+    };
 
-		this.setOutputData(0, this._tex);
-	};
-
-	LGraphTextureOperation.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureOperation.pixel_shader =
+        "precision highp float;\n\
 		\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_textureB;\n\
@@ -16882,26 +16953,45 @@ if (typeof exports != "undefined") {
 		}\n\
 		";
 
-	LGraphTextureOperation.registerPreset = function ( name, code )
-	{
-		LGraphTextureOperation.presets[name] = code;
-	}
+    LGraphTextureOperation.registerPreset = function (name, code) {
+        LGraphTextureOperation.presets[name] = code;
+    };
 
-	LGraphTextureOperation.registerPreset("","");
-	LGraphTextureOperation.registerPreset("bypass","color");
-	LGraphTextureOperation.registerPreset("add","color + colorB * value");
-	LGraphTextureOperation.registerPreset("substract","(color - colorB) * value");
-	LGraphTextureOperation.registerPreset("mate","mix( color, colorB, color4B.a * value)");
-	LGraphTextureOperation.registerPreset("invert","vec3(1.0) - color");
-	LGraphTextureOperation.registerPreset("multiply","color * colorB * value");
-	LGraphTextureOperation.registerPreset("divide","(color / colorB) / value");
-	LGraphTextureOperation.registerPreset("difference","abs(color - colorB) * value");
-	LGraphTextureOperation.registerPreset("max","max(color, colorB) * value");
-	LGraphTextureOperation.registerPreset("min","min(color, colorB) * value");
-	LGraphTextureOperation.registerPreset("displace","texture2D(u_texture, uv + (colorB.xy - vec2(0.5)) * value).xyz");
-	LGraphTextureOperation.registerPreset("grayscale","vec3(color.x + color.y + color.z) * value / 3.0");
-	LGraphTextureOperation.registerPreset("saturation","mix( vec3(color.x + color.y + color.z) / 3.0, color, value )");
-	LGraphTextureOperation.registerPreset("normalmap","\n\
+    LGraphTextureOperation.registerPreset("", "");
+    LGraphTextureOperation.registerPreset("bypass", "color");
+    LGraphTextureOperation.registerPreset("add", "color + colorB * value");
+    LGraphTextureOperation.registerPreset(
+        "substract",
+        "(color - colorB) * value"
+    );
+    LGraphTextureOperation.registerPreset(
+        "mate",
+        "mix( color, colorB, color4B.a * value)"
+    );
+    LGraphTextureOperation.registerPreset("invert", "vec3(1.0) - color");
+    LGraphTextureOperation.registerPreset("multiply", "color * colorB * value");
+    LGraphTextureOperation.registerPreset("divide", "(color / colorB) / value");
+    LGraphTextureOperation.registerPreset(
+        "difference",
+        "abs(color - colorB) * value"
+    );
+    LGraphTextureOperation.registerPreset("max", "max(color, colorB) * value");
+    LGraphTextureOperation.registerPreset("min", "min(color, colorB) * value");
+    LGraphTextureOperation.registerPreset(
+        "displace",
+        "texture2D(u_texture, uv + (colorB.xy - vec2(0.5)) * value).xyz"
+    );
+    LGraphTextureOperation.registerPreset(
+        "grayscale",
+        "vec3(color.x + color.y + color.z) * value / 3.0"
+    );
+    LGraphTextureOperation.registerPreset(
+        "saturation",
+        "mix( vec3(color.x + color.y + color.z) / 3.0, color, value )"
+    );
+    LGraphTextureOperation.registerPreset(
+        "normalmap",
+        "\n\
 		float z0 = texture2D(u_texture, uv + vec2(-texSize.z, -texSize.w) ).x;\n\
 		float z1 = texture2D(u_texture, uv + vec2(0.0, -texSize.w) ).x;\n\
 		float z2 = texture2D(u_texture, uv + vec2(texSize.z, -texSize.w) ).x;\n\
@@ -16914,224 +17004,247 @@ if (typeof exports != "undefined") {
 		vec3 normal = vec3( z2 + 2.0*z4 + z7 - z0 - 2.0*z3 - z5, z5 + 2.0*z6 + z7 -z0 - 2.0*z1 - z2, 1.0 );\n\
 		normal.xy *= value;\n\
 		result.xyz = normalize(normal) * 0.5 + vec3(0.5);\n\
-	");
-	LGraphTextureOperation.registerPreset("threshold","vec3(color.x > colorB.x * value ? 1.0 : 0.0,color.y > colorB.y * value ? 1.0 : 0.0,color.z > colorB.z * value ? 1.0 : 0.0)");
+	"
+    );
+    LGraphTextureOperation.registerPreset(
+        "threshold",
+        "vec3(color.x > colorB.x * value ? 1.0 : 0.0,color.y > colorB.y * value ? 1.0 : 0.0,color.z > colorB.z * value ? 1.0 : 0.0)"
+    );
 
-	//webglstudio stuff...
-	LGraphTextureOperation.prototype.onInspect = function(widgets)
-	{
-		var that = this;
-		widgets.addCombo("Presets","",{ values: Object.keys(LGraphTextureOperation.presets), callback: function(v){
-			var code = LGraphTextureOperation.presets[v];
-			if(!code)
-				return;
-			that.setProperty("pixelcode",code);
-			that.title = v;
-			widgets.refresh();
-		}});
-	}
+    //webglstudio stuff...
+    LGraphTextureOperation.prototype.onInspect = function (widgets) {
+        var that = this;
+        widgets.addCombo("Presets", "", {
+            values: Object.keys(LGraphTextureOperation.presets),
+            callback: function (v) {
+                var code = LGraphTextureOperation.presets[v];
+                if (!code) return;
+                that.setProperty("pixelcode", code);
+                that.title = v;
+                widgets.refresh();
+            },
+        });
+    };
 
-	LiteGraph.registerNodeType("texture/operation", LGraphTextureOperation);
+    LiteGraph.registerNodeType("texture/operation", LGraphTextureOperation);
 
-	//****************************************************
+    //****************************************************
 
-	function LGraphTextureShader() {
-		this.addOutput("out", "Texture");
-		this.properties = {
-			code: "",
-			u_value: 1,
-			u_color: [1,1,1,1],
-			width: 512,
-			height: 512,
-			precision: LGraphTexture.DEFAULT
-		};
+    function LGraphTextureShader() {
+        this.addOutput("out", "Texture");
+        this.properties = {
+            code: "",
+            u_value: 1,
+            u_color: [1, 1, 1, 1],
+            width: 512,
+            height: 512,
+            precision: LGraphTexture.DEFAULT,
+        };
 
-		this.properties.code = LGraphTextureShader.pixel_shader;
-		this._uniforms = { u_value: 1, u_color: vec4.create(), in_texture: 0, texSize: vec4.create(), time: 0 };
-	}
+        this.properties.code = LGraphTextureShader.pixel_shader;
+        this._uniforms = {
+            u_value: 1,
+            u_color: vec4.create(),
+            in_texture: 0,
+            texSize: vec4.create(),
+            time: 0,
+        };
+    }
 
-	LGraphTextureShader.title = "Shader";
-	LGraphTextureShader.desc = "Texture shader";
-	LGraphTextureShader.widgets_info = {
-		code: { type: "code", lang: "glsl" },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureShader.title = "Shader";
+    LGraphTextureShader.desc = "Texture shader";
+    LGraphTextureShader.widgets_info = {
+        code: { type: "code", lang: "glsl" },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureShader.prototype.onPropertyChanged = function(
-		name,
-		value
-	) {
-		if (name != "code") {
-			return;
-		}
+    LGraphTextureShader.prototype.onPropertyChanged = function (name, value) {
+        if (name != "code") {
+            return;
+        }
 
-		var shader = this.getShader();
-		if (!shader) {
-			return;
-		}
+        var shader = this.getShader();
+        if (!shader) {
+            return;
+        }
 
-		//update connections
-		var uniforms = shader.uniformInfo;
+        //update connections
+        var uniforms = shader.uniformInfo;
 
-		//remove deprecated slots
-		if (this.inputs) {
-			var already = {};
-			for (var i = 0; i < this.inputs.length; ++i) {
-				var info = this.getInputInfo(i);
-				if (!info) {
-					continue;
-				}
+        //remove deprecated slots
+        if (this.inputs) {
+            var already = {};
+            for (var i = 0; i < this.inputs.length; ++i) {
+                var info = this.getInputInfo(i);
+                if (!info) {
+                    continue;
+                }
 
-				if (uniforms[info.name] && !already[info.name]) {
-					already[info.name] = true;
-					continue;
-				}
-				this.removeInput(i);
-				i--;
-			}
-		}
+                if (uniforms[info.name] && !already[info.name]) {
+                    already[info.name] = true;
+                    continue;
+                }
+                this.removeInput(i);
+                i--;
+            }
+        }
 
-		//update existing ones
-		for (var i in uniforms) {
-			var info = shader.uniformInfo[i];
-			if (info.loc === null) {
-				continue;
-			} //is an attribute, not a uniform
-			if (i == "time") {
-				//default one
-				continue;
-			}
+        //update existing ones
+        for (var i in uniforms) {
+            var info = shader.uniformInfo[i];
+            if (info.loc === null) {
+                continue;
+            } //is an attribute, not a uniform
+            if (i == "time") {
+                //default one
+                continue;
+            }
 
-			var type = "number";
-			if (this._shader.samplers[i]) {
-				type = "texture";
-			} else {
-				switch (info.size) {
-					case 1:
-						type = "number";
-						break;
-					case 2:
-						type = "vec2";
-						break;
-					case 3:
-						type = "vec3";
-						break;
-					case 4:
-						type = "vec4";
-						break;
-					case 9:
-						type = "mat3";
-						break;
-					case 16:
-						type = "mat4";
-						break;
-					default:
-						continue;
-				}
-			}
+            var type = "number";
+            if (this._shader.samplers[i]) {
+                type = "texture";
+            } else {
+                switch (info.size) {
+                    case 1:
+                        type = "number";
+                        break;
+                    case 2:
+                        type = "vec2";
+                        break;
+                    case 3:
+                        type = "vec3";
+                        break;
+                    case 4:
+                        type = "vec4";
+                        break;
+                    case 9:
+                        type = "mat3";
+                        break;
+                    case 16:
+                        type = "mat4";
+                        break;
+                    default:
+                        continue;
+                }
+            }
 
-			var slot = this.findInputSlot(i);
-			if (slot == -1) {
-				this.addInput(i, type);
-				continue;
-			}
+            var slot = this.findInputSlot(i);
+            if (slot == -1) {
+                this.addInput(i, type);
+                continue;
+            }
 
-			var input_info = this.getInputInfo(slot);
-			if (!input_info) {
-				this.addInput(i, type);
-			} else {
-				if (input_info.type == type) {
-					continue;
-				}
-				this.removeInput(slot, type);
-				this.addInput(i, type);
-			}
-		}
-	};
+            var input_info = this.getInputInfo(slot);
+            if (!input_info) {
+                this.addInput(i, type);
+            } else {
+                if (input_info.type == type) {
+                    continue;
+                }
+                this.removeInput(slot, type);
+                this.addInput(i, type);
+            }
+        }
+    };
 
-	LGraphTextureShader.prototype.getShader = function() {
-		//replug
-		if (this._shader && this._shader_code == this.properties.code) {
-			return this._shader;
-		}
+    LGraphTextureShader.prototype.getShader = function () {
+        //replug
+        if (this._shader && this._shader_code == this.properties.code) {
+            return this._shader;
+        }
 
-		this._shader_code = this.properties.code;
-		this._shader = new GL.Shader( Shader.SCREEN_VERTEX_SHADER, this.properties.code );
-		if (!this._shader) {
-			this.boxcolor = "red";
-			return null;
-		} else {
-			this.boxcolor = "green";
-		}
-		return this._shader;
-	};
+        this._shader_code = this.properties.code;
+        this._shader = new GL.Shader(
+            Shader.SCREEN_VERTEX_SHADER,
+            this.properties.code
+        );
+        if (!this._shader) {
+            this.boxcolor = "red";
+            return null;
+        } else {
+            this.boxcolor = "green";
+        }
+        return this._shader;
+    };
 
-	LGraphTextureShader.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+    LGraphTextureShader.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var shader = this.getShader();
-		if (!shader) {
-			return;
-		}
+        var shader = this.getShader();
+        if (!shader) {
+            return;
+        }
 
-		var tex_slot = 0;
-		var in_tex = null;
+        var tex_slot = 0;
+        var in_tex = null;
 
-		//set uniforms
-		if(this.inputs)
-		for (var i = 0; i < this.inputs.length; ++i) {
-			var info = this.getInputInfo(i);
-			var data = this.getInputData(i);
-			if (data == null) {
-				continue;
-			}
+        //set uniforms
+        if (this.inputs)
+            for (var i = 0; i < this.inputs.length; ++i) {
+                var info = this.getInputInfo(i);
+                var data = this.getInputData(i);
+                if (data == null) {
+                    continue;
+                }
 
-			if (data.constructor === GL.Texture) {
-				data.bind(tex_slot);
-				if (!in_tex) {
-					in_tex = data;
-				}
-				data = tex_slot;
-				tex_slot++;
-			}
-			shader.setUniform(info.name, data); //data is tex_slot
-		}
+                if (data.constructor === GL.Texture) {
+                    data.bind(tex_slot);
+                    if (!in_tex) {
+                        in_tex = data;
+                    }
+                    data = tex_slot;
+                    tex_slot++;
+                }
+                shader.setUniform(info.name, data); //data is tex_slot
+            }
 
-		var uniforms = this._uniforms;
-		var type = LGraphTexture.getTextureType( this.properties.precision, in_tex );
+        var uniforms = this._uniforms;
+        var type = LGraphTexture.getTextureType(
+            this.properties.precision,
+            in_tex
+        );
 
-		//render to texture
-		var w = this.properties.width | 0;
-		var h = this.properties.height | 0;
-		if (w == 0) {
-			w = in_tex ? in_tex.width : gl.canvas.width;
-		}
-		if (h == 0) {
-			h = in_tex ? in_tex.height : gl.canvas.height;
-		}
-		uniforms.texSize[0] = w;
-		uniforms.texSize[1] = h;
-		uniforms.texSize[2] = 1/w;
-		uniforms.texSize[3] = 1/h;
-		uniforms.time = this.graph.getTime();
-		uniforms.u_value = this.properties.u_value;
-		uniforms.u_color.set( this.properties.u_color );
+        //render to texture
+        var w = this.properties.width | 0;
+        var h = this.properties.height | 0;
+        if (w == 0) {
+            w = in_tex ? in_tex.width : gl.canvas.width;
+        }
+        if (h == 0) {
+            h = in_tex ? in_tex.height : gl.canvas.height;
+        }
+        uniforms.texSize[0] = w;
+        uniforms.texSize[1] = h;
+        uniforms.texSize[2] = 1 / w;
+        uniforms.texSize[3] = 1 / h;
+        uniforms.time = this.graph.getTime();
+        uniforms.u_value = this.properties.u_value;
+        uniforms.u_color.set(this.properties.u_color);
 
-		if ( !this._tex || this._tex.type != type ||  this._tex.width != w || this._tex.height != h ) {
-			this._tex = new GL.Texture(w, h, {  type: type, format: gl.RGBA, filter: gl.LINEAR });
-		}
-		var tex = this._tex;
-		tex.drawTo(function() {
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        if (
+            !this._tex ||
+            this._tex.type != type ||
+            this._tex.width != w ||
+            this._tex.height != h
+        ) {
+            this._tex = new GL.Texture(w, h, {
+                type: type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
+        var tex = this._tex;
+        tex.drawTo(function () {
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureShader.pixel_shader =
-"precision highp float;\n\
+    LGraphTextureShader.pixel_shader =
+        "precision highp float;\n\
 \n\
 varying vec2 v_coord;\n\
 uniform float time; //time in seconds\n\
@@ -17147,106 +17260,109 @@ void main() {\n\
 }\n\
 ";
 
-	LiteGraph.registerNodeType("texture/shader", LGraphTextureShader);
+    LiteGraph.registerNodeType("texture/shader", LGraphTextureShader);
 
-	// Texture Scale Offset
+    // Texture Scale Offset
 
-	function LGraphTextureScaleOffset() {
-		this.addInput("in", "Texture");
-		this.addInput("scale", "vec2");
-		this.addInput("offset", "vec2");
-		this.addOutput("out", "Texture");
-		this.properties = {
-			offset: vec2.fromValues(0, 0),
-			scale: vec2.fromValues(1, 1),
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+    function LGraphTextureScaleOffset() {
+        this.addInput("in", "Texture");
+        this.addInput("scale", "vec2");
+        this.addInput("offset", "vec2");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            offset: vec2.fromValues(0, 0),
+            scale: vec2.fromValues(1, 1),
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureScaleOffset.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureScaleOffset.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureScaleOffset.title = "Scale/Offset";
-	LGraphTextureScaleOffset.desc = "Applies an scaling and offseting";
+    LGraphTextureScaleOffset.title = "Scale/Offset";
+    LGraphTextureScaleOffset.desc = "Applies an scaling and offseting";
 
-	LGraphTextureScaleOffset.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
+    LGraphTextureScaleOffset.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
 
-		if (!this.isOutputConnected(0) || !tex) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0) || !tex) {
+            return;
+        } //saves work
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var width = tex.width;
-		var height = tex.height;
-		var type =  this.precision === LGraphTexture.LOW ? gl.UNSIGNED_BYTE : gl.HIGH_PRECISION_FORMAT;
-		if (this.precision === LGraphTexture.DEFAULT) {
-			type = tex.type;
-		}
+        var width = tex.width;
+        var height = tex.height;
+        var type =
+            this.precision === LGraphTexture.LOW
+                ? gl.UNSIGNED_BYTE
+                : gl.HIGH_PRECISION_FORMAT;
+        if (this.precision === LGraphTexture.DEFAULT) {
+            type = tex.type;
+        }
 
-		if (
-			!this._tex ||
-			this._tex.width != width ||
-			this._tex.height != height ||
-			this._tex.type != type
-		) {
-			this._tex = new GL.Texture(width, height, {
-				type: type,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        if (
+            !this._tex ||
+            this._tex.width != width ||
+            this._tex.height != height ||
+            this._tex.type != type
+        ) {
+            this._tex = new GL.Texture(width, height, {
+                type: type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var shader = this._shader;
+        var shader = this._shader;
 
-		if (!shader) {
-			shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureScaleOffset.pixel_shader
-			);
-		}
+        if (!shader) {
+            shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureScaleOffset.pixel_shader
+            );
+        }
 
-		var scale = this.getInputData(1);
-		if (scale) {
-			this.properties.scale[0] = scale[0];
-			this.properties.scale[1] = scale[1];
-		} else {
-			scale = this.properties.scale;
-		}
+        var scale = this.getInputData(1);
+        if (scale) {
+            this.properties.scale[0] = scale[0];
+            this.properties.scale[1] = scale[1];
+        } else {
+            scale = this.properties.scale;
+        }
 
-		var offset = this.getInputData(2);
-		if (offset) {
-			this.properties.offset[0] = offset[0];
-			this.properties.offset[1] = offset[1];
-		} else {
-			offset = this.properties.offset;
-		}
+        var offset = this.getInputData(2);
+        if (offset) {
+            this.properties.offset[0] = offset[0];
+            this.properties.offset[1] = offset[1];
+        } else {
+            offset = this.properties.offset;
+        }
 
-		this._tex.drawTo(function() {
-			gl.disable(gl.DEPTH_TEST);
-			gl.disable(gl.CULL_FACE);
-			gl.disable(gl.BLEND);
-			tex.bind(0);
-			var mesh = Mesh.getScreenQuad();
-			shader
-				.uniforms({
-					u_texture: 0,
-					u_scale: scale,
-					u_offset: offset
-				})
-				.draw(mesh);
-		});
+        this._tex.drawTo(function () {
+            gl.disable(gl.DEPTH_TEST);
+            gl.disable(gl.CULL_FACE);
+            gl.disable(gl.BLEND);
+            tex.bind(0);
+            var mesh = Mesh.getScreenQuad();
+            shader
+                .uniforms({
+                    u_texture: 0,
+                    u_scale: scale,
+                    u_offset: offset,
+                })
+                .draw(mesh);
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureScaleOffset.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureScaleOffset.pixel_shader =
+        "precision highp float;\n\
 		\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_textureB;\n\
@@ -17261,126 +17377,121 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType(
-		"texture/scaleOffset",
-		LGraphTextureScaleOffset
-	);
+    LiteGraph.registerNodeType("texture/scaleOffset", LGraphTextureScaleOffset);
 
-	// Warp (distort a texture) *************************
+    // Warp (distort a texture) *************************
 
-	function LGraphTextureWarp() {
-		this.addInput("in", "Texture");
-		this.addInput("warp", "Texture");
-		this.addInput("factor", "number");
-		this.addOutput("out", "Texture");
-		this.properties = {
-			factor: 0.01,
-			scale: [1,1],
-			offset: [0,0],
-			precision: LGraphTexture.DEFAULT
-		};
+    function LGraphTextureWarp() {
+        this.addInput("in", "Texture");
+        this.addInput("warp", "Texture");
+        this.addInput("factor", "number");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            factor: 0.01,
+            scale: [1, 1],
+            offset: [0, 0],
+            precision: LGraphTexture.DEFAULT,
+        };
 
-		this._uniforms = { 
-			u_texture: 0, 
-			u_textureB: 1, 
-			u_factor: 1, 
-			u_scale: vec2.create(),
-			u_offset: vec2.create()
-		};
-	}
+        this._uniforms = {
+            u_texture: 0,
+            u_textureB: 1,
+            u_factor: 1,
+            u_scale: vec2.create(),
+            u_offset: vec2.create(),
+        };
+    }
 
-	LGraphTextureWarp.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureWarp.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureWarp.title = "Warp";
-	LGraphTextureWarp.desc = "Texture warp operation";
+    LGraphTextureWarp.title = "Warp";
+    LGraphTextureWarp.desc = "Texture warp operation";
 
-	LGraphTextureWarp.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
+    LGraphTextureWarp.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var texB = this.getInputData(1);
+        var texB = this.getInputData(1);
 
-		var width = 512;
-		var height = 512;
-		var type = gl.UNSIGNED_BYTE;
-		if (tex) {
-			width = tex.width;
-			height = tex.height;
-			type = tex.type;
-		} else if (texB) {
-			width = texB.width;
-			height = texB.height;
-			type = texB.type;
-		}
+        var width = 512;
+        var height = 512;
+        var type = gl.UNSIGNED_BYTE;
+        if (tex) {
+            width = tex.width;
+            height = tex.height;
+            type = tex.type;
+        } else if (texB) {
+            width = texB.width;
+            height = texB.height;
+            type = texB.type;
+        }
 
-		if (!tex && !this._tex) {
-			this._tex = new GL.Texture(width, height, {
-				type:
-					this.precision === LGraphTexture.LOW
-						? gl.UNSIGNED_BYTE
-						: gl.HIGH_PRECISION_FORMAT,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		} else {
-			this._tex = LGraphTexture.getTargetTexture(
-				tex || this._tex,
-				this._tex,
-				this.properties.precision
-			);
-		}
+        if (!tex && !this._tex) {
+            this._tex = new GL.Texture(width, height, {
+                type:
+                    this.precision === LGraphTexture.LOW
+                        ? gl.UNSIGNED_BYTE
+                        : gl.HIGH_PRECISION_FORMAT,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        } else {
+            this._tex = LGraphTexture.getTargetTexture(
+                tex || this._tex,
+                this._tex,
+                this.properties.precision
+            );
+        }
 
-		var shader = this._shader;
+        var shader = this._shader;
 
-		if (!shader) {
-			shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureWarp.pixel_shader
-			);
-		}
+        if (!shader) {
+            shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureWarp.pixel_shader
+            );
+        }
 
-		var factor = this.getInputData(2);
-		if (factor != null) {
-			this.properties.factor = factor;
-		} else {
-			factor = parseFloat(this.properties.factor);
-		}
-		var uniforms = this._uniforms;
-		uniforms.u_factor = factor;
-		uniforms.u_scale.set( this.properties.scale );
-		uniforms.u_offset.set( this.properties.offset );
+        var factor = this.getInputData(2);
+        if (factor != null) {
+            this.properties.factor = factor;
+        } else {
+            factor = parseFloat(this.properties.factor);
+        }
+        var uniforms = this._uniforms;
+        uniforms.u_factor = factor;
+        uniforms.u_scale.set(this.properties.scale);
+        uniforms.u_offset.set(this.properties.offset);
 
-		this._tex.drawTo(function() {
-			gl.disable(gl.DEPTH_TEST);
-			gl.disable(gl.CULL_FACE);
-			gl.disable(gl.BLEND);
-			if (tex) {
-				tex.bind(0);
-			}
-			if (texB) {
-				texB.bind(1);
-			}
-			var mesh = Mesh.getScreenQuad();
-			shader
-				.uniforms( uniforms )
-				.draw(mesh);
-		});
+        this._tex.drawTo(function () {
+            gl.disable(gl.DEPTH_TEST);
+            gl.disable(gl.CULL_FACE);
+            gl.disable(gl.BLEND);
+            if (tex) {
+                tex.bind(0);
+            }
+            if (texB) {
+                texB.bind(1);
+            }
+            var mesh = Mesh.getScreenQuad();
+            shader.uniforms(uniforms).draw(mesh);
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureWarp.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureWarp.pixel_shader =
+        "precision highp float;\n\
 		\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_textureB;\n\
@@ -17396,120 +17507,134 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/warp", LGraphTextureWarp);
+    LiteGraph.registerNodeType("texture/warp", LGraphTextureWarp);
 
-	//****************************************************
+    //****************************************************
 
-	// Texture to Viewport *****************************************
-	function LGraphTextureToViewport() {
-		this.addInput("Texture", "Texture");
-		this.properties = {
-			additive: false,
-			antialiasing: false,
-			filter: true,
-			disable_alpha: false,
-			gamma: 1.0,
-			viewport: [0,0,1,1]
-		};
-		this.size[0] = 130;
-	}
+    // Texture to Viewport *****************************************
+    function LGraphTextureToViewport() {
+        this.addInput("Texture", "Texture");
+        this.properties = {
+            additive: false,
+            antialiasing: false,
+            filter: true,
+            disable_alpha: false,
+            gamma: 1.0,
+            viewport: [0, 0, 1, 1],
+        };
+        this.size[0] = 130;
+    }
 
-	LGraphTextureToViewport.title = "to Viewport";
-	LGraphTextureToViewport.desc = "Texture to viewport";
+    LGraphTextureToViewport.title = "to Viewport";
+    LGraphTextureToViewport.desc = "Texture to viewport";
 
-	LGraphTextureToViewport._prev_viewport = new Float32Array(4);
+    LGraphTextureToViewport._prev_viewport = new Float32Array(4);
 
-	LGraphTextureToViewport.prototype.onDrawBackground = function( ctx )
-	{
-		if ( this.flags.collapsed || this.size[1] <= 40 )
-			return;
+    LGraphTextureToViewport.prototype.onDrawBackground = function (ctx) {
+        if (this.flags.collapsed || this.size[1] <= 40) return;
 
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		ctx.drawImage( ctx == gl ? tex : gl.canvas, 10,30, this.size[0] -20, this.size[1] -40);
-	}
+        ctx.drawImage(
+            ctx == gl ? tex : gl.canvas,
+            10,
+            30,
+            this.size[0] - 20,
+            this.size[1] - 40
+        );
+    };
 
-	LGraphTextureToViewport.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphTextureToViewport.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (this.properties.disable_alpha) {
-			gl.disable(gl.BLEND);
-		} else {
-			gl.enable(gl.BLEND);
-			if (this.properties.additive) {
-				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-			} else {
-				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-			}
-		}
+        if (this.properties.disable_alpha) {
+            gl.disable(gl.BLEND);
+        } else {
+            gl.enable(gl.BLEND);
+            if (this.properties.additive) {
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+            } else {
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            }
+        }
 
-		gl.disable(gl.DEPTH_TEST);
-		var gamma = this.properties.gamma || 1.0;
-		if (this.isInputConnected(1)) {
-			gamma = this.getInputData(1);
-		}
+        gl.disable(gl.DEPTH_TEST);
+        var gamma = this.properties.gamma || 1.0;
+        if (this.isInputConnected(1)) {
+            gamma = this.getInputData(1);
+        }
 
-		tex.setParameter(
-			gl.TEXTURE_MAG_FILTER,
-			this.properties.filter ? gl.LINEAR : gl.NEAREST
-		);
+        tex.setParameter(
+            gl.TEXTURE_MAG_FILTER,
+            this.properties.filter ? gl.LINEAR : gl.NEAREST
+        );
 
-		var old_viewport = LGraphTextureToViewport._prev_viewport;
-		old_viewport.set( gl.viewport_data );
-		var new_view = this.properties.viewport;
-		gl.viewport( old_viewport[0] + old_viewport[2] * new_view[0], old_viewport[1] + old_viewport[3] * new_view[1], old_viewport[2] * new_view[2], old_viewport[3] * new_view[3] );
-		var viewport = gl.getViewport(); //gl.getParameter(gl.VIEWPORT);
+        var old_viewport = LGraphTextureToViewport._prev_viewport;
+        old_viewport.set(gl.viewport_data);
+        var new_view = this.properties.viewport;
+        gl.viewport(
+            old_viewport[0] + old_viewport[2] * new_view[0],
+            old_viewport[1] + old_viewport[3] * new_view[1],
+            old_viewport[2] * new_view[2],
+            old_viewport[3] * new_view[3]
+        );
+        var viewport = gl.getViewport(); //gl.getParameter(gl.VIEWPORT);
 
-		if (this.properties.antialiasing) {
-			if (!LGraphTextureToViewport._shader) {
-				LGraphTextureToViewport._shader = new GL.Shader(
-					GL.Shader.SCREEN_VERTEX_SHADER,
-					LGraphTextureToViewport.aa_pixel_shader
-				);
-			}
+        if (this.properties.antialiasing) {
+            if (!LGraphTextureToViewport._shader) {
+                LGraphTextureToViewport._shader = new GL.Shader(
+                    GL.Shader.SCREEN_VERTEX_SHADER,
+                    LGraphTextureToViewport.aa_pixel_shader
+                );
+            }
 
-			var mesh = Mesh.getScreenQuad();
-			tex.bind(0);
-			LGraphTextureToViewport._shader
-				.uniforms({
-					u_texture: 0,
-					uViewportSize: [tex.width, tex.height],
-					u_igamma: 1 / gamma,
-					inverseVP: [1 / tex.width, 1 / tex.height]
-				})
-				.draw(mesh);
-		} else {
-			if (gamma != 1.0) {
-				if (!LGraphTextureToViewport._gamma_shader) {
-					LGraphTextureToViewport._gamma_shader = new GL.Shader(
-						Shader.SCREEN_VERTEX_SHADER,
-						LGraphTextureToViewport.gamma_pixel_shader
-					);
-				}
-				tex.toViewport(LGraphTextureToViewport._gamma_shader, {
-					u_texture: 0,
-					u_igamma: 1 / gamma
-				});
-			} else {
-				tex.toViewport();
-			}
-		}
+            var mesh = Mesh.getScreenQuad();
+            tex.bind(0);
+            LGraphTextureToViewport._shader
+                .uniforms({
+                    u_texture: 0,
+                    uViewportSize: [tex.width, tex.height],
+                    u_igamma: 1 / gamma,
+                    inverseVP: [1 / tex.width, 1 / tex.height],
+                })
+                .draw(mesh);
+        } else {
+            if (gamma != 1.0) {
+                if (!LGraphTextureToViewport._gamma_shader) {
+                    LGraphTextureToViewport._gamma_shader = new GL.Shader(
+                        Shader.SCREEN_VERTEX_SHADER,
+                        LGraphTextureToViewport.gamma_pixel_shader
+                    );
+                }
+                tex.toViewport(LGraphTextureToViewport._gamma_shader, {
+                    u_texture: 0,
+                    u_igamma: 1 / gamma,
+                });
+            } else {
+                tex.toViewport();
+            }
+        }
 
-		gl.viewport( old_viewport[0], old_viewport[1], old_viewport[2], old_viewport[3] );
-	};
+        gl.viewport(
+            old_viewport[0],
+            old_viewport[1],
+            old_viewport[2],
+            old_viewport[3]
+        );
+    };
 
-	LGraphTextureToViewport.prototype.onGetInputs = function() {
-		return [["gamma", "number"]];
-	};
+    LGraphTextureToViewport.prototype.onGetInputs = function () {
+        return [["gamma", "number"]];
+    };
 
-	LGraphTextureToViewport.aa_pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureToViewport.aa_pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -17569,8 +17694,8 @@ void main() {\n\
 		}\n\
 		";
 
-	LGraphTextureToViewport.gamma_pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureToViewport.gamma_pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -17582,204 +17707,201 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType(
-		"texture/toviewport",
-		LGraphTextureToViewport
-	);
+    LiteGraph.registerNodeType("texture/toviewport", LGraphTextureToViewport);
 
-	// Texture Copy *****************************************
-	function LGraphTextureCopy() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("", "Texture");
-		this.properties = {
-			size: 0,
-			generate_mipmaps: false,
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+    // Texture Copy *****************************************
+    function LGraphTextureCopy() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("", "Texture");
+        this.properties = {
+            size: 0,
+            generate_mipmaps: false,
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureCopy.title = "Copy";
-	LGraphTextureCopy.desc = "Copy Texture";
-	LGraphTextureCopy.widgets_info = {
-		size: {
-			widget: "combo",
-			values: [0, 32, 64, 128, 256, 512, 1024, 2048]
-		},
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureCopy.title = "Copy";
+    LGraphTextureCopy.desc = "Copy Texture";
+    LGraphTextureCopy.widgets_info = {
+        size: {
+            widget: "combo",
+            values: [0, 32, 64, 128, 256, 512, 1024, 2048],
+        },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureCopy.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex && !this._temp_texture) {
-			return;
-		}
+    LGraphTextureCopy.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex && !this._temp_texture) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		//copy the texture
-		if (tex) {
-			var width = tex.width;
-			var height = tex.height;
+        //copy the texture
+        if (tex) {
+            var width = tex.width;
+            var height = tex.height;
 
-			if (this.properties.size != 0) {
-				width = this.properties.size;
-				height = this.properties.size;
-			}
+            if (this.properties.size != 0) {
+                width = this.properties.size;
+                height = this.properties.size;
+            }
 
-			var temp = this._temp_texture;
+            var temp = this._temp_texture;
 
-			var type = tex.type;
-			if (this.properties.precision === LGraphTexture.LOW) {
-				type = gl.UNSIGNED_BYTE;
-			} else if (this.properties.precision === LGraphTexture.HIGH) {
-				type = gl.HIGH_PRECISION_FORMAT;
-			}
+            var type = tex.type;
+            if (this.properties.precision === LGraphTexture.LOW) {
+                type = gl.UNSIGNED_BYTE;
+            } else if (this.properties.precision === LGraphTexture.HIGH) {
+                type = gl.HIGH_PRECISION_FORMAT;
+            }
 
-			if (
-				!temp ||
-				temp.width != width ||
-				temp.height != height ||
-				temp.type != type
-			) {
-				var minFilter = gl.LINEAR;
-				if (
-					this.properties.generate_mipmaps &&
-					isPowerOfTwo(width) &&
-					isPowerOfTwo(height)
-				) {
-					minFilter = gl.LINEAR_MIPMAP_LINEAR;
-				}
-				this._temp_texture = new GL.Texture(width, height, {
-					type: type,
-					format: gl.RGBA,
-					minFilter: minFilter,
-					magFilter: gl.LINEAR
-				});
-			}
-			tex.copyTo(this._temp_texture);
+            if (
+                !temp ||
+                temp.width != width ||
+                temp.height != height ||
+                temp.type != type
+            ) {
+                var minFilter = gl.LINEAR;
+                if (
+                    this.properties.generate_mipmaps &&
+                    isPowerOfTwo(width) &&
+                    isPowerOfTwo(height)
+                ) {
+                    minFilter = gl.LINEAR_MIPMAP_LINEAR;
+                }
+                this._temp_texture = new GL.Texture(width, height, {
+                    type: type,
+                    format: gl.RGBA,
+                    minFilter: minFilter,
+                    magFilter: gl.LINEAR,
+                });
+            }
+            tex.copyTo(this._temp_texture);
 
-			if (this.properties.generate_mipmaps) {
-				this._temp_texture.bind(0);
-				gl.generateMipmap(this._temp_texture.texture_type);
-				this._temp_texture.unbind(0);
-			}
-		}
+            if (this.properties.generate_mipmaps) {
+                this._temp_texture.bind(0);
+                gl.generateMipmap(this._temp_texture.texture_type);
+                this._temp_texture.unbind(0);
+            }
+        }
 
-		this.setOutputData(0, this._temp_texture);
-	};
+        this.setOutputData(0, this._temp_texture);
+    };
 
-	LiteGraph.registerNodeType("texture/copy", LGraphTextureCopy);
+    LiteGraph.registerNodeType("texture/copy", LGraphTextureCopy);
 
-	// Texture Downsample *****************************************
-	function LGraphTextureDownsample() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("", "Texture");
-		this.properties = {
-			iterations: 1,
-			generate_mipmaps: false,
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+    // Texture Downsample *****************************************
+    function LGraphTextureDownsample() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("", "Texture");
+        this.properties = {
+            iterations: 1,
+            generate_mipmaps: false,
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureDownsample.title = "Downsample";
-	LGraphTextureDownsample.desc = "Downsample Texture";
-	LGraphTextureDownsample.widgets_info = {
-		iterations: { type: "number", step: 1, precision: 0, min: 0 },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureDownsample.title = "Downsample";
+    LGraphTextureDownsample.desc = "Downsample Texture";
+    LGraphTextureDownsample.widgets_info = {
+        iterations: { type: "number", step: 1, precision: 0, min: 0 },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureDownsample.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex && !this._temp_texture) {
-			return;
-		}
+    LGraphTextureDownsample.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex && !this._temp_texture) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		//we do not allow any texture different than texture 2D
-		if (!tex || tex.texture_type !== GL.TEXTURE_2D) {
-			return;
-		}
+        //we do not allow any texture different than texture 2D
+        if (!tex || tex.texture_type !== GL.TEXTURE_2D) {
+            return;
+        }
 
-		if (this.properties.iterations < 1) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.iterations < 1) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var shader = LGraphTextureDownsample._shader;
-		if (!shader) {
-			LGraphTextureDownsample._shader = shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureDownsample.pixel_shader
-			);
-		}
+        var shader = LGraphTextureDownsample._shader;
+        if (!shader) {
+            LGraphTextureDownsample._shader = shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureDownsample.pixel_shader
+            );
+        }
 
-		var width = tex.width | 0;
-		var height = tex.height | 0;
-		var type = tex.type;
-		if (this.properties.precision === LGraphTexture.LOW) {
-			type = gl.UNSIGNED_BYTE;
-		} else if (this.properties.precision === LGraphTexture.HIGH) {
-			type = gl.HIGH_PRECISION_FORMAT;
-		}
-		var iterations = this.properties.iterations || 1;
+        var width = tex.width | 0;
+        var height = tex.height | 0;
+        var type = tex.type;
+        if (this.properties.precision === LGraphTexture.LOW) {
+            type = gl.UNSIGNED_BYTE;
+        } else if (this.properties.precision === LGraphTexture.HIGH) {
+            type = gl.HIGH_PRECISION_FORMAT;
+        }
+        var iterations = this.properties.iterations || 1;
 
-		var origin = tex;
-		var target = null;
+        var origin = tex;
+        var target = null;
 
-		var temp = [];
-		var options = {
-			type: type,
-			format: tex.format
-		};
+        var temp = [];
+        var options = {
+            type: type,
+            format: tex.format,
+        };
 
-		var offset = vec2.create();
-		var uniforms = {
-			u_offset: offset
-		};
+        var offset = vec2.create();
+        var uniforms = {
+            u_offset: offset,
+        };
 
-		if (this._texture) {
-			GL.Texture.releaseTemporary(this._texture);
-		}
+        if (this._texture) {
+            GL.Texture.releaseTemporary(this._texture);
+        }
 
-		for (var i = 0; i < iterations; ++i) {
-			offset[0] = 1 / width;
-			offset[1] = 1 / height;
-			width = width >> 1 || 0;
-			height = height >> 1 || 0;
-			target = GL.Texture.getTemporary(width, height, options);
-			temp.push(target);
-			origin.setParameter(GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-			origin.copyTo(target, shader, uniforms);
-			if (width == 1 && height == 1) {
-				break;
-			} //nothing else to do
-			origin = target;
-		}
+        for (var i = 0; i < iterations; ++i) {
+            offset[0] = 1 / width;
+            offset[1] = 1 / height;
+            width = width >> 1 || 0;
+            height = height >> 1 || 0;
+            target = GL.Texture.getTemporary(width, height, options);
+            temp.push(target);
+            origin.setParameter(GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+            origin.copyTo(target, shader, uniforms);
+            if (width == 1 && height == 1) {
+                break;
+            } //nothing else to do
+            origin = target;
+        }
 
-		//keep the last texture used
-		this._texture = temp.pop();
+        //keep the last texture used
+        this._texture = temp.pop();
 
-		//free the rest
-		for (var i = 0; i < temp.length; ++i) {
-			GL.Texture.releaseTemporary(temp[i]);
-		}
+        //free the rest
+        for (var i = 0; i < temp.length; ++i) {
+            GL.Texture.releaseTemporary(temp[i]);
+        }
 
-		if (this.properties.generate_mipmaps) {
-			this._texture.bind(0);
-			gl.generateMipmap(this._texture.texture_type);
-			this._texture.unbind(0);
-		}
+        if (this.properties.generate_mipmaps) {
+            this._texture.bind(0);
+            gl.generateMipmap(this._texture.texture_type);
+            this._texture.unbind(0);
+        }
 
-		this.setOutputData(0, this._texture);
-	};
+        this.setOutputData(0, this._texture);
+    };
 
-	LGraphTextureDownsample.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureDownsample.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform sampler2D u_texture;\n\
 		uniform vec2 u_offset;\n\
@@ -17794,206 +17916,203 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType(
-		"texture/downsample",
-		LGraphTextureDownsample
-	);
+    LiteGraph.registerNodeType("texture/downsample", LGraphTextureDownsample);
 
+    function LGraphTextureResize() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("", "Texture");
+        this.properties = {
+            size: [512, 512],
+            generate_mipmaps: false,
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
+    LGraphTextureResize.title = "Resize";
+    LGraphTextureResize.desc = "Resize Texture";
+    LGraphTextureResize.widgets_info = {
+        iterations: { type: "number", step: 1, precision: 0, min: 0 },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	function LGraphTextureResize() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("", "Texture");
-		this.properties = {
-			size: [512,512],
-			generate_mipmaps: false,
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+    LGraphTextureResize.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex && !this._temp_texture) {
+            return;
+        }
 
-	LGraphTextureResize.title = "Resize";
-	LGraphTextureResize.desc = "Resize Texture";
-	LGraphTextureResize.widgets_info = {
-		iterations: { type: "number", step: 1, precision: 0, min: 0 },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureResize.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex && !this._temp_texture) {
-			return;
-		}
+        //we do not allow any texture different than texture 2D
+        if (!tex || tex.texture_type !== GL.TEXTURE_2D) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var width = this.properties.size[0] | 0;
+        var height = this.properties.size[1] | 0;
+        if (width == 0) width = tex.width;
+        if (height == 0) height = tex.height;
+        var type = tex.type;
+        if (this.properties.precision === LGraphTexture.LOW) {
+            type = gl.UNSIGNED_BYTE;
+        } else if (this.properties.precision === LGraphTexture.HIGH) {
+            type = gl.HIGH_PRECISION_FORMAT;
+        }
 
-		//we do not allow any texture different than texture 2D
-		if (!tex || tex.texture_type !== GL.TEXTURE_2D) {
-			return;
-		}
+        if (
+            !this._texture ||
+            this._texture.width != width ||
+            this._texture.height != height ||
+            this._texture.type != type
+        )
+            this._texture = new GL.Texture(width, height, { type: type });
 
-		var width = this.properties.size[0] | 0;
-		var height = this.properties.size[1] | 0;
-		if(width == 0)
-			width = tex.width;
-		if(height == 0)
-			height = tex.height;
-		var type = tex.type;
-		if (this.properties.precision === LGraphTexture.LOW) {
-			type = gl.UNSIGNED_BYTE;
-		} else if (this.properties.precision === LGraphTexture.HIGH) {
-			type = gl.HIGH_PRECISION_FORMAT;
-		}
+        tex.copyTo(this._texture);
 
-		if( !this._texture || this._texture.width != width || this._texture.height != height || this._texture.type != type )
-			this._texture = new GL.Texture( width, height, { type: type } );
+        if (this.properties.generate_mipmaps) {
+            this._texture.bind(0);
+            gl.generateMipmap(this._texture.texture_type);
+            this._texture.unbind(0);
+        }
 
-		tex.copyTo( this._texture );
+        this.setOutputData(0, this._texture);
+    };
 
-		if (this.properties.generate_mipmaps) {
-			this._texture.bind(0);
-			gl.generateMipmap(this._texture.texture_type);
-			this._texture.unbind(0);
-		}
+    LiteGraph.registerNodeType("texture/resize", LGraphTextureResize);
 
-		this.setOutputData(0, this._texture);
-	};
+    // Texture Average  *****************************************
+    function LGraphTextureAverage() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("tex", "Texture");
+        this.addOutput("avg", "vec4");
+        this.addOutput("lum", "number");
+        this.properties = {
+            use_previous_frame: true, //to avoid stalls
+            high_quality: false, //to use as much pixels as possible
+        };
 
-	LiteGraph.registerNodeType( "texture/resize", LGraphTextureResize );
+        this._uniforms = {
+            u_texture: 0,
+            u_mipmap_offset: 0,
+        };
+        this._luminance = new Float32Array(4);
+    }
 
-	// Texture Average  *****************************************
-	function LGraphTextureAverage() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("tex", "Texture");
-		this.addOutput("avg", "vec4");
-		this.addOutput("lum", "number");
-		this.properties = {
-			use_previous_frame: true, //to avoid stalls 
-			high_quality: false //to use as much pixels as possible
-		};
+    LGraphTextureAverage.title = "Average";
+    LGraphTextureAverage.desc =
+        "Compute a partial average (32 random samples) of a texture and stores it as a 1x1 pixel texture.\n If high_quality is true, then it generates the mipmaps first and reads from the lower one.";
 
-		this._uniforms = {
-			u_texture: 0,
-			u_mipmap_offset: 0
-		};
-		this._luminance = new Float32Array(4);
-	}
+    LGraphTextureAverage.prototype.onExecute = function () {
+        if (!this.properties.use_previous_frame) {
+            this.updateAverage();
+        }
 
-	LGraphTextureAverage.title = "Average";
-	LGraphTextureAverage.desc =
-		"Compute a partial average (32 random samples) of a texture and stores it as a 1x1 pixel texture.\n If high_quality is true, then it generates the mipmaps first and reads from the lower one.";
+        var v = this._luminance;
+        this.setOutputData(0, this._temp_texture);
+        this.setOutputData(1, v);
+        this.setOutputData(2, (v[0] + v[1] + v[2]) / 3);
+    };
 
-	LGraphTextureAverage.prototype.onExecute = function() {
-		if (!this.properties.use_previous_frame) {
-			this.updateAverage();
-		}
+    //executed before rendering the frame
+    LGraphTextureAverage.prototype.onPreRenderExecute = function () {
+        this.updateAverage();
+    };
 
-		var v = this._luminance;
-		this.setOutputData(0, this._temp_texture);
-		this.setOutputData(1, v);
-		this.setOutputData(2, (v[0] + v[1] + v[2]) / 3);
-	};
+    LGraphTextureAverage.prototype.updateAverage = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-	//executed before rendering the frame
-	LGraphTextureAverage.prototype.onPreRenderExecute = function() {
-		this.updateAverage();
-	};
+        if (
+            !this.isOutputConnected(0) &&
+            !this.isOutputConnected(1) &&
+            !this.isOutputConnected(2)
+        ) {
+            return;
+        } //saves work
 
-	LGraphTextureAverage.prototype.updateAverage = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        if (!LGraphTextureAverage._shader) {
+            LGraphTextureAverage._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureAverage.pixel_shader
+            );
+            //creates 256 random numbers and stores them in two mat4
+            var samples = new Float32Array(16);
+            for (var i = 0; i < samples.length; ++i) {
+                samples[i] = Math.random(); //poorly distributed samples
+            }
+            //upload only once
+            LGraphTextureAverage._shader.uniforms({
+                u_samples_a: samples.subarray(0, 16),
+                u_samples_b: samples.subarray(16, 32),
+            });
+        }
 
-		if (
-			!this.isOutputConnected(0) &&
-			!this.isOutputConnected(1) &&
-			!this.isOutputConnected(2)
-		) {
-			return;
-		} //saves work
+        var temp = this._temp_texture;
+        var type = gl.UNSIGNED_BYTE;
+        if (tex.type != type) {
+            //force floats, half floats cannot be read with gl.readPixels
+            type = gl.FLOAT;
+        }
 
-		if (!LGraphTextureAverage._shader) {
-			LGraphTextureAverage._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureAverage.pixel_shader
-			);
-			//creates 256 random numbers and stores them in two mat4
-			var samples = new Float32Array(16);
-			for (var i = 0; i < samples.length; ++i) {
-				samples[i] = Math.random(); //poorly distributed samples
-			}
-			//upload only once
-			LGraphTextureAverage._shader.uniforms({
-				u_samples_a: samples.subarray(0, 16),
-				u_samples_b: samples.subarray(16, 32)
-			});
-		}
+        if (!temp || temp.type != type) {
+            this._temp_texture = new GL.Texture(1, 1, {
+                type: type,
+                format: gl.RGBA,
+                filter: gl.NEAREST,
+            });
+        }
 
-		var temp = this._temp_texture;
-		var type = gl.UNSIGNED_BYTE;
-		if (tex.type != type) {
-			//force floats, half floats cannot be read with gl.readPixels
-			type = gl.FLOAT;
-		}
+        this._uniforms.u_mipmap_offset = 0;
 
-		if (!temp || temp.type != type) {
-			this._temp_texture = new GL.Texture(1, 1, {
-				type: type,
-				format: gl.RGBA,
-				filter: gl.NEAREST
-			});
-		}
+        if (this.properties.high_quality) {
+            if (
+                !this._temp_pot2_texture ||
+                this._temp_pot2_texture.type != type
+            )
+                this._temp_pot2_texture = new GL.Texture(512, 512, {
+                    type: type,
+                    format: gl.RGBA,
+                    minFilter: gl.LINEAR_MIPMAP_LINEAR,
+                    magFilter: gl.LINEAR,
+                });
 
-		this._uniforms.u_mipmap_offset = 0;
+            tex.copyTo(this._temp_pot2_texture);
+            tex = this._temp_pot2_texture;
+            tex.bind(0);
+            gl.generateMipmap(GL.TEXTURE_2D);
+            this._uniforms.u_mipmap_offset = 9;
+        }
 
-		if(this.properties.high_quality)
-		{
-			if( !this._temp_pot2_texture || this._temp_pot2_texture.type != type )
-				this._temp_pot2_texture = new GL.Texture(512, 512, {
-					type: type,
-					format: gl.RGBA,
-					minFilter: gl.LINEAR_MIPMAP_LINEAR,
-					magFilter: gl.LINEAR
-				});
+        var shader = LGraphTextureAverage._shader;
+        var uniforms = this._uniforms;
+        uniforms.u_mipmap_offset = this.properties.mipmap_offset;
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        this._temp_texture.drawTo(function () {
+            tex.toViewport(shader, uniforms);
+        });
 
-			tex.copyTo( this._temp_pot2_texture );
-			tex = this._temp_pot2_texture;
-			tex.bind(0);
-			gl.generateMipmap(GL.TEXTURE_2D);
-			this._uniforms.u_mipmap_offset = 9;
-		}
+        if (this.isOutputConnected(1) || this.isOutputConnected(2)) {
+            var pixel = this._temp_texture.getPixels();
+            if (pixel) {
+                var v = this._luminance;
+                var type = this._temp_texture.type;
+                v.set(pixel);
+                if (type == gl.UNSIGNED_BYTE) {
+                    vec4.scale(v, v, 1 / 255);
+                } else if (type == GL.HALF_FLOAT || type == GL.HALF_FLOAT_OES) {
+                    //no half floats possible, hard to read back unless copyed to a FLOAT texture, so temp_texture is always forced to FLOAT
+                }
+            }
+        }
+    };
 
-		var shader = LGraphTextureAverage._shader;
-		var uniforms = this._uniforms;
-		uniforms.u_mipmap_offset = this.properties.mipmap_offset;
-		gl.disable(gl.DEPTH_TEST);
-		gl.disable(gl.BLEND);
-		this._temp_texture.drawTo(function() {
-			tex.toViewport(shader, uniforms);
-		});
-
-		if (this.isOutputConnected(1) || this.isOutputConnected(2)) {
-			var pixel = this._temp_texture.getPixels();
-			if (pixel) {
-				var v = this._luminance;
-				var type = this._temp_texture.type;
-				v.set(pixel);
-				if (type == gl.UNSIGNED_BYTE) {
-					vec4.scale(v, v, 1 / 255);
-				} else if (
-					type == GL.HALF_FLOAT ||
-					type == GL.HALF_FLOAT_OES
-				) {
-					//no half floats possible, hard to read back unless copyed to a FLOAT texture, so temp_texture is always forced to FLOAT
-				}
-			}
-		}
-	};
-
-	LGraphTextureAverage.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureAverage.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform mat4 u_samples_a;\n\
 		uniform mat4 u_samples_b;\n\
@@ -18014,114 +18133,114 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/average", LGraphTextureAverage);
+    LiteGraph.registerNodeType("texture/average", LGraphTextureAverage);
 
+    // Computes operation between pixels (max, min)  *****************************************
+    function LGraphTextureMinMax() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("min_t", "Texture");
+        this.addOutput("max_t", "Texture");
+        this.addOutput("min", "vec4");
+        this.addOutput("max", "vec4");
+        this.properties = {
+            mode: "max",
+            use_previous_frame: true, //to avoid stalls
+        };
 
+        this._uniforms = {
+            u_texture: 0,
+        };
 
-	// Computes operation between pixels (max, min)  *****************************************
-	function LGraphTextureMinMax() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("min_t", "Texture");
-		this.addOutput("max_t", "Texture");
-		this.addOutput("min", "vec4");
-		this.addOutput("max", "vec4");
-		this.properties = {
-			mode: "max",
-			use_previous_frame: true //to avoid stalls 
-		};
+        this._max = new Float32Array(4);
+        this._min = new Float32Array(4);
 
-		this._uniforms = {
-			u_texture: 0
-		};
+        this._textures_chain = [];
+    }
 
-		this._max = new Float32Array(4);
-		this._min = new Float32Array(4);
+    LGraphTextureMinMax.widgets_info = {
+        mode: { widget: "combo", values: ["min", "max", "avg"] },
+    };
 
-		this._textures_chain = [];
-	}
+    LGraphTextureMinMax.title = "MinMax";
+    LGraphTextureMinMax.desc = "Compute the scene min max";
 
-	LGraphTextureMinMax.widgets_info = {
-		mode: { widget: "combo", values: ["min","max","avg"] }
-	};
+    LGraphTextureMinMax.prototype.onExecute = function () {
+        if (!this.properties.use_previous_frame) {
+            this.update();
+        }
 
-	LGraphTextureMinMax.title = "MinMax";
-	LGraphTextureMinMax.desc = "Compute the scene min max";
+        this.setOutputData(0, this._temp_texture);
+        this.setOutputData(1, this._luminance);
+    };
 
-	LGraphTextureMinMax.prototype.onExecute = function() {
-		if (!this.properties.use_previous_frame) {
-			this.update();
-		}
+    //executed before rendering the frame
+    LGraphTextureMinMax.prototype.onPreRenderExecute = function () {
+        this.update();
+    };
 
-		this.setOutputData(0, this._temp_texture);
-		this.setOutputData(1, this._luminance);
-	};
+    LGraphTextureMinMax.prototype.update = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-	//executed before rendering the frame
-	LGraphTextureMinMax.prototype.onPreRenderExecute = function() {
-		this.update();
-	};
+        if (!this.isOutputConnected(0) && !this.isOutputConnected(1)) {
+            return;
+        } //saves work
 
-	LGraphTextureMinMax.prototype.update = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        if (!LGraphTextureMinMax._shader) {
+            LGraphTextureMinMax._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureMinMax.pixel_shader
+            );
+        }
 
-		if ( !this.isOutputConnected(0) && !this.isOutputConnected(1) ) {
-			return;
-		} //saves work
+        var temp = this._temp_texture;
+        var type = gl.UNSIGNED_BYTE;
+        if (tex.type != type) {
+            //force floats, half floats cannot be read with gl.readPixels
+            type = gl.FLOAT;
+        }
 
-		if (!LGraphTextureMinMax._shader) {
-			LGraphTextureMinMax._shader = new GL.Shader( GL.Shader.SCREEN_VERTEX_SHADER, LGraphTextureMinMax.pixel_shader );
-		}
+        var size = 512;
 
-		var temp = this._temp_texture;
-		var type = gl.UNSIGNED_BYTE;
-		if (tex.type != type) {
-			//force floats, half floats cannot be read with gl.readPixels
-			type = gl.FLOAT;
-		}
+        if (
+            !this._textures_chain.length ||
+            this._textures_chain[0].type != type
+        ) {
+            var index = 0;
+            while (i) {
+                this._textures_chain[i] = new GL.Texture(size, size, {
+                    type: type,
+                    format: gl.RGBA,
+                    filter: gl.NEAREST,
+                });
+                size = size >> 2;
+                i++;
+                if (size == 1) break;
+            }
+        }
 
-		var size = 512;
+        tex.copyTo(this._textures_chain[0]);
+        var prev = this._textures_chain[0];
+        for (var i = 1; i <= this._textures_chain.length; ++i) {
+            var tex = this._textures_chain[i];
 
-		if( !this._textures_chain.length || this._textures_chain[0].type != type )
-		{
-			var index = 0;
-			while(i)
-			{
-				this._textures_chain[i] = new GL.Texture( size, size, {
-					type: type,
-					format: gl.RGBA,
-					filter: gl.NEAREST
-				});
-				size = size >> 2;
-				i++;
-				if(size == 1)
-					break;
-			}
-		}
+            prev = tex;
+        }
 
-		tex.copyTo( this._textures_chain[0] );
-		var prev = this._textures_chain[0];
-		for(var i = 1; i <= this._textures_chain.length; ++i)
-		{
-			var tex = this._textures_chain[i];
+        var shader = LGraphTextureMinMax._shader;
+        var uniforms = this._uniforms;
+        uniforms.u_mipmap_offset = this.properties.mipmap_offset;
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        this._temp_texture.drawTo(function () {
+            tex.toViewport(shader, uniforms);
+        });
+    };
 
-			prev = tex;				
-		}
-
-		var shader = LGraphTextureMinMax._shader;
-		var uniforms = this._uniforms;
-		uniforms.u_mipmap_offset = this.properties.mipmap_offset;
-		gl.disable(gl.DEPTH_TEST);
-		gl.disable(gl.BLEND);
-		this._temp_texture.drawTo(function() {
-			tex.toViewport(shader, uniforms);
-		});
-	};
-
-	LGraphTextureMinMax.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureMinMax.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform mat4 u_samples_a;\n\
 		uniform mat4 u_samples_b;\n\
@@ -18142,77 +18261,80 @@ void main() {\n\
 		}\n\
 		";
 
-	//LiteGraph.registerNodeType("texture/clustered_operation", LGraphTextureClusteredOperation);
+    //LiteGraph.registerNodeType("texture/clustered_operation", LGraphTextureClusteredOperation);
 
+    function LGraphTextureTemporalSmooth() {
+        this.addInput("in", "Texture");
+        this.addInput("factor", "Number");
+        this.addOutput("out", "Texture");
+        this.properties = { factor: 0.5 };
+        this._uniforms = {
+            u_texture: 0,
+            u_textureB: 1,
+            u_factor: this.properties.factor,
+        };
+    }
 
-	function LGraphTextureTemporalSmooth() {
-		this.addInput("in", "Texture");
-		this.addInput("factor", "Number");
-		this.addOutput("out", "Texture");
-		this.properties = { factor: 0.5 };
-		this._uniforms = {
-			u_texture: 0,
-			u_textureB: 1,
-			u_factor: this.properties.factor
-		};
-	}
+    LGraphTextureTemporalSmooth.title = "Smooth";
+    LGraphTextureTemporalSmooth.desc = "Smooth texture over time";
 
-	LGraphTextureTemporalSmooth.title = "Smooth";
-	LGraphTextureTemporalSmooth.desc = "Smooth texture over time";
+    LGraphTextureTemporalSmooth.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex || !this.isOutputConnected(0)) {
+            return;
+        }
 
-	LGraphTextureTemporalSmooth.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex || !this.isOutputConnected(0)) {
-			return;
-		}
+        if (!LGraphTextureTemporalSmooth._shader) {
+            LGraphTextureTemporalSmooth._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureTemporalSmooth.pixel_shader
+            );
+        }
 
-		if (!LGraphTextureTemporalSmooth._shader) {
-			LGraphTextureTemporalSmooth._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureTemporalSmooth.pixel_shader
-			);
-		}
+        var temp = this._temp_texture;
+        if (
+            !temp ||
+            temp.type != tex.type ||
+            temp.width != tex.width ||
+            temp.height != tex.height
+        ) {
+            var options = {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.NEAREST,
+            };
+            this._temp_texture = new GL.Texture(tex.width, tex.height, options);
+            this._temp_texture2 = new GL.Texture(
+                tex.width,
+                tex.height,
+                options
+            );
+            tex.copyTo(this._temp_texture2);
+        }
 
-		var temp = this._temp_texture;
-		if (
-			!temp ||
-			temp.type != tex.type ||
-			temp.width != tex.width ||
-			temp.height != tex.height
-		) {
-			var options = {
-				type: tex.type,
-				format: gl.RGBA,
-				filter: gl.NEAREST
-			};
-			this._temp_texture = new GL.Texture(tex.width, tex.height, options );
-			this._temp_texture2 = new GL.Texture(tex.width, tex.height, options );
-			tex.copyTo(this._temp_texture2);
-		}
+        var tempA = this._temp_texture;
+        var tempB = this._temp_texture2;
 
-		var tempA = this._temp_texture;
-		var tempB = this._temp_texture2;
+        var shader = LGraphTextureTemporalSmooth._shader;
+        var uniforms = this._uniforms;
+        uniforms.u_factor = 1.0 - this.getInputOrProperty("factor");
 
-		var shader = LGraphTextureTemporalSmooth._shader;
-		var uniforms = this._uniforms;
-		uniforms.u_factor = 1.0 - this.getInputOrProperty("factor");
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
+        tempA.drawTo(function () {
+            tempB.bind(1);
+            tex.toViewport(shader, uniforms);
+        });
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
-		tempA.drawTo(function() {
-			tempB.bind(1);
-			tex.toViewport(shader, uniforms);
-		});
+        this.setOutputData(0, tempA);
 
-		this.setOutputData(0, tempA);
+        //swap
+        this._temp_texture = tempB;
+        this._temp_texture2 = tempA;
+    };
 
-		//swap
-		this._temp_texture = tempB;
-		this._temp_texture2 = tempA;
-	};
-
-	LGraphTextureTemporalSmooth.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureTemporalSmooth.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_textureB;\n\
@@ -18224,97 +18346,106 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType( "texture/temporal_smooth", LGraphTextureTemporalSmooth );
+    LiteGraph.registerNodeType(
+        "texture/temporal_smooth",
+        LGraphTextureTemporalSmooth
+    );
 
+    function LGraphTextureLinearAvgSmooth() {
+        this.addInput("in", "Texture");
+        this.addOutput("avg", "Texture");
+        this.addOutput("array", "Texture");
+        this.properties = { samples: 64, frames_interval: 1 };
+        this._uniforms = {
+            u_texture: 0,
+            u_textureB: 1,
+            u_samples: this.properties.samples,
+            u_isamples: 1 / this.properties.samples,
+        };
+        this.frame = 0;
+    }
 
-	function LGraphTextureLinearAvgSmooth() {
-		this.addInput("in", "Texture");
-		this.addOutput("avg", "Texture");
-		this.addOutput("array", "Texture");
-		this.properties = { samples: 64, frames_interval: 1 };
-		this._uniforms = {
-			u_texture: 0,
-			u_textureB: 1,
-			u_samples: this.properties.samples,
-			u_isamples: 1/this.properties.samples
-		};
-		this.frame = 0;
-	}
+    LGraphTextureLinearAvgSmooth.title = "Lineal Avg Smooth";
+    LGraphTextureLinearAvgSmooth.desc = "Smooth texture linearly over time";
 
-	LGraphTextureLinearAvgSmooth.title = "Lineal Avg Smooth";
-	LGraphTextureLinearAvgSmooth.desc = "Smooth texture linearly over time";
+    LGraphTextureLinearAvgSmooth["@samples"] = {
+        type: "number",
+        min: 1,
+        max: 64,
+        step: 1,
+        precision: 1,
+    };
 
-	LGraphTextureLinearAvgSmooth["@samples"] = { type: "number", min: 1, max: 64, step: 1, precision: 1 };
+    LGraphTextureLinearAvgSmooth.prototype.getPreviewTexture = function () {
+        return this._temp_texture2;
+    };
 
-	LGraphTextureLinearAvgSmooth.prototype.getPreviewTexture = function()
-	{
-		return this._temp_texture2;
-	}
+    LGraphTextureLinearAvgSmooth.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex || !this.isOutputConnected(0)) {
+            return;
+        }
 
-	LGraphTextureLinearAvgSmooth.prototype.onExecute = function() {
+        if (!LGraphTextureLinearAvgSmooth._shader) {
+            LGraphTextureLinearAvgSmooth._shader_copy = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureLinearAvgSmooth.pixel_shader_copy
+            );
+            LGraphTextureLinearAvgSmooth._shader_avg = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureLinearAvgSmooth.pixel_shader_avg
+            );
+        }
 
-		var tex = this.getInputData(0);
-		if (!tex || !this.isOutputConnected(0)) {
-			return;
-		}
+        var samples = Math.clamp(this.properties.samples, 0, 64);
+        var frame = this.frame;
+        var interval = this.properties.frames_interval;
 
-		if (!LGraphTextureLinearAvgSmooth._shader) {
-			LGraphTextureLinearAvgSmooth._shader_copy = new GL.Shader( GL.Shader.SCREEN_VERTEX_SHADER, LGraphTextureLinearAvgSmooth.pixel_shader_copy );
-			LGraphTextureLinearAvgSmooth._shader_avg = new GL.Shader( GL.Shader.SCREEN_VERTEX_SHADER, LGraphTextureLinearAvgSmooth.pixel_shader_avg );
-		}
+        if (interval == 0 || frame % interval == 0) {
+            var temp = this._temp_texture;
+            if (!temp || temp.type != tex.type || temp.width != samples) {
+                var options = {
+                    type: tex.type,
+                    format: gl.RGBA,
+                    filter: gl.NEAREST,
+                };
+                this._temp_texture = new GL.Texture(samples, 1, options);
+                this._temp_texture2 = new GL.Texture(samples, 1, options);
+                this._temp_texture_out = new GL.Texture(1, 1, options);
+            }
 
-		var samples = Math.clamp(this.properties.samples,0,64);
-		var frame = this.frame;
-		var interval = this.properties.frames_interval;
+            var tempA = this._temp_texture;
+            var tempB = this._temp_texture2;
 
-		if( interval == 0 || frame % interval == 0 )
-		{
-			var temp = this._temp_texture;
-			if ( !temp || temp.type != tex.type || temp.width != samples ) {
-				var options = {
-					type: tex.type,
-					format: gl.RGBA,
-					filter: gl.NEAREST
-				};
-				this._temp_texture = new GL.Texture( samples, 1, options );
-				this._temp_texture2 = new GL.Texture( samples, 1, options );
-				this._temp_texture_out = new GL.Texture( 1, 1, options );
-			}
+            var shader_copy = LGraphTextureLinearAvgSmooth._shader_copy;
+            var shader_avg = LGraphTextureLinearAvgSmooth._shader_avg;
+            var uniforms = this._uniforms;
+            uniforms.u_samples = samples;
+            uniforms.u_isamples = 1.0 / samples;
 
-			var tempA = this._temp_texture;
-			var tempB = this._temp_texture2;
+            gl.disable(gl.BLEND);
+            gl.disable(gl.DEPTH_TEST);
+            tempA.drawTo(function () {
+                tempB.bind(1);
+                tex.toViewport(shader_copy, uniforms);
+            });
 
-			var shader_copy = LGraphTextureLinearAvgSmooth._shader_copy;
-			var shader_avg = LGraphTextureLinearAvgSmooth._shader_avg;
-			var uniforms = this._uniforms;
-			uniforms.u_samples = samples;
-			uniforms.u_isamples = 1.0 / samples;
+            this._temp_texture_out.drawTo(function () {
+                tempA.toViewport(shader_avg, uniforms);
+            });
 
-			gl.disable(gl.BLEND);
-			gl.disable(gl.DEPTH_TEST);
-			tempA.drawTo(function() {
-				tempB.bind(1);
-				tex.toViewport( shader_copy, uniforms );
-			});
+            this.setOutputData(0, this._temp_texture_out);
 
-			this._temp_texture_out.drawTo(function() {
-				tempA.toViewport( shader_avg, uniforms );
-			});
+            //swap
+            this._temp_texture = tempB;
+            this._temp_texture2 = tempA;
+        } else this.setOutputData(0, this._temp_texture_out);
+        this.setOutputData(1, this._temp_texture2);
+        this.frame++;
+    };
 
-			this.setOutputData( 0, this._temp_texture_out );
-
-			//swap
-			this._temp_texture = tempB;
-			this._temp_texture2 = tempA;
-		}
-		else
-			this.setOutputData(0, this._temp_texture_out);
-		this.setOutputData(1, this._temp_texture2);
-		this.frame++;
-	};
-
-	LGraphTextureLinearAvgSmooth.pixel_shader_copy =
-		"precision highp float;\n\
+    LGraphTextureLinearAvgSmooth.pixel_shader_copy =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_textureB;\n\
@@ -18329,8 +18460,8 @@ void main() {\n\
 		}\n\
 		";
 
-	LGraphTextureLinearAvgSmooth.pixel_shader_avg =
-		"precision highp float;\n\
+    LGraphTextureLinearAvgSmooth.pixel_shader_avg =
+        "precision highp float;\n\
 		precision highp float;\n\
 		uniform sampler2D u_texture;\n\
 		uniform int u_samples;\n\
@@ -18349,150 +18480,152 @@ void main() {\n\
 		}\n\
 		";
 
+    LiteGraph.registerNodeType(
+        "texture/linear_avg_smooth",
+        LGraphTextureLinearAvgSmooth
+    );
 
-	LiteGraph.registerNodeType( "texture/linear_avg_smooth", LGraphTextureLinearAvgSmooth );
+    // Image To Texture *****************************************
+    function LGraphImageToTexture() {
+        this.addInput("Image", "image");
+        this.addOutput("", "Texture");
+        this.properties = {};
+    }
 
-	// Image To Texture *****************************************
-	function LGraphImageToTexture() {
-		this.addInput("Image", "image");
-		this.addOutput("", "Texture");
-		this.properties = {};
-	}
+    LGraphImageToTexture.title = "Image to Texture";
+    LGraphImageToTexture.desc = "Uploads an image to the GPU";
+    //LGraphImageToTexture.widgets_info = { size: { widget:"combo", values:[0,32,64,128,256,512,1024,2048]} };
 
-	LGraphImageToTexture.title = "Image to Texture";
-	LGraphImageToTexture.desc = "Uploads an image to the GPU";
-	//LGraphImageToTexture.widgets_info = { size: { widget:"combo", values:[0,32,64,128,256,512,1024,2048]} };
+    LGraphImageToTexture.prototype.onExecute = function () {
+        var img = this.getInputData(0);
+        if (!img) {
+            return;
+        }
 
-	LGraphImageToTexture.prototype.onExecute = function() {
-		var img = this.getInputData(0);
-		if (!img) {
-			return;
-		}
+        var width = img.videoWidth || img.width;
+        var height = img.videoHeight || img.height;
 
-		var width = img.videoWidth || img.width;
-		var height = img.videoHeight || img.height;
+        //this is in case we are using a webgl canvas already, no need to reupload it
+        if (img.gltexture) {
+            this.setOutputData(0, img.gltexture);
+            return;
+        }
 
-		//this is in case we are using a webgl canvas already, no need to reupload it
-		if (img.gltexture) {
-			this.setOutputData(0, img.gltexture);
-			return;
-		}
+        var temp = this._temp_texture;
+        if (!temp || temp.width != width || temp.height != height) {
+            this._temp_texture = new GL.Texture(width, height, {
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var temp = this._temp_texture;
-		if (!temp || temp.width != width || temp.height != height) {
-			this._temp_texture = new GL.Texture(width, height, {
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        try {
+            this._temp_texture.uploadImage(img);
+        } catch (err) {
+            console.error(
+                "image comes from an unsafe location, cannot be uploaded to webgl: " +
+                    err
+            );
+            return;
+        }
 
-		try {
-			this._temp_texture.uploadImage(img);
-		} catch (err) {
-			console.error(
-				"image comes from an unsafe location, cannot be uploaded to webgl: " +
-					err
-			);
-			return;
-		}
+        this.setOutputData(0, this._temp_texture);
+    };
 
-		this.setOutputData(0, this._temp_texture);
-	};
+    LiteGraph.registerNodeType("texture/imageToTexture", LGraphImageToTexture);
 
-	LiteGraph.registerNodeType(
-		"texture/imageToTexture",
-		LGraphImageToTexture
-	);
+    // Texture LUT *****************************************
+    function LGraphTextureLUT() {
+        this.addInput("Texture", "Texture");
+        this.addInput("LUT", "Texture");
+        this.addInput("Intensity", "number");
+        this.addOutput("", "Texture");
+        this.properties = {
+            enabled: true,
+            intensity: 1,
+            precision: LGraphTexture.DEFAULT,
+            texture: null,
+        };
 
-	// Texture LUT *****************************************
-	function LGraphTextureLUT() {
-		this.addInput("Texture", "Texture");
-		this.addInput("LUT", "Texture");
-		this.addInput("Intensity", "number");
-		this.addOutput("", "Texture");
-		this.properties = { enabled: true, intensity: 1, precision: LGraphTexture.DEFAULT, texture: null };
+        if (!LGraphTextureLUT._shader) {
+            LGraphTextureLUT._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureLUT.pixel_shader
+            );
+        }
+    }
 
-		if (!LGraphTextureLUT._shader) {
-			LGraphTextureLUT._shader = new GL.Shader( Shader.SCREEN_VERTEX_SHADER, LGraphTextureLUT.pixel_shader );
-		}
-	}
+    LGraphTextureLUT.widgets_info = {
+        texture: { widget: "texture" },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureLUT.widgets_info = {
-		texture: { widget: "texture" },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureLUT.title = "LUT";
+    LGraphTextureLUT.desc = "Apply LUT to Texture";
 
-	LGraphTextureLUT.title = "LUT";
-	LGraphTextureLUT.desc = "Apply LUT to Texture";
+    LGraphTextureLUT.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureLUT.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var tex = this.getInputData(0);
 
-		var tex = this.getInputData(0);
+        if (
+            this.properties.precision === LGraphTexture.PASS_THROUGH ||
+            this.properties.enabled === false
+        ) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH || this.properties.enabled === false) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (!tex) {
+            return;
+        }
 
-		if (!tex) {
-			return;
-		}
+        var lut_tex = this.getInputData(1);
 
-		var lut_tex = this.getInputData(1);
+        if (!lut_tex) {
+            lut_tex = LGraphTexture.getTexture(this.properties.texture);
+        }
 
-		if (!lut_tex) {
-			lut_tex = LGraphTexture.getTexture(this.properties.texture);
-		}
+        if (!lut_tex) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (!lut_tex) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        lut_tex.bind(0);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
-		lut_tex.bind(0);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-		gl.texParameteri(
-			gl.TEXTURE_2D,
-			gl.TEXTURE_WRAP_S,
-			gl.CLAMP_TO_EDGE
-		);
-		gl.texParameteri(
-			gl.TEXTURE_2D,
-			gl.TEXTURE_WRAP_T,
-			gl.CLAMP_TO_EDGE
-		);
-		gl.bindTexture(gl.TEXTURE_2D, null);
+        var intensity = this.properties.intensity;
+        if (this.isInputConnected(2)) {
+            this.properties.intensity = intensity = this.getInputData(2);
+        }
 
-		var intensity = this.properties.intensity;
-		if (this.isInputConnected(2)) {
-			this.properties.intensity = intensity = this.getInputData(2);
-		}
+        this._tex = LGraphTexture.getTargetTexture(
+            tex,
+            this._tex,
+            this.properties.precision
+        );
 
-		this._tex = LGraphTexture.getTargetTexture(
-			tex,
-			this._tex,
-			this.properties.precision
-		);
+        //var mesh = Mesh.getScreenQuad();
 
-		//var mesh = Mesh.getScreenQuad();
+        this._tex.drawTo(function () {
+            lut_tex.bind(1);
+            tex.toViewport(LGraphTextureLUT._shader, {
+                u_texture: 0,
+                u_textureB: 1,
+                u_amount: intensity,
+            });
+        });
 
-		this._tex.drawTo(function() {
-			lut_tex.bind(1);
-			tex.toViewport(LGraphTextureLUT._shader, {
-				u_texture: 0,
-				u_textureB: 1,
-				u_amount: intensity
-			});
-		});
+        this.setOutputData(0, this._tex);
+    };
 
-		this.setOutputData(0, this._tex);
-	};
-
-	LGraphTextureLUT.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureLUT.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -18521,101 +18654,129 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/LUT", LGraphTextureLUT);
+    LiteGraph.registerNodeType("texture/LUT", LGraphTextureLUT);
 
+    // Texture LUT *****************************************
+    function LGraphTextureEncode() {
+        this.addInput("Texture", "Texture");
+        this.addInput("Atlas", "Texture");
+        this.addOutput("", "Texture");
+        this.properties = {
+            enabled: true,
+            num_row_symbols: 4,
+            symbol_size: 16,
+            brightness: 1,
+            colorize: false,
+            filter: false,
+            invert: false,
+            precision: LGraphTexture.DEFAULT,
+            generate_mipmaps: false,
+            texture: null,
+        };
 
-	// Texture LUT *****************************************
-	function LGraphTextureEncode() {
-		this.addInput("Texture", "Texture");
-		this.addInput("Atlas", "Texture");
-		this.addOutput("", "Texture");
-		this.properties = { enabled: true, num_row_symbols: 4, symbol_size: 16, brightness: 1, colorize: false, filter: false, invert: false, precision: LGraphTexture.DEFAULT, generate_mipmaps: false, texture: null };
+        if (!LGraphTextureEncode._shader) {
+            LGraphTextureEncode._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureEncode.pixel_shader
+            );
+        }
 
-		if (!LGraphTextureEncode._shader) {
-			LGraphTextureEncode._shader = new GL.Shader( Shader.SCREEN_VERTEX_SHADER, LGraphTextureEncode.pixel_shader );
-		}
+        this._uniforms = {
+            u_texture: 0,
+            u_textureB: 1,
+            u_row_simbols: 4,
+            u_simbol_size: 16,
+            u_res: vec2.create(),
+        };
+    }
 
-		this._uniforms = {
-				u_texture: 0,
-				u_textureB: 1,
-				u_row_simbols: 4,
-				u_simbol_size: 16,
-				u_res: vec2.create()
-		};
-	}
+    LGraphTextureEncode.widgets_info = {
+        texture: { widget: "texture" },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureEncode.widgets_info = {
-		texture: { widget: "texture" },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureEncode.title = "Encode";
+    LGraphTextureEncode.desc = "Apply a texture atlas to encode a texture";
 
-	LGraphTextureEncode.title = "Encode";
-	LGraphTextureEncode.desc = "Apply a texture atlas to encode a texture";
+    LGraphTextureEncode.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureEncode.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var tex = this.getInputData(0);
 
-		var tex = this.getInputData(0);
+        if (
+            this.properties.precision === LGraphTexture.PASS_THROUGH ||
+            this.properties.enabled === false
+        ) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH || this.properties.enabled === false) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (!tex) {
+            return;
+        }
 
-		if (!tex) {
-			return;
-		}
+        var symbols_tex = this.getInputData(1);
 
-		var symbols_tex = this.getInputData(1);
+        if (!symbols_tex) {
+            symbols_tex = LGraphTexture.getTexture(this.properties.texture);
+        }
 
-		if (!symbols_tex) {
-			symbols_tex = LGraphTexture.getTexture(this.properties.texture);
-		}
+        if (!symbols_tex) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (!symbols_tex) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        symbols_tex.bind(0);
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_MAG_FILTER,
+            this.properties.filter ? gl.LINEAR : gl.NEAREST
+        );
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_MIN_FILTER,
+            this.properties.filter ? gl.LINEAR : gl.NEAREST
+        );
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
-		symbols_tex.bind(0);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.properties.filter ? gl.LINEAR : gl.NEAREST );
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.properties.filter ? gl.LINEAR : gl.NEAREST );
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
-		gl.bindTexture(gl.TEXTURE_2D, null);
+        var uniforms = this._uniforms;
+        uniforms.u_row_simbols = Math.floor(this.properties.num_row_symbols);
+        uniforms.u_symbol_size = this.properties.symbol_size;
+        uniforms.u_brightness = this.properties.brightness;
+        uniforms.u_invert = this.properties.invert ? 1 : 0;
+        uniforms.u_colorize = this.properties.colorize ? 1 : 0;
 
-		var uniforms = this._uniforms;
-		uniforms.u_row_simbols = Math.floor(this.properties.num_row_symbols);
-		uniforms.u_symbol_size = this.properties.symbol_size;
-		uniforms.u_brightness = this.properties.brightness;
-		uniforms.u_invert = this.properties.invert ? 1 : 0;
-		uniforms.u_colorize = this.properties.colorize ? 1 : 0;
+        this._tex = LGraphTexture.getTargetTexture(
+            tex,
+            this._tex,
+            this.properties.precision
+        );
+        uniforms.u_res[0] = this._tex.width;
+        uniforms.u_res[1] = this._tex.height;
+        this._tex.bind(0);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-		this._tex = LGraphTexture.getTargetTexture( tex, this._tex, this.properties.precision );
-		uniforms.u_res[0] = this._tex.width;
-		uniforms.u_res[1] = this._tex.height;
-		this._tex.bind(0);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+        this._tex.drawTo(function () {
+            symbols_tex.bind(1);
+            tex.toViewport(LGraphTextureEncode._shader, uniforms);
+        });
 
-		this._tex.drawTo(function() {
-			symbols_tex.bind(1);
-			tex.toViewport(LGraphTextureEncode._shader, uniforms);
-		});
+        if (this.properties.generate_mipmaps) {
+            this._tex.bind(0);
+            gl.generateMipmap(this._tex.texture_type);
+            this._tex.unbind(0);
+        }
 
-		if (this.properties.generate_mipmaps) {
-			this._tex.bind(0);
-			gl.generateMipmap(this._tex.texture_type);
-			this._tex.unbind(0);
-		}
+        this.setOutputData(0, this._tex);
+    };
 
-		this.setOutputData(0, this._tex);
-	};
-
-	LGraphTextureEncode.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureEncode.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -18645,100 +18806,98 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/encode", LGraphTextureEncode);
+    LiteGraph.registerNodeType("texture/encode", LGraphTextureEncode);
 
-	// Texture Channels *****************************************
-	function LGraphTextureChannels() {
-		this.addInput("Texture", "Texture");
+    // Texture Channels *****************************************
+    function LGraphTextureChannels() {
+        this.addInput("Texture", "Texture");
 
-		this.addOutput("R", "Texture");
-		this.addOutput("G", "Texture");
-		this.addOutput("B", "Texture");
-		this.addOutput("A", "Texture");
+        this.addOutput("R", "Texture");
+        this.addOutput("G", "Texture");
+        this.addOutput("B", "Texture");
+        this.addOutput("A", "Texture");
 
-		//this.properties = { use_single_channel: true };
-		if (!LGraphTextureChannels._shader) {
-			LGraphTextureChannels._shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureChannels.pixel_shader
-			);
-		}
-	}
+        //this.properties = { use_single_channel: true };
+        if (!LGraphTextureChannels._shader) {
+            LGraphTextureChannels._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureChannels.pixel_shader
+            );
+        }
+    }
 
-	LGraphTextureChannels.title = "Texture to Channels";
-	LGraphTextureChannels.desc = "Split texture channels";
+    LGraphTextureChannels.title = "Texture to Channels";
+    LGraphTextureChannels.desc = "Split texture channels";
 
-	LGraphTextureChannels.prototype.onExecute = function() {
-		var texA = this.getInputData(0);
-		if (!texA) {
-			return;
-		}
+    LGraphTextureChannels.prototype.onExecute = function () {
+        var texA = this.getInputData(0);
+        if (!texA) {
+            return;
+        }
 
-		if (!this._channels) {
-			this._channels = Array(4);
-		}
+        if (!this._channels) {
+            this._channels = Array(4);
+        }
 
-		//var format = this.properties.use_single_channel ? gl.LUMINANCE : gl.RGBA; //not supported by WebGL1
-		var format = gl.RGB;
-		var connections = 0;
-		for (var i = 0; i < 4; i++) {
-			if (this.isOutputConnected(i)) {
-				if (
-					!this._channels[i] ||
-					this._channels[i].width != texA.width ||
-					this._channels[i].height != texA.height ||
-					this._channels[i].type != texA.type ||
-					this._channels[i].format != format
-				) {
-					this._channels[i] = new GL.Texture(
-						texA.width,
-						texA.height,
-						{
-							type: texA.type,
-							format: format,
-							filter: gl.LINEAR
-						}
-					);
-				}
-				connections++;
-			} else {
-				this._channels[i] = null;
-			}
-		}
+        //var format = this.properties.use_single_channel ? gl.LUMINANCE : gl.RGBA; //not supported by WebGL1
+        var format = gl.RGB;
+        var connections = 0;
+        for (var i = 0; i < 4; i++) {
+            if (this.isOutputConnected(i)) {
+                if (
+                    !this._channels[i] ||
+                    this._channels[i].width != texA.width ||
+                    this._channels[i].height != texA.height ||
+                    this._channels[i].type != texA.type ||
+                    this._channels[i].format != format
+                ) {
+                    this._channels[i] = new GL.Texture(
+                        texA.width,
+                        texA.height,
+                        {
+                            type: texA.type,
+                            format: format,
+                            filter: gl.LINEAR,
+                        }
+                    );
+                }
+                connections++;
+            } else {
+                this._channels[i] = null;
+            }
+        }
 
-		if (!connections) {
-			return;
-		}
+        if (!connections) {
+            return;
+        }
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		var mesh = Mesh.getScreenQuad();
-		var shader = LGraphTextureChannels._shader;
-		var masks = [
-			[1, 0, 0, 0],
-			[0, 1, 0, 0],
-			[0, 0, 1, 0],
-			[0, 0, 0, 1]
-		];
+        var mesh = Mesh.getScreenQuad();
+        var shader = LGraphTextureChannels._shader;
+        var masks = [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ];
 
-		for (var i = 0; i < 4; i++) {
-			if (!this._channels[i]) {
-				continue;
-			}
+        for (var i = 0; i < 4; i++) {
+            if (!this._channels[i]) {
+                continue;
+            }
 
-			this._channels[i].drawTo(function() {
-				texA.bind(0);
-				shader
-					.uniforms({ u_texture: 0, u_mask: masks[i] })
-					.draw(mesh);
-			});
-			this.setOutputData(i, this._channels[i]);
-		}
-	};
+            this._channels[i].drawTo(function () {
+                texA.bind(0);
+                shader.uniforms({ u_texture: 0, u_mask: masks[i] }).draw(mesh);
+            });
+            this.setOutputData(i, this._channels[i]);
+        }
+    };
 
-	LGraphTextureChannels.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureChannels.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -18749,106 +18908,101 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType(
-		"texture/textureChannels",
-		LGraphTextureChannels
-	);
+    LiteGraph.registerNodeType(
+        "texture/textureChannels",
+        LGraphTextureChannels
+    );
 
-	// Texture Channels to Texture *****************************************
-	function LGraphChannelsTexture() {
-		this.addInput("R", "Texture");
-		this.addInput("G", "Texture");
-		this.addInput("B", "Texture");
-		this.addInput("A", "Texture");
+    // Texture Channels to Texture *****************************************
+    function LGraphChannelsTexture() {
+        this.addInput("R", "Texture");
+        this.addInput("G", "Texture");
+        this.addInput("B", "Texture");
+        this.addInput("A", "Texture");
 
-		this.addOutput("Texture", "Texture");
+        this.addOutput("Texture", "Texture");
 
-		this.properties = {
-			precision: LGraphTexture.DEFAULT,
-			R: 1,
-			G: 1,
-			B: 1,
-			A: 1
-		};
-		this._color = vec4.create();
-		this._uniforms = {
-			u_textureR: 0,
-			u_textureG: 1,
-			u_textureB: 2,
-			u_textureA: 3,
-			u_color: this._color
-		};
-	}
+        this.properties = {
+            precision: LGraphTexture.DEFAULT,
+            R: 1,
+            G: 1,
+            B: 1,
+            A: 1,
+        };
+        this._color = vec4.create();
+        this._uniforms = {
+            u_textureR: 0,
+            u_textureG: 1,
+            u_textureB: 2,
+            u_textureA: 3,
+            u_color: this._color,
+        };
+    }
 
-	LGraphChannelsTexture.title = "Channels to Texture";
-	LGraphChannelsTexture.desc = "Split texture channels";
-	LGraphChannelsTexture.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphChannelsTexture.title = "Channels to Texture";
+    LGraphChannelsTexture.desc = "Split texture channels";
+    LGraphChannelsTexture.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphChannelsTexture.prototype.onExecute = function() {
-		var white = LGraphTexture.getWhiteTexture();
-		var texR = this.getInputData(0) || white;
-		var texG = this.getInputData(1) || white;
-		var texB = this.getInputData(2) || white;
-		var texA = this.getInputData(3) || white;
+    LGraphChannelsTexture.prototype.onExecute = function () {
+        var white = LGraphTexture.getWhiteTexture();
+        var texR = this.getInputData(0) || white;
+        var texG = this.getInputData(1) || white;
+        var texB = this.getInputData(2) || white;
+        var texA = this.getInputData(3) || white;
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		var mesh = Mesh.getScreenQuad();
-		if (!LGraphChannelsTexture._shader) {
-			LGraphChannelsTexture._shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphChannelsTexture.pixel_shader
-			);
-		}
-		var shader = LGraphChannelsTexture._shader;
+        var mesh = Mesh.getScreenQuad();
+        if (!LGraphChannelsTexture._shader) {
+            LGraphChannelsTexture._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphChannelsTexture.pixel_shader
+            );
+        }
+        var shader = LGraphChannelsTexture._shader;
 
-		var w = Math.max(texR.width, texG.width, texB.width, texA.width);
-		var h = Math.max(
-			texR.height,
-			texG.height,
-			texB.height,
-			texA.height
-		);
-		var type =
-			this.properties.precision == LGraphTexture.HIGH
-				? LGraphTexture.HIGH_PRECISION_FORMAT
-				: gl.UNSIGNED_BYTE;
+        var w = Math.max(texR.width, texG.width, texB.width, texA.width);
+        var h = Math.max(texR.height, texG.height, texB.height, texA.height);
+        var type =
+            this.properties.precision == LGraphTexture.HIGH
+                ? LGraphTexture.HIGH_PRECISION_FORMAT
+                : gl.UNSIGNED_BYTE;
 
-		if (
-			!this._texture ||
-			this._texture.width != w ||
-			this._texture.height != h ||
-			this._texture.type != type
-		) {
-			this._texture = new GL.Texture(w, h, {
-				type: type,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        if (
+            !this._texture ||
+            this._texture.width != w ||
+            this._texture.height != h ||
+            this._texture.type != type
+        ) {
+            this._texture = new GL.Texture(w, h, {
+                type: type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var color = this._color;
-		color[0] = this.properties.R;
-		color[1] = this.properties.G;
-		color[2] = this.properties.B;
-		color[3] = this.properties.A;
-		var uniforms = this._uniforms;
+        var color = this._color;
+        color[0] = this.properties.R;
+        color[1] = this.properties.G;
+        color[2] = this.properties.B;
+        color[3] = this.properties.A;
+        var uniforms = this._uniforms;
 
-		this._texture.drawTo(function() {
-			texR.bind(0);
-			texG.bind(1);
-			texB.bind(2);
-			texA.bind(3);
-			shader.uniforms(uniforms).draw(mesh);
-		});
-		this.setOutputData(0, this._texture);
-	};
+        this._texture.drawTo(function () {
+            texR.bind(0);
+            texG.bind(1);
+            texB.bind(2);
+            texA.bind(3);
+            shader.uniforms(uniforms).draw(mesh);
+        });
+        this.setOutputData(0, this._texture);
+    };
 
-	LGraphChannelsTexture.pixel_shader =
-		"precision highp float;\n\
+    LGraphChannelsTexture.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_textureR;\n\
@@ -18866,198 +19020,200 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType(
-		"texture/channelsTexture",
-		LGraphChannelsTexture
-	);
+    LiteGraph.registerNodeType(
+        "texture/channelsTexture",
+        LGraphChannelsTexture
+    );
 
-	// Texture Color *****************************************
-	function LGraphTextureColor() {
-		this.addOutput("Texture", "Texture");
+    // Texture Color *****************************************
+    function LGraphTextureColor() {
+        this.addOutput("Texture", "Texture");
 
-		this._tex_color = vec4.create();
-		this.properties = {
-			color: vec4.create(),
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+        this._tex_color = vec4.create();
+        this.properties = {
+            color: vec4.create(),
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureColor.title = "Color";
-	LGraphTextureColor.desc =
-		"Generates a 1x1 texture with a constant color";
+    LGraphTextureColor.title = "Color";
+    LGraphTextureColor.desc = "Generates a 1x1 texture with a constant color";
 
-	LGraphTextureColor.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureColor.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureColor.prototype.onDrawBackground = function(ctx) {
-		var c = this.properties.color;
-		ctx.fillStyle =
-			"rgb(" +
-			Math.floor(Math.clamp(c[0], 0, 1) * 255) +
-			"," +
-			Math.floor(Math.clamp(c[1], 0, 1) * 255) +
-			"," +
-			Math.floor(Math.clamp(c[2], 0, 1) * 255) +
-			")";
-		if (this.flags.collapsed) {
-			this.boxcolor = ctx.fillStyle;
-		} else {
-			ctx.fillRect(0, 0, this.size[0], this.size[1]);
-		}
-	};
+    LGraphTextureColor.prototype.onDrawBackground = function (ctx) {
+        var c = this.properties.color;
+        ctx.fillStyle =
+            "rgb(" +
+            Math.floor(Math.clamp(c[0], 0, 1) * 255) +
+            "," +
+            Math.floor(Math.clamp(c[1], 0, 1) * 255) +
+            "," +
+            Math.floor(Math.clamp(c[2], 0, 1) * 255) +
+            ")";
+        if (this.flags.collapsed) {
+            this.boxcolor = ctx.fillStyle;
+        } else {
+            ctx.fillRect(0, 0, this.size[0], this.size[1]);
+        }
+    };
 
-	LGraphTextureColor.prototype.onExecute = function() {
-		var type =
-			this.properties.precision == LGraphTexture.HIGH
-				? LGraphTexture.HIGH_PRECISION_FORMAT
-				: gl.UNSIGNED_BYTE;
+    LGraphTextureColor.prototype.onExecute = function () {
+        var type =
+            this.properties.precision == LGraphTexture.HIGH
+                ? LGraphTexture.HIGH_PRECISION_FORMAT
+                : gl.UNSIGNED_BYTE;
 
-		if (!this._tex || this._tex.type != type) {
-			this._tex = new GL.Texture(1, 1, {
-				format: gl.RGBA,
-				type: type,
-				minFilter: gl.NEAREST
-			});
-		}
-		var color = this.properties.color;
+        if (!this._tex || this._tex.type != type) {
+            this._tex = new GL.Texture(1, 1, {
+                format: gl.RGBA,
+                type: type,
+                minFilter: gl.NEAREST,
+            });
+        }
+        var color = this.properties.color;
 
-		if (this.inputs) {
-			for (var i = 0; i < this.inputs.length; i++) {
-				var input = this.inputs[i];
-				var v = this.getInputData(i);
-				if (v === undefined) {
-					continue;
-				}
-				switch (input.name) {
-					case "RGB":
-					case "RGBA":
-						color.set(v);
-						break;
-					case "R":
-						color[0] = v;
-						break;
-					case "G":
-						color[1] = v;
-						break;
-					case "B":
-						color[2] = v;
-						break;
-					case "A":
-						color[3] = v;
-						break;
-				}
-			}
-		}
+        if (this.inputs) {
+            for (var i = 0; i < this.inputs.length; i++) {
+                var input = this.inputs[i];
+                var v = this.getInputData(i);
+                if (v === undefined) {
+                    continue;
+                }
+                switch (input.name) {
+                    case "RGB":
+                    case "RGBA":
+                        color.set(v);
+                        break;
+                    case "R":
+                        color[0] = v;
+                        break;
+                    case "G":
+                        color[1] = v;
+                        break;
+                    case "B":
+                        color[2] = v;
+                        break;
+                    case "A":
+                        color[3] = v;
+                        break;
+                }
+            }
+        }
 
-		if (vec4.sqrDist(this._tex_color, color) > 0.001) {
-			this._tex_color.set(color);
-			this._tex.fill(color);
-		}
-		this.setOutputData(0, this._tex);
-	};
+        if (vec4.sqrDist(this._tex_color, color) > 0.001) {
+            this._tex_color.set(color);
+            this._tex.fill(color);
+        }
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureColor.prototype.onGetInputs = function() {
-		return [
-			["RGB", "vec3"],
-			["RGBA", "vec4"],
-			["R", "number"],
-			["G", "number"],
-			["B", "number"],
-			["A", "number"]
-		];
-	};
+    LGraphTextureColor.prototype.onGetInputs = function () {
+        return [
+            ["RGB", "vec3"],
+            ["RGBA", "vec4"],
+            ["R", "number"],
+            ["G", "number"],
+            ["B", "number"],
+            ["A", "number"],
+        ];
+    };
 
-	LiteGraph.registerNodeType("texture/color", LGraphTextureColor);
+    LiteGraph.registerNodeType("texture/color", LGraphTextureColor);
 
-	// Texture Channels to Texture *****************************************
-	function LGraphTextureGradient() {
-		this.addInput("A", "color");
-		this.addInput("B", "color");
-		this.addOutput("Texture", "Texture");
+    // Texture Channels to Texture *****************************************
+    function LGraphTextureGradient() {
+        this.addInput("A", "color");
+        this.addInput("B", "color");
+        this.addOutput("Texture", "Texture");
 
-		this.properties = {
-			angle: 0,
-			scale: 1,
-			A: [0, 0, 0],
-			B: [1, 1, 1],
-			texture_size: 32
-		};
-		if (!LGraphTextureGradient._shader) {
-			LGraphTextureGradient._shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureGradient.pixel_shader
-			);
-		}
+        this.properties = {
+            angle: 0,
+            scale: 1,
+            A: [0, 0, 0],
+            B: [1, 1, 1],
+            texture_size: 32,
+        };
+        if (!LGraphTextureGradient._shader) {
+            LGraphTextureGradient._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureGradient.pixel_shader
+            );
+        }
 
-		this._uniforms = {
-			u_angle: 0,
-			u_colorA: vec3.create(),
-			u_colorB: vec3.create()
-		};
-	}
+        this._uniforms = {
+            u_angle: 0,
+            u_colorA: vec3.create(),
+            u_colorB: vec3.create(),
+        };
+    }
 
-	LGraphTextureGradient.title = "Gradient";
-	LGraphTextureGradient.desc = "Generates a gradient";
-	LGraphTextureGradient["@A"] = { type: "color" };
-	LGraphTextureGradient["@B"] = { type: "color" };
-	LGraphTextureGradient["@texture_size"] = {
-		type: "enum",
-		values: [32, 64, 128, 256, 512]
-	};
+    LGraphTextureGradient.title = "Gradient";
+    LGraphTextureGradient.desc = "Generates a gradient";
+    LGraphTextureGradient["@A"] = { type: "color" };
+    LGraphTextureGradient["@B"] = { type: "color" };
+    LGraphTextureGradient["@texture_size"] = {
+        type: "enum",
+        values: [32, 64, 128, 256, 512],
+    };
 
-	LGraphTextureGradient.prototype.onExecute = function() {
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+    LGraphTextureGradient.prototype.onExecute = function () {
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		var mesh = GL.Mesh.getScreenQuad();
-		var shader = LGraphTextureGradient._shader;
+        var mesh = GL.Mesh.getScreenQuad();
+        var shader = LGraphTextureGradient._shader;
 
-		var A = this.getInputData(0);
-		if (!A) {
-			A = this.properties.A;
-		}
-		var B = this.getInputData(1);
-		if (!B) {
-			B = this.properties.B;
-		}
+        var A = this.getInputData(0);
+        if (!A) {
+            A = this.properties.A;
+        }
+        var B = this.getInputData(1);
+        if (!B) {
+            B = this.properties.B;
+        }
 
-		//angle and scale
-		for (var i = 2; i < this.inputs.length; i++) {
-			var input = this.inputs[i];
-			var v = this.getInputData(i);
-			if (v === undefined) {
-				continue;
-			}
-			this.properties[input.name] = v;
-		}
+        //angle and scale
+        for (var i = 2; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            var v = this.getInputData(i);
+            if (v === undefined) {
+                continue;
+            }
+            this.properties[input.name] = v;
+        }
 
-		var uniforms = this._uniforms;
-		this._uniforms.u_angle = this.properties.angle * DEG2RAD;
-		this._uniforms.u_scale = this.properties.scale;
-		vec3.copy(uniforms.u_colorA, A);
-		vec3.copy(uniforms.u_colorB, B);
+        var uniforms = this._uniforms;
+        this._uniforms.u_angle = this.properties.angle * DEG2RAD;
+        this._uniforms.u_scale = this.properties.scale;
+        vec3.copy(uniforms.u_colorA, A);
+        vec3.copy(uniforms.u_colorB, B);
 
-		var size = parseInt(this.properties.texture_size);
-		if (!this._tex || this._tex.width != size) {
-			this._tex = new GL.Texture(size, size, {
-				format: gl.RGB,
-				filter: gl.LINEAR
-			});
-		}
+        var size = parseInt(this.properties.texture_size);
+        if (!this._tex || this._tex.width != size) {
+            this._tex = new GL.Texture(size, size, {
+                format: gl.RGB,
+                filter: gl.LINEAR,
+            });
+        }
 
-		this._tex.drawTo(function() {
-			shader.uniforms(uniforms).draw(mesh);
-		});
-		this.setOutputData(0, this._tex);
-	};
+        this._tex.drawTo(function () {
+            shader.uniforms(uniforms).draw(mesh);
+        });
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureGradient.prototype.onGetInputs = function() {
-		return [["angle", "number"], ["scale", "number"]];
-	};
+    LGraphTextureGradient.prototype.onGetInputs = function () {
+        return [
+            ["angle", "number"],
+            ["scale", "number"],
+        ];
+    };
 
-	LGraphTextureGradient.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureGradient.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform float u_angle;\n\
@@ -19081,105 +19237,112 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/gradient", LGraphTextureGradient);
+    LiteGraph.registerNodeType("texture/gradient", LGraphTextureGradient);
 
-	// Texture Mix *****************************************
-	function LGraphTextureMix() {
-		this.addInput("A", "Texture");
-		this.addInput("B", "Texture");
-		this.addInput("Mixer", "Texture");
+    // Texture Mix *****************************************
+    function LGraphTextureMix() {
+        this.addInput("A", "Texture");
+        this.addInput("B", "Texture");
+        this.addInput("Mixer", "Texture");
 
-		this.addOutput("Texture", "Texture");
-		this.properties = { factor: 0.5, size_from_biggest: true, invert: false, precision: LGraphTexture.DEFAULT };
-		this._uniforms = {
-			u_textureA: 0,
-			u_textureB: 1,
-			u_textureMix: 2,
-			u_mix: vec4.create()
-		};
-	}
+        this.addOutput("Texture", "Texture");
+        this.properties = {
+            factor: 0.5,
+            size_from_biggest: true,
+            invert: false,
+            precision: LGraphTexture.DEFAULT,
+        };
+        this._uniforms = {
+            u_textureA: 0,
+            u_textureB: 1,
+            u_textureMix: 2,
+            u_mix: vec4.create(),
+        };
+    }
 
-	LGraphTextureMix.title = "Mix";
-	LGraphTextureMix.desc = "Generates a texture mixing two textures";
+    LGraphTextureMix.title = "Mix";
+    LGraphTextureMix.desc = "Generates a texture mixing two textures";
 
-	LGraphTextureMix.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureMix.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureMix.prototype.onExecute = function() {
-		var texA = this.getInputData(0);
+    LGraphTextureMix.prototype.onExecute = function () {
+        var texA = this.getInputData(0);
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, texA);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, texA);
+            return;
+        }
 
-		var texB = this.getInputData(1);
-		if (!texA || !texB) {
-			return;
-		}
+        var texB = this.getInputData(1);
+        if (!texA || !texB) {
+            return;
+        }
 
-		var texMix = this.getInputData(2);
+        var texMix = this.getInputData(2);
 
-		var factor = this.getInputData(3);
+        var factor = this.getInputData(3);
 
-		this._tex = LGraphTexture.getTargetTexture(
-			this.properties.size_from_biggest && texB.width > texA.width ? texB : texA,
-			this._tex,
-			this.properties.precision
-		);
+        this._tex = LGraphTexture.getTargetTexture(
+            this.properties.size_from_biggest && texB.width > texA.width
+                ? texB
+                : texA,
+            this._tex,
+            this.properties.precision
+        );
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		var mesh = Mesh.getScreenQuad();
-		var shader = null;
-		var uniforms = this._uniforms;
-		if (texMix) {
-			shader = LGraphTextureMix._shader_tex;
-			if (!shader) {
-				shader = LGraphTextureMix._shader_tex = new GL.Shader(
-					Shader.SCREEN_VERTEX_SHADER,
-					LGraphTextureMix.pixel_shader,
-					{ MIX_TEX: "" }
-				);
-			}
-		} else {
-			shader = LGraphTextureMix._shader_factor;
-			if (!shader) {
-				shader = LGraphTextureMix._shader_factor = new GL.Shader(
-					Shader.SCREEN_VERTEX_SHADER,
-					LGraphTextureMix.pixel_shader
-				);
-			}
-			var f = factor == null ? this.properties.factor : factor;
-			uniforms.u_mix.set([f, f, f, f]);
-		}
+        var mesh = Mesh.getScreenQuad();
+        var shader = null;
+        var uniforms = this._uniforms;
+        if (texMix) {
+            shader = LGraphTextureMix._shader_tex;
+            if (!shader) {
+                shader = LGraphTextureMix._shader_tex = new GL.Shader(
+                    Shader.SCREEN_VERTEX_SHADER,
+                    LGraphTextureMix.pixel_shader,
+                    { MIX_TEX: "" }
+                );
+            }
+        } else {
+            shader = LGraphTextureMix._shader_factor;
+            if (!shader) {
+                shader = LGraphTextureMix._shader_factor = new GL.Shader(
+                    Shader.SCREEN_VERTEX_SHADER,
+                    LGraphTextureMix.pixel_shader
+                );
+            }
+            var f = factor == null ? this.properties.factor : factor;
+            uniforms.u_mix.set([f, f, f, f]);
+        }
 
-		var invert = this.properties.invert;
+        var invert = this.properties.invert;
 
-		this._tex.drawTo(function() {
-			texA.bind( invert ? 1 : 0 );
-			texB.bind( invert ? 0 : 1 );
-			if (texMix) {
-				texMix.bind(2);
-			}
-			shader.uniforms(uniforms).draw(mesh);
-		});
+        this._tex.drawTo(function () {
+            texA.bind(invert ? 1 : 0);
+            texB.bind(invert ? 0 : 1);
+            if (texMix) {
+                texMix.bind(2);
+            }
+            shader.uniforms(uniforms).draw(mesh);
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureMix.prototype.onGetInputs = function() {
-		return [["factor", "number"]];
-	};
+    LGraphTextureMix.prototype.onGetInputs = function () {
+        return [["factor", "number"]];
+    };
 
-	LGraphTextureMix.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureMix.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_textureA;\n\
@@ -19200,84 +19363,84 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/mix", LGraphTextureMix);
+    LiteGraph.registerNodeType("texture/mix", LGraphTextureMix);
 
-	// Texture Edges detection *****************************************
-	function LGraphTextureEdges() {
-		this.addInput("Tex.", "Texture");
+    // Texture Edges detection *****************************************
+    function LGraphTextureEdges() {
+        this.addInput("Tex.", "Texture");
 
-		this.addOutput("Edges", "Texture");
-		this.properties = {
-			invert: true,
-			threshold: false,
-			factor: 1,
-			precision: LGraphTexture.DEFAULT
-		};
+        this.addOutput("Edges", "Texture");
+        this.properties = {
+            invert: true,
+            threshold: false,
+            factor: 1,
+            precision: LGraphTexture.DEFAULT,
+        };
 
-		if (!LGraphTextureEdges._shader) {
-			LGraphTextureEdges._shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureEdges.pixel_shader
-			);
-		}
-	}
+        if (!LGraphTextureEdges._shader) {
+            LGraphTextureEdges._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureEdges.pixel_shader
+            );
+        }
+    }
 
-	LGraphTextureEdges.title = "Edges";
-	LGraphTextureEdges.desc = "Detects edges";
+    LGraphTextureEdges.title = "Edges";
+    LGraphTextureEdges.desc = "Detects edges";
 
-	LGraphTextureEdges.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureEdges.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureEdges.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+    LGraphTextureEdges.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var tex = this.getInputData(0);
+        var tex = this.getInputData(0);
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (!tex) {
-			return;
-		}
+        if (!tex) {
+            return;
+        }
 
-		this._tex = LGraphTexture.getTargetTexture(
-			tex,
-			this._tex,
-			this.properties.precision
-		);
+        this._tex = LGraphTexture.getTargetTexture(
+            tex,
+            this._tex,
+            this.properties.precision
+        );
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		var mesh = Mesh.getScreenQuad();
-		var shader = LGraphTextureEdges._shader;
-		var invert = this.properties.invert;
-		var factor = this.properties.factor;
-		var threshold = this.properties.threshold ? 1 : 0;
+        var mesh = Mesh.getScreenQuad();
+        var shader = LGraphTextureEdges._shader;
+        var invert = this.properties.invert;
+        var factor = this.properties.factor;
+        var threshold = this.properties.threshold ? 1 : 0;
 
-		this._tex.drawTo(function() {
-			tex.bind(0);
-			shader
-				.uniforms({
-					u_texture: 0,
-					u_isize: [1 / tex.width, 1 / tex.height],
-					u_factor: factor,
-					u_threshold: threshold,
-					u_invert: invert ? 1 : 0
-				})
-				.draw(mesh);
-		});
+        this._tex.drawTo(function () {
+            tex.bind(0);
+            shader
+                .uniforms({
+                    u_texture: 0,
+                    u_isize: [1 / tex.width, 1 / tex.height],
+                    u_factor: factor,
+                    u_threshold: threshold,
+                    u_invert: invert ? 1 : 0,
+                })
+                .draw(mesh);
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureEdges.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureEdges.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -19303,117 +19466,117 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType("texture/edges", LGraphTextureEdges);
+    LiteGraph.registerNodeType("texture/edges", LGraphTextureEdges);
 
-	// Texture Depth *****************************************
-	function LGraphTextureDepthRange() {
-		this.addInput("Texture", "Texture");
-		this.addInput("Distance", "number");
-		this.addInput("Range", "number");
-		this.addOutput("Texture", "Texture");
-		this.properties = {
-			distance: 100,
-			range: 50,
-			only_depth: false,
-			high_precision: false
-		};
-		this._uniforms = {
-			u_texture: 0,
-			u_distance: 100,
-			u_range: 50,
-			u_camera_planes: null
-		};
-	}
+    // Texture Depth *****************************************
+    function LGraphTextureDepthRange() {
+        this.addInput("Texture", "Texture");
+        this.addInput("Distance", "number");
+        this.addInput("Range", "number");
+        this.addOutput("Texture", "Texture");
+        this.properties = {
+            distance: 100,
+            range: 50,
+            only_depth: false,
+            high_precision: false,
+        };
+        this._uniforms = {
+            u_texture: 0,
+            u_distance: 100,
+            u_range: 50,
+            u_camera_planes: null,
+        };
+    }
 
-	LGraphTextureDepthRange.title = "Depth Range";
-	LGraphTextureDepthRange.desc = "Generates a texture with a depth range";
+    LGraphTextureDepthRange.title = "Depth Range";
+    LGraphTextureDepthRange.desc = "Generates a texture with a depth range";
 
-	LGraphTextureDepthRange.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+    LGraphTextureDepthRange.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		var precision = gl.UNSIGNED_BYTE;
-		if (this.properties.high_precision) {
-			precision = gl.half_float_ext ? gl.HALF_FLOAT_OES : gl.FLOAT;
-		}
+        var precision = gl.UNSIGNED_BYTE;
+        if (this.properties.high_precision) {
+            precision = gl.half_float_ext ? gl.HALF_FLOAT_OES : gl.FLOAT;
+        }
 
-		if (
-			!this._temp_texture ||
-			this._temp_texture.type != precision ||
-			this._temp_texture.width != tex.width ||
-			this._temp_texture.height != tex.height
-		) {
-			this._temp_texture = new GL.Texture(tex.width, tex.height, {
-				type: precision,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        if (
+            !this._temp_texture ||
+            this._temp_texture.type != precision ||
+            this._temp_texture.width != tex.width ||
+            this._temp_texture.height != tex.height
+        ) {
+            this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: precision,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var uniforms = this._uniforms;
+        var uniforms = this._uniforms;
 
-		//iterations
-		var distance = this.properties.distance;
-		if (this.isInputConnected(1)) {
-			distance = this.getInputData(1);
-			this.properties.distance = distance;
-		}
+        //iterations
+        var distance = this.properties.distance;
+        if (this.isInputConnected(1)) {
+            distance = this.getInputData(1);
+            this.properties.distance = distance;
+        }
 
-		var range = this.properties.range;
-		if (this.isInputConnected(2)) {
-			range = this.getInputData(2);
-			this.properties.range = range;
-		}
+        var range = this.properties.range;
+        if (this.isInputConnected(2)) {
+            range = this.getInputData(2);
+            this.properties.range = range;
+        }
 
-		uniforms.u_distance = distance;
-		uniforms.u_range = range;
+        uniforms.u_distance = distance;
+        uniforms.u_range = range;
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
-		var mesh = Mesh.getScreenQuad();
-		if (!LGraphTextureDepthRange._shader) {
-			LGraphTextureDepthRange._shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureDepthRange.pixel_shader
-			);
-			LGraphTextureDepthRange._shader_onlydepth = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureDepthRange.pixel_shader,
-				{ ONLY_DEPTH: "" }
-			);
-		}
-		var shader = this.properties.only_depth
-			? LGraphTextureDepthRange._shader_onlydepth
-			: LGraphTextureDepthRange._shader;
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
+        var mesh = Mesh.getScreenQuad();
+        if (!LGraphTextureDepthRange._shader) {
+            LGraphTextureDepthRange._shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureDepthRange.pixel_shader
+            );
+            LGraphTextureDepthRange._shader_onlydepth = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureDepthRange.pixel_shader,
+                { ONLY_DEPTH: "" }
+            );
+        }
+        var shader = this.properties.only_depth
+            ? LGraphTextureDepthRange._shader_onlydepth
+            : LGraphTextureDepthRange._shader;
 
-		//NEAR AND FAR PLANES
-		var planes = null;
-		if (tex.near_far_planes) {
-			planes = tex.near_far_planes;
-		} else if (window.LS && LS.Renderer._main_camera) {
-			planes = LS.Renderer._main_camera._uniforms.u_camera_planes;
-		} else {
-			planes = [0.1, 1000];
-		} //hardcoded
-		uniforms.u_camera_planes = planes;
+        //NEAR AND FAR PLANES
+        var planes = null;
+        if (tex.near_far_planes) {
+            planes = tex.near_far_planes;
+        } else if (window.LS && LS.Renderer._main_camera) {
+            planes = LS.Renderer._main_camera._uniforms.u_camera_planes;
+        } else {
+            planes = [0.1, 1000];
+        } //hardcoded
+        uniforms.u_camera_planes = planes;
 
-		this._temp_texture.drawTo(function() {
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(mesh);
-		});
+        this._temp_texture.drawTo(function () {
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(mesh);
+        });
 
-		this._temp_texture.near_far_planes = planes;
-		this.setOutputData(0, this._temp_texture);
-	};
+        this._temp_texture.near_far_planes = planes;
+        this.setOutputData(0, this._temp_texture);
+    };
 
-	LGraphTextureDepthRange.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureDepthRange.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -19444,85 +19607,98 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType( "texture/depth_range", LGraphTextureDepthRange );
+    LiteGraph.registerNodeType("texture/depth_range", LGraphTextureDepthRange);
 
+    // Texture Depth *****************************************
+    function LGraphTextureLinearDepth() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("Texture", "Texture");
+        this.properties = {
+            precision: LGraphTexture.DEFAULT,
+            invert: false,
+        };
+        this._uniforms = {
+            u_texture: 0,
+            u_camera_planes: null, //filled later
+            u_ires: vec2.create(),
+        };
+    }
 
-	// Texture Depth *****************************************
-	function LGraphTextureLinearDepth() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("Texture", "Texture");
-		this.properties = {
-			precision: LGraphTexture.DEFAULT,
-			invert: false
-		};
-		this._uniforms = {
-			u_texture: 0,
-			u_camera_planes: null, //filled later
-			u_ires: vec2.create()
-		};
-	}
+    LGraphTextureLinearDepth.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureLinearDepth.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureLinearDepth.title = "Linear Depth";
+    LGraphTextureLinearDepth.desc = "Creates a color texture with linear depth";
 
-	LGraphTextureLinearDepth.title = "Linear Depth";
-	LGraphTextureLinearDepth.desc = "Creates a color texture with linear depth";
+    LGraphTextureLinearDepth.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureLinearDepth.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var tex = this.getInputData(0);
+        if (
+            !tex ||
+            (tex.format != gl.DEPTH_COMPONENT && tex.format != gl.DEPTH_STENCIL)
+        ) {
+            return;
+        }
 
-		var tex = this.getInputData(0);
-		if (!tex || (tex.format != gl.DEPTH_COMPONENT && tex.format != gl.DEPTH_STENCIL) ) {
-			return;
-		}
+        var precision =
+            this.properties.precision == LGraphTexture.HIGH
+                ? gl.HIGH_PRECISION_FORMAT
+                : gl.UNSIGNED_BYTE;
 
-		var precision = this.properties.precision == LGraphTexture.HIGH ? gl.HIGH_PRECISION_FORMAT : gl.UNSIGNED_BYTE;
+        if (
+            !this._temp_texture ||
+            this._temp_texture.type != precision ||
+            this._temp_texture.width != tex.width ||
+            this._temp_texture.height != tex.height
+        ) {
+            this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: precision,
+                format: gl.RGB,
+                filter: gl.LINEAR,
+            });
+        }
 
-		if ( !this._temp_texture || this._temp_texture.type != precision || this._temp_texture.width != tex.width || this._temp_texture.height != tex.height ) {
-			this._temp_texture = new GL.Texture(tex.width, tex.height, {
-				type: precision,
-				format: gl.RGB,
-				filter: gl.LINEAR
-			});
-		}
+        var uniforms = this._uniforms;
+        uniforms.u_invert = this.properties.invert ? 1 : 0;
 
-		var uniforms = this._uniforms;
-		uniforms.u_invert = this.properties.invert ? 1 : 0;
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
+        var mesh = Mesh.getScreenQuad();
+        if (!LGraphTextureLinearDepth._shader)
+            LGraphTextureLinearDepth._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureLinearDepth.pixel_shader
+            );
+        var shader = LGraphTextureLinearDepth._shader;
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
-		var mesh = Mesh.getScreenQuad();
-		if(!LGraphTextureLinearDepth._shader)
-			LGraphTextureLinearDepth._shader = new GL.Shader( GL.Shader.SCREEN_VERTEX_SHADER, LGraphTextureLinearDepth.pixel_shader);
-		var shader = LGraphTextureLinearDepth._shader;
+        //NEAR AND FAR PLANES
+        var planes = null;
+        if (tex.near_far_planes) {
+            planes = tex.near_far_planes;
+        } else if (window.LS && LS.Renderer._main_camera) {
+            planes = LS.Renderer._main_camera._uniforms.u_camera_planes;
+        } else {
+            planes = [0.1, 1000];
+        } //hardcoded
+        uniforms.u_camera_planes = planes;
+        //uniforms.u_ires.set([1/tex.width, 1/tex.height]);
+        uniforms.u_ires.set([0, 0]);
 
-		//NEAR AND FAR PLANES
-		var planes = null;
-		if (tex.near_far_planes) {
-			planes = tex.near_far_planes;
-		} else if (window.LS && LS.Renderer._main_camera) {
-			planes = LS.Renderer._main_camera._uniforms.u_camera_planes;
-		} else {
-			planes = [0.1, 1000];
-		} //hardcoded
-		uniforms.u_camera_planes = planes;
-		//uniforms.u_ires.set([1/tex.width, 1/tex.height]);
-		uniforms.u_ires.set([0,0]);
+        this._temp_texture.drawTo(function () {
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(mesh);
+        });
 
-		this._temp_texture.drawTo(function() {
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(mesh);
-		});
+        this._temp_texture.near_far_planes = planes;
+        this.setOutputData(0, this._temp_texture);
+    };
 
-		this._temp_texture.near_far_planes = planes;
-		this.setOutputData(0, this._temp_texture);
-	};
-
-	LGraphTextureLinearDepth.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureLinearDepth.pixel_shader =
+        "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
@@ -19541,105 +19717,108 @@ void main() {\n\
 		}\n\
 		";
 
-	LiteGraph.registerNodeType( "texture/linear_depth", LGraphTextureLinearDepth );
+    LiteGraph.registerNodeType(
+        "texture/linear_depth",
+        LGraphTextureLinearDepth
+    );
 
-	// Texture Blur *****************************************
-	function LGraphTextureBlur() {
-		this.addInput("Texture", "Texture");
-		this.addInput("Iterations", "number");
-		this.addInput("Intensity", "number");
-		this.addOutput("Blurred", "Texture");
-		this.properties = {
-			intensity: 1,
-			iterations: 1,
-			preserve_aspect: false,
-			scale: [1, 1],
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+    // Texture Blur *****************************************
+    function LGraphTextureBlur() {
+        this.addInput("Texture", "Texture");
+        this.addInput("Iterations", "number");
+        this.addInput("Intensity", "number");
+        this.addOutput("Blurred", "Texture");
+        this.properties = {
+            intensity: 1,
+            iterations: 1,
+            preserve_aspect: false,
+            scale: [1, 1],
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureBlur.title = "Blur";
-	LGraphTextureBlur.desc = "Blur a texture";
+    LGraphTextureBlur.title = "Blur";
+    LGraphTextureBlur.desc = "Blur a texture";
 
-	LGraphTextureBlur.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureBlur.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureBlur.max_iterations = 20;
+    LGraphTextureBlur.max_iterations = 20;
 
-	LGraphTextureBlur.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphTextureBlur.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var temp = this._final_texture;
+        var temp = this._final_texture;
 
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			//we need two textures to do the blurring
-			//this._temp_texture = new GL.Texture( tex.width, tex.height, { type: tex.type, format: gl.RGBA, filter: gl.LINEAR });
-			temp = this._final_texture = new GL.Texture(
-				tex.width,
-				tex.height,
-				{ type: tex.type, format: gl.RGBA, filter: gl.LINEAR }
-			);
-		}
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            //we need two textures to do the blurring
+            //this._temp_texture = new GL.Texture( tex.width, tex.height, { type: tex.type, format: gl.RGBA, filter: gl.LINEAR });
+            temp = this._final_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		//iterations
-		var iterations = this.properties.iterations;
-		if (this.isInputConnected(1)) {
-			iterations = this.getInputData(1);
-			this.properties.iterations = iterations;
-		}
-		iterations = Math.min(
-			Math.floor(iterations),
-			LGraphTextureBlur.max_iterations
-		);
-		if (iterations == 0) {
-			//skip blurring
-			this.setOutputData(0, tex);
-			return;
-		}
+        //iterations
+        var iterations = this.properties.iterations;
+        if (this.isInputConnected(1)) {
+            iterations = this.getInputData(1);
+            this.properties.iterations = iterations;
+        }
+        iterations = Math.min(
+            Math.floor(iterations),
+            LGraphTextureBlur.max_iterations
+        );
+        if (iterations == 0) {
+            //skip blurring
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var intensity = this.properties.intensity;
-		if (this.isInputConnected(2)) {
-			intensity = this.getInputData(2);
-			this.properties.intensity = intensity;
-		}
+        var intensity = this.properties.intensity;
+        if (this.isInputConnected(2)) {
+            intensity = this.getInputData(2);
+            this.properties.intensity = intensity;
+        }
 
-		//blur sometimes needs an aspect correction
-		var aspect = LiteGraph.camera_aspect;
-		if (!aspect && window.gl !== undefined) {
-			aspect = gl.canvas.height / gl.canvas.width;
-		}
-		if (!aspect) {
-			aspect = 1;
-		}
-		aspect = this.properties.preserve_aspect ? aspect : 1;
+        //blur sometimes needs an aspect correction
+        var aspect = LiteGraph.camera_aspect;
+        if (!aspect && window.gl !== undefined) {
+            aspect = gl.canvas.height / gl.canvas.width;
+        }
+        if (!aspect) {
+            aspect = 1;
+        }
+        aspect = this.properties.preserve_aspect ? aspect : 1;
 
-		var scale = this.properties.scale || [1, 1];
-		tex.applyBlur(aspect * scale[0], scale[1], intensity, temp);
-		for (var i = 1; i < iterations; ++i) {
-			temp.applyBlur(
-				aspect * scale[0] * (i + 1),
-				scale[1] * (i + 1),
-				intensity
-			);
-		}
+        var scale = this.properties.scale || [1, 1];
+        tex.applyBlur(aspect * scale[0], scale[1], intensity, temp);
+        for (var i = 1; i < iterations; ++i) {
+            temp.applyBlur(
+                aspect * scale[0] * (i + 1),
+                scale[1] * (i + 1),
+                intensity
+            );
+        }
 
-		this.setOutputData(0, temp);
-	};
+        this.setOutputData(0, temp);
+    };
 
-	/*
+    /*
 LGraphTextureBlur.pixel_shader = "precision highp float;\n\
 		precision highp float;\n\
 		varying vec2 v_coord;\n\
@@ -19663,189 +19842,182 @@ LGraphTextureBlur.pixel_shader = "precision highp float;\n\
 		";
 */
 
-	LiteGraph.registerNodeType("texture/blur", LGraphTextureBlur);
+    LiteGraph.registerNodeType("texture/blur", LGraphTextureBlur);
 
-	//Independent glow FX
-	//based on https://catlikecoding.com/unity/tutorials/advanced-rendering/bloom/
-	function FXGlow()
-	{
-		this.intensity = 0.5;
-		this.persistence = 0.6;
-		this.iterations = 8;
-		this.threshold = 0.8;
-		this.scale = 1;
+    //Independent glow FX
+    //based on https://catlikecoding.com/unity/tutorials/advanced-rendering/bloom/
+    function FXGlow() {
+        this.intensity = 0.5;
+        this.persistence = 0.6;
+        this.iterations = 8;
+        this.threshold = 0.8;
+        this.scale = 1;
 
-		this.dirt_texture = null;
-		this.dirt_factor = 0.5;
+        this.dirt_texture = null;
+        this.dirt_factor = 0.5;
 
-		this._textures = [];
-		this._uniforms = {
-			u_intensity: 1,
-			u_texture: 0,
-			u_glow_texture: 1,
-			u_threshold: 0,
-			u_texel_size: vec2.create()
-		};
-	}
+        this._textures = [];
+        this._uniforms = {
+            u_intensity: 1,
+            u_texture: 0,
+            u_glow_texture: 1,
+            u_threshold: 0,
+            u_texel_size: vec2.create(),
+        };
+    }
 
-	FXGlow.prototype.applyFX = function( tex, output_texture, glow_texture, average_texture ) {
+    FXGlow.prototype.applyFX = function (
+        tex,
+        output_texture,
+        glow_texture,
+        average_texture
+    ) {
+        var width = tex.width;
+        var height = tex.height;
 
-		var width = tex.width;
-		var height = tex.height;
+        var texture_info = {
+            format: tex.format,
+            type: tex.type,
+            minFilter: GL.LINEAR,
+            magFilter: GL.LINEAR,
+            wrap: gl.CLAMP_TO_EDGE,
+        };
 
-		var texture_info = {
-			format: tex.format,
-			type: tex.type,
-			minFilter: GL.LINEAR,
-			magFilter: GL.LINEAR,
-			wrap: gl.CLAMP_TO_EDGE
-		};
+        var uniforms = this._uniforms;
+        var textures = this._textures;
 
-		var uniforms = this._uniforms;
-		var textures = this._textures;
+        //cut
+        var shader = FXGlow._cut_shader;
+        if (!shader) {
+            shader = FXGlow._cut_shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                FXGlow.cut_pixel_shader
+            );
+        }
 
-		//cut
-		var shader = FXGlow._cut_shader;
-		if (!shader) {
-			shader = FXGlow._cut_shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				FXGlow.cut_pixel_shader
-			);
-		}
+        gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
 
-		gl.disable(gl.DEPTH_TEST);
-		gl.disable(gl.BLEND);
+        uniforms.u_threshold = this.threshold;
+        var currentDestination = (textures[0] = GL.Texture.getTemporary(
+            width,
+            height,
+            texture_info
+        ));
+        tex.blit(currentDestination, shader.uniforms(uniforms));
+        var currentSource = currentDestination;
 
-		uniforms.u_threshold = this.threshold;
-		var currentDestination = (textures[0] = GL.Texture.getTemporary(
-			width,
-			height,
-			texture_info
-		));
-		tex.blit( currentDestination, shader.uniforms(uniforms) );
-		var currentSource = currentDestination;
+        var iterations = this.iterations;
+        iterations = Math.clamp(iterations, 1, 16) | 0;
+        var texel_size = uniforms.u_texel_size;
+        var intensity = this.intensity;
 
-		var iterations = this.iterations;
-		iterations = Math.clamp(iterations, 1, 16) | 0;
-		var texel_size = uniforms.u_texel_size;
-		var intensity = this.intensity;
+        uniforms.u_intensity = 1;
+        uniforms.u_delta = this.scale; //1
 
-		uniforms.u_intensity = 1;
-		uniforms.u_delta = this.scale; //1
+        //downscale/upscale shader
+        var shader = FXGlow._shader;
+        if (!shader) {
+            shader = FXGlow._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                FXGlow.scale_pixel_shader
+            );
+        }
 
-		//downscale/upscale shader
-		var shader = FXGlow._shader;
-		if (!shader) {
-			shader = FXGlow._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				FXGlow.scale_pixel_shader
-			);
-		}
+        var i = 1;
+        //downscale
+        for (; i < iterations; i++) {
+            width = width >> 1;
+            if ((height | 0) > 1) {
+                height = height >> 1;
+            }
+            if (width < 2) {
+                break;
+            }
+            currentDestination = textures[i] = GL.Texture.getTemporary(
+                width,
+                height,
+                texture_info
+            );
+            texel_size[0] = 1 / currentSource.width;
+            texel_size[1] = 1 / currentSource.height;
+            currentSource.blit(currentDestination, shader.uniforms(uniforms));
+            currentSource = currentDestination;
+        }
 
-		var i = 1;
-		//downscale
-		for (; i < iterations; i++) {
-			width = width >> 1;
-			if ((height | 0) > 1) {
-				height = height >> 1;
-			}
-			if (width < 2) {
-				break;
-			}
-			currentDestination = textures[i] = GL.Texture.getTemporary(
-				width,
-				height,
-				texture_info
-			);
-			texel_size[0] = 1 / currentSource.width;
-			texel_size[1] = 1 / currentSource.height;
-			currentSource.blit(
-				currentDestination,
-				shader.uniforms(uniforms)
-			);
-			currentSource = currentDestination;
-		}
+        //average
+        if (average_texture) {
+            texel_size[0] = 1 / currentSource.width;
+            texel_size[1] = 1 / currentSource.height;
+            uniforms.u_intensity = intensity;
+            uniforms.u_delta = 1;
+            currentSource.blit(average_texture, shader.uniforms(uniforms));
+        }
 
-		//average
-		if (average_texture) {
-			texel_size[0] = 1 / currentSource.width;
-			texel_size[1] = 1 / currentSource.height;
-			uniforms.u_intensity = intensity;
-			uniforms.u_delta = 1;
-			currentSource.blit(average_texture, shader.uniforms(uniforms));
-		}
+        //upscale and blend
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);
+        uniforms.u_intensity = this.persistence;
+        uniforms.u_delta = 0.5;
 
-		//upscale and blend
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.ONE, gl.ONE);
-		uniforms.u_intensity = this.persistence;
-		uniforms.u_delta = 0.5;
+        // i-=2 => -1 to point to last element in array, -1 to go to texture above
+        for (i -= 2; i >= 0; i--) {
+            currentDestination = textures[i];
+            textures[i] = null;
+            texel_size[0] = 1 / currentSource.width;
+            texel_size[1] = 1 / currentSource.height;
+            currentSource.blit(currentDestination, shader.uniforms(uniforms));
+            GL.Texture.releaseTemporary(currentSource);
+            currentSource = currentDestination;
+        }
+        gl.disable(gl.BLEND);
 
-		// i-=2 => -1 to point to last element in array, -1 to go to texture above
-		for ( i -= 2; i >= 0; i-- ) 
-		{
-			currentDestination = textures[i];
-			textures[i] = null;
-			texel_size[0] = 1 / currentSource.width;
-			texel_size[1] = 1 / currentSource.height;
-			currentSource.blit(
-				currentDestination,
-				shader.uniforms(uniforms)
-			);
-			GL.Texture.releaseTemporary(currentSource);
-			currentSource = currentDestination;
-		}
-		gl.disable(gl.BLEND);
+        //glow
+        if (glow_texture) {
+            currentSource.blit(glow_texture);
+        }
 
-		//glow
-		if (glow_texture) {
-			currentSource.blit(glow_texture);
-		}
+        //final composition
+        if (output_texture) {
+            var final_texture = output_texture;
+            var dirt_texture = this.dirt_texture;
+            var dirt_factor = this.dirt_factor;
+            uniforms.u_intensity = intensity;
 
-		//final composition
-		if ( output_texture ) {
-			var final_texture = output_texture;
-			var dirt_texture = this.dirt_texture;
-			var dirt_factor = this.dirt_factor;
-			uniforms.u_intensity = intensity;
+            shader = dirt_texture
+                ? FXGlow._dirt_final_shader
+                : FXGlow._final_shader;
+            if (!shader) {
+                if (dirt_texture) {
+                    shader = FXGlow._dirt_final_shader = new GL.Shader(
+                        GL.Shader.SCREEN_VERTEX_SHADER,
+                        FXGlow.final_pixel_shader,
+                        { USE_DIRT: "" }
+                    );
+                } else {
+                    shader = FXGlow._final_shader = new GL.Shader(
+                        GL.Shader.SCREEN_VERTEX_SHADER,
+                        FXGlow.final_pixel_shader
+                    );
+                }
+            }
 
-			shader = dirt_texture
-				? FXGlow._dirt_final_shader
-				: FXGlow._final_shader;
-			if (!shader) {
-				if (dirt_texture) {
-					shader = FXGlow._dirt_final_shader = new GL.Shader(
-						GL.Shader.SCREEN_VERTEX_SHADER,
-						FXGlow.final_pixel_shader,
-						{ USE_DIRT: "" }
-					);
-				} else {
-					shader = FXGlow._final_shader = new GL.Shader(
-						GL.Shader.SCREEN_VERTEX_SHADER,
-						FXGlow.final_pixel_shader
-					);
-				}
-			}
+            final_texture.drawTo(function () {
+                tex.bind(0);
+                currentSource.bind(1);
+                if (dirt_texture) {
+                    shader.setUniform("u_dirt_factor", dirt_factor);
+                    shader.setUniform("u_dirt_texture", dirt_texture.bind(2));
+                }
+                shader.toViewport(uniforms);
+            });
+        }
 
-			final_texture.drawTo(function() {
-				tex.bind(0);
-				currentSource.bind(1);
-				if (dirt_texture) {
-					shader.setUniform("u_dirt_factor", dirt_factor);
-					shader.setUniform(
-						"u_dirt_texture",
-						dirt_texture.bind(2)
-					);
-				}
-				shader.toViewport(uniforms);
-			});
-		}
+        GL.Texture.releaseTemporary(currentSource);
+    };
 
-		GL.Texture.releaseTemporary(currentSource);
-	};
-
-	FXGlow.cut_pixel_shader =
-		"precision highp float;\n\
+    FXGlow.cut_pixel_shader =
+        "precision highp float;\n\
 	varying vec2 v_coord;\n\
 	uniform sampler2D u_texture;\n\
 	uniform float u_threshold;\n\
@@ -19853,8 +20025,8 @@ LGraphTextureBlur.pixel_shader = "precision highp float;\n\
 		gl_FragColor = max( texture2D( u_texture, v_coord ) - vec4( u_threshold ), vec4(0.0) );\n\
 	}";
 
-	FXGlow.scale_pixel_shader =
-		"precision highp float;\n\
+    FXGlow.scale_pixel_shader =
+        "precision highp float;\n\
 	varying vec2 v_coord;\n\
 	uniform sampler2D u_texture;\n\
 	uniform vec2 u_texel_size;\n\
@@ -19870,8 +20042,8 @@ LGraphTextureBlur.pixel_shader = "precision highp float;\n\
 		gl_FragColor = u_intensity * sampleBox( v_coord );\n\
 	}";
 
-	FXGlow.final_pixel_shader =
-		"precision highp float;\n\
+    FXGlow.final_pixel_shader =
+        "precision highp float;\n\
 	varying vec2 v_coord;\n\
 	uniform sampler2D u_texture;\n\
 	uniform sampler2D u_glow_texture;\n\
@@ -19896,259 +20068,252 @@ LGraphTextureBlur.pixel_shader = "precision highp float;\n\
 		gl_FragColor = texture2D( u_texture, v_coord ) + u_intensity * glow;\n\
 	}";
 
+    // Texture Glow *****************************************
+    function LGraphTextureGlow() {
+        this.addInput("in", "Texture");
+        this.addInput("dirt", "Texture");
+        this.addOutput("out", "Texture");
+        this.addOutput("glow", "Texture");
+        this.properties = {
+            enabled: true,
+            intensity: 1,
+            persistence: 0.99,
+            iterations: 16,
+            threshold: 0,
+            scale: 1,
+            dirt_factor: 0.5,
+            precision: LGraphTexture.DEFAULT,
+        };
 
-	// Texture Glow *****************************************
-	function LGraphTextureGlow() {
-		this.addInput("in", "Texture");
-		this.addInput("dirt", "Texture");
-		this.addOutput("out", "Texture");
-		this.addOutput("glow", "Texture");
-		this.properties = {
-			enabled: true,
-			intensity: 1,
-			persistence: 0.99,
-			iterations: 16,
-			threshold: 0,
-			scale: 1,
-			dirt_factor: 0.5,
-			precision: LGraphTexture.DEFAULT
-		};
+        this.fx = new FXGlow();
+    }
 
-		this.fx = new FXGlow();
-	}
+    LGraphTextureGlow.title = "Glow";
+    LGraphTextureGlow.desc = "Filters a texture giving it a glow effect";
 
-	LGraphTextureGlow.title = "Glow";
-	LGraphTextureGlow.desc = "Filters a texture giving it a glow effect";
+    LGraphTextureGlow.widgets_info = {
+        iterations: {
+            type: "number",
+            min: 0,
+            max: 16,
+            step: 1,
+            precision: 0,
+        },
+        threshold: {
+            type: "number",
+            min: 0,
+            max: 10,
+            step: 0.01,
+            precision: 2,
+        },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureGlow.widgets_info = {
-		iterations: {
-			type: "number",
-			min: 0,
-			max: 16,
-			step: 1,
-			precision: 0
-		},
-		threshold: {
-			type: "number",
-			min: 0,
-			max: 10,
-			step: 0.01,
-			precision: 2
-		},
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureGlow.prototype.onGetInputs = function () {
+        return [
+            ["enabled", "boolean"],
+            ["threshold", "number"],
+            ["intensity", "number"],
+            ["persistence", "number"],
+            ["iterations", "number"],
+            ["dirt_factor", "number"],
+        ];
+    };
 
-	LGraphTextureGlow.prototype.onGetInputs = function() {
-		return [
-			["enabled", "boolean"],
-			["threshold", "number"],
-			["intensity", "number"],
-			["persistence", "number"],
-			["iterations", "number"],
-			["dirt_factor", "number"]
-		];
-	};
+    LGraphTextureGlow.prototype.onGetOutputs = function () {
+        return [["average", "Texture"]];
+    };
 
-	LGraphTextureGlow.prototype.onGetOutputs = function() {
-		return [["average", "Texture"]];
-	};
+    LGraphTextureGlow.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-	LGraphTextureGlow.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        if (!this.isAnyOutputConnected()) {
+            return;
+        } //saves work
 
-		if (!this.isAnyOutputConnected()) {
-			return;
-		} //saves work
+        if (
+            this.properties.precision === LGraphTexture.PASS_THROUGH ||
+            this.getInputOrProperty("enabled") === false
+        ) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (
-			this.properties.precision === LGraphTexture.PASS_THROUGH ||
-			this.getInputOrProperty("enabled") === false
-		) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        var width = tex.width;
+        var height = tex.height;
 
-		var width = tex.width;
-		var height = tex.height;
+        var fx = this.fx;
+        fx.threshold = this.getInputOrProperty("threshold");
+        fx.iterations = this.getInputOrProperty("iterations");
+        fx.intensity = this.getInputOrProperty("intensity");
+        fx.persistence = this.getInputOrProperty("persistence");
+        fx.dirt_texture = this.getInputData(1);
+        fx.dirt_factor = this.getInputOrProperty("dirt_factor");
+        fx.scale = this.properties.scale;
 
-		var fx = this.fx;
-		fx.threshold = this.getInputOrProperty("threshold");
-		fx.iterations = this.getInputOrProperty("iterations");
-		fx.intensity = this.getInputOrProperty("intensity");
-		fx.persistence = this.getInputOrProperty("persistence");
-		fx.dirt_texture = this.getInputData(1);
-		fx.dirt_factor = this.getInputOrProperty("dirt_factor");
-		fx.scale = this.properties.scale;
+        var type = LGraphTexture.getTextureType(this.properties.precision, tex);
 
-		var type = LGraphTexture.getTextureType( this.properties.precision, tex );
+        var average_texture = null;
+        if (this.isOutputConnected(2)) {
+            average_texture = this._average_texture;
+            if (
+                !average_texture ||
+                average_texture.type != tex.type ||
+                average_texture.format != tex.format
+            ) {
+                average_texture = this._average_texture = new GL.Texture(1, 1, {
+                    type: tex.type,
+                    format: tex.format,
+                    filter: gl.LINEAR,
+                });
+            }
+        }
 
-		var average_texture = null;
-		if (this.isOutputConnected(2)) {
-			average_texture = this._average_texture;
-			if (
-				!average_texture ||
-				average_texture.type != tex.type ||
-				average_texture.format != tex.format
-			) {
-				average_texture = this._average_texture = new GL.Texture(
-					1,
-					1,
-					{
-						type: tex.type,
-						format: tex.format,
-						filter: gl.LINEAR
-					}
-				);
-			}
-		}
+        var glow_texture = null;
+        if (this.isOutputConnected(1)) {
+            glow_texture = this._glow_texture;
+            if (
+                !glow_texture ||
+                glow_texture.width != tex.width ||
+                glow_texture.height != tex.height ||
+                glow_texture.type != type ||
+                glow_texture.format != tex.format
+            ) {
+                glow_texture = this._glow_texture = new GL.Texture(
+                    tex.width,
+                    tex.height,
+                    { type: type, format: tex.format, filter: gl.LINEAR }
+                );
+            }
+        }
 
-		var glow_texture = null;
-		if (this.isOutputConnected(1)) {
-			glow_texture = this._glow_texture;
-			if (
-				!glow_texture ||
-				glow_texture.width != tex.width ||
-				glow_texture.height != tex.height ||
-				glow_texture.type != type ||
-				glow_texture.format != tex.format
-			) {
-				glow_texture = this._glow_texture = new GL.Texture(
-					tex.width,
-					tex.height,
-					{ type: type, format: tex.format, filter: gl.LINEAR }
-				);
-			}
-		}
+        var final_texture = null;
+        if (this.isOutputConnected(0)) {
+            final_texture = this._final_texture;
+            if (
+                !final_texture ||
+                final_texture.width != tex.width ||
+                final_texture.height != tex.height ||
+                final_texture.type != type ||
+                final_texture.format != tex.format
+            ) {
+                final_texture = this._final_texture = new GL.Texture(
+                    tex.width,
+                    tex.height,
+                    { type: type, format: tex.format, filter: gl.LINEAR }
+                );
+            }
+        }
 
-		var final_texture = null;
-		if (this.isOutputConnected(0)) {
-			final_texture = this._final_texture;
-			if (
-				!final_texture ||
-				final_texture.width != tex.width ||
-				final_texture.height != tex.height ||
-				final_texture.type != type ||
-				final_texture.format != tex.format
-			) {
-				final_texture = this._final_texture = new GL.Texture(
-					tex.width,
-					tex.height,
-					{ type: type, format: tex.format, filter: gl.LINEAR }
-				);
-			}
+        //apply FX
+        fx.applyFX(tex, final_texture, glow_texture, average_texture);
 
-		}
+        if (this.isOutputConnected(0)) this.setOutputData(0, final_texture);
 
-		//apply FX
-		fx.applyFX(tex, final_texture, glow_texture, average_texture );
+        if (this.isOutputConnected(1)) this.setOutputData(1, average_texture);
 
-		if (this.isOutputConnected(0))
-			this.setOutputData(0, final_texture);
+        if (this.isOutputConnected(2)) this.setOutputData(2, glow_texture);
+    };
 
-		if (this.isOutputConnected(1))
-			this.setOutputData(1, average_texture);
+    LiteGraph.registerNodeType("texture/glow", LGraphTextureGlow);
 
-		if (this.isOutputConnected(2))
-			this.setOutputData(2, glow_texture);
-	};
+    // Texture Filter *****************************************
+    function LGraphTextureKuwaharaFilter() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("Filtered", "Texture");
+        this.properties = { intensity: 1, radius: 5 };
+    }
 
-	LiteGraph.registerNodeType("texture/glow", LGraphTextureGlow);
+    LGraphTextureKuwaharaFilter.title = "Kuwahara Filter";
+    LGraphTextureKuwaharaFilter.desc =
+        "Filters a texture giving an artistic oil canvas painting";
 
-	// Texture Filter *****************************************
-	function LGraphTextureKuwaharaFilter() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("Filtered", "Texture");
-		this.properties = { intensity: 1, radius: 5 };
-	}
+    LGraphTextureKuwaharaFilter.max_radius = 10;
+    LGraphTextureKuwaharaFilter._shaders = [];
 
-	LGraphTextureKuwaharaFilter.title = "Kuwahara Filter";
-	LGraphTextureKuwaharaFilter.desc =
-		"Filters a texture giving an artistic oil canvas painting";
+    LGraphTextureKuwaharaFilter.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-	LGraphTextureKuwaharaFilter.max_radius = 10;
-	LGraphTextureKuwaharaFilter._shaders = [];
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureKuwaharaFilter.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+        var temp = this._temp_texture;
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var temp = this._temp_texture;
+        //iterations
+        var radius = this.properties.radius;
+        radius = Math.min(
+            Math.floor(radius),
+            LGraphTextureKuwaharaFilter.max_radius
+        );
+        if (radius == 0) {
+            //skip blurring
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			this._temp_texture = new GL.Texture(tex.width, tex.height, {
-				type: tex.type,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        var intensity = this.properties.intensity;
 
-		//iterations
-		var radius = this.properties.radius;
-		radius = Math.min(
-			Math.floor(radius),
-			LGraphTextureKuwaharaFilter.max_radius
-		);
-		if (radius == 0) {
-			//skip blurring
-			this.setOutputData(0, tex);
-			return;
-		}
+        //blur sometimes needs an aspect correction
+        var aspect = LiteGraph.camera_aspect;
+        if (!aspect && window.gl !== undefined) {
+            aspect = gl.canvas.height / gl.canvas.width;
+        }
+        if (!aspect) {
+            aspect = 1;
+        }
+        aspect = this.properties.preserve_aspect ? aspect : 1;
 
-		var intensity = this.properties.intensity;
+        if (!LGraphTextureKuwaharaFilter._shaders[radius]) {
+            LGraphTextureKuwaharaFilter._shaders[
+                radius
+            ] = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureKuwaharaFilter.pixel_shader,
+                { RADIUS: radius.toFixed(0) }
+            );
+        }
 
-		//blur sometimes needs an aspect correction
-		var aspect = LiteGraph.camera_aspect;
-		if (!aspect && window.gl !== undefined) {
-			aspect = gl.canvas.height / gl.canvas.width;
-		}
-		if (!aspect) {
-			aspect = 1;
-		}
-		aspect = this.properties.preserve_aspect ? aspect : 1;
+        var shader = LGraphTextureKuwaharaFilter._shaders[radius];
+        var mesh = GL.Mesh.getScreenQuad();
+        tex.bind(0);
 
-		if (!LGraphTextureKuwaharaFilter._shaders[radius]) {
-			LGraphTextureKuwaharaFilter._shaders[radius] = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureKuwaharaFilter.pixel_shader,
-				{ RADIUS: radius.toFixed(0) }
-			);
-		}
+        this._temp_texture.drawTo(function () {
+            shader
+                .uniforms({
+                    u_texture: 0,
+                    u_intensity: intensity,
+                    u_resolution: [tex.width, tex.height],
+                    u_iResolution: [1 / tex.width, 1 / tex.height],
+                })
+                .draw(mesh);
+        });
 
-		var shader = LGraphTextureKuwaharaFilter._shaders[radius];
-		var mesh = GL.Mesh.getScreenQuad();
-		tex.bind(0);
+        this.setOutputData(0, this._temp_texture);
+    };
 
-		this._temp_texture.drawTo(function() {
-			shader
-				.uniforms({
-					u_texture: 0,
-					u_intensity: intensity,
-					u_resolution: [tex.width, tex.height],
-					u_iResolution: [1 / tex.width, 1 / tex.height]
-				})
-				.draw(mesh);
-		});
-
-		this.setOutputData(0, this._temp_texture);
-	};
-
-	//from https://www.shadertoy.com/view/MsXSz4
-	LGraphTextureKuwaharaFilter.pixel_shader =
-		"\n\
+    //from https://www.shadertoy.com/view/MsXSz4
+    LGraphTextureKuwaharaFilter.pixel_shader =
+        "\n\
 precision highp float;\n\
 varying vec2 v_coord;\n\
 uniform sampler2D u_texture;\n\
@@ -20242,91 +20407,88 @@ void main() {\n\
 }\n\
 ";
 
-	LiteGraph.registerNodeType(
-		"texture/kuwahara",
-		LGraphTextureKuwaharaFilter
-	);
+    LiteGraph.registerNodeType("texture/kuwahara", LGraphTextureKuwaharaFilter);
 
-	// Texture  *****************************************
-	function LGraphTextureXDoGFilter() {
-		this.addInput("Texture", "Texture");
-		this.addOutput("Filtered", "Texture");
-		this.properties = {
-			sigma: 1.4,
-			k: 1.6,
-			p: 21.7,
-			epsilon: 79,
-			phi: 0.017
-		};
-	}
+    // Texture  *****************************************
+    function LGraphTextureXDoGFilter() {
+        this.addInput("Texture", "Texture");
+        this.addOutput("Filtered", "Texture");
+        this.properties = {
+            sigma: 1.4,
+            k: 1.6,
+            p: 21.7,
+            epsilon: 79,
+            phi: 0.017,
+        };
+    }
 
-	LGraphTextureXDoGFilter.title = "XDoG Filter";
-	LGraphTextureXDoGFilter.desc =
-		"Filters a texture giving an artistic ink style";
+    LGraphTextureXDoGFilter.title = "XDoG Filter";
+    LGraphTextureXDoGFilter.desc =
+        "Filters a texture giving an artistic ink style";
 
-	LGraphTextureXDoGFilter.max_radius = 10;
-	LGraphTextureXDoGFilter._shaders = [];
+    LGraphTextureXDoGFilter.max_radius = 10;
+    LGraphTextureXDoGFilter._shaders = [];
 
-	LGraphTextureXDoGFilter.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphTextureXDoGFilter.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var temp = this._temp_texture;
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			this._temp_texture = new GL.Texture(tex.width, tex.height, {
-				type: tex.type,
-				format: gl.RGBA,
-				filter: gl.LINEAR
-			});
-		}
+        var temp = this._temp_texture;
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		if (!LGraphTextureXDoGFilter._xdog_shader) {
-			LGraphTextureXDoGFilter._xdog_shader = new GL.Shader(
-				Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureXDoGFilter.xdog_pixel_shader
-			);
-		}
-		var shader = LGraphTextureXDoGFilter._xdog_shader;
-		var mesh = GL.Mesh.getScreenQuad();
+        if (!LGraphTextureXDoGFilter._xdog_shader) {
+            LGraphTextureXDoGFilter._xdog_shader = new GL.Shader(
+                Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureXDoGFilter.xdog_pixel_shader
+            );
+        }
+        var shader = LGraphTextureXDoGFilter._xdog_shader;
+        var mesh = GL.Mesh.getScreenQuad();
 
-		var sigma = this.properties.sigma;
-		var k = this.properties.k;
-		var p = this.properties.p;
-		var epsilon = this.properties.epsilon;
-		var phi = this.properties.phi;
-		tex.bind(0);
-		this._temp_texture.drawTo(function() {
-			shader
-				.uniforms({
-					src: 0,
-					sigma: sigma,
-					k: k,
-					p: p,
-					epsilon: epsilon,
-					phi: phi,
-					cvsWidth: tex.width,
-					cvsHeight: tex.height
-				})
-				.draw(mesh);
-		});
+        var sigma = this.properties.sigma;
+        var k = this.properties.k;
+        var p = this.properties.p;
+        var epsilon = this.properties.epsilon;
+        var phi = this.properties.phi;
+        tex.bind(0);
+        this._temp_texture.drawTo(function () {
+            shader
+                .uniforms({
+                    src: 0,
+                    sigma: sigma,
+                    k: k,
+                    p: p,
+                    epsilon: epsilon,
+                    phi: phi,
+                    cvsWidth: tex.width,
+                    cvsHeight: tex.height,
+                })
+                .draw(mesh);
+        });
 
-		this.setOutputData(0, this._temp_texture);
-	};
+        this.setOutputData(0, this._temp_texture);
+    };
 
-	//from https://github.com/RaymondMcGuire/GPU-Based-Image-Processing-Tools/blob/master/lib_webgl/scripts/main.js
-	LGraphTextureXDoGFilter.xdog_pixel_shader =
-		"\n\
+    //from https://github.com/RaymondMcGuire/GPU-Based-Image-Processing-Tools/blob/master/lib_webgl/scripts/main.js
+    LGraphTextureXDoGFilter.xdog_pixel_shader =
+        "\n\
 precision highp float;\n\
 uniform sampler2D src;\n\n\
 uniform float cvsHeight;\n\
@@ -20385,282 +20547,279 @@ void main(void){\n\
 	gl_FragColor = vec4(destColor, 1.0);\n\
 }";
 
-	LiteGraph.registerNodeType("texture/xDoG", LGraphTextureXDoGFilter);
+    LiteGraph.registerNodeType("texture/xDoG", LGraphTextureXDoGFilter);
 
-	// Texture Webcam *****************************************
-	function LGraphTextureWebcam() {
-		this.addOutput("Webcam", "Texture");
-		this.properties = { texture_name: "", facingMode: "user" };
-		this.boxcolor = "black";
-		this.version = 0;
-	}
+    // Texture Webcam *****************************************
+    function LGraphTextureWebcam() {
+        this.addOutput("Webcam", "Texture");
+        this.properties = { texture_name: "", facingMode: "user" };
+        this.boxcolor = "black";
+        this.version = 0;
+    }
 
-	LGraphTextureWebcam.title = "Webcam";
-	LGraphTextureWebcam.desc = "Webcam texture";
+    LGraphTextureWebcam.title = "Webcam";
+    LGraphTextureWebcam.desc = "Webcam texture";
 
-	LGraphTextureWebcam.is_webcam_open = false;
+    LGraphTextureWebcam.is_webcam_open = false;
 
-	LGraphTextureWebcam.prototype.openStream = function() {
-		if (!navigator.getUserMedia) {
-			//console.log('getUserMedia() is not supported in your browser, use chrome and enable WebRTC from about://flags');
-			return;
-		}
+    LGraphTextureWebcam.prototype.openStream = function () {
+        if (!navigator.getUserMedia) {
+            //console.log('getUserMedia() is not supported in your browser, use chrome and enable WebRTC from about://flags');
+            return;
+        }
 
-		this._waiting_confirmation = true;
+        this._waiting_confirmation = true;
 
-		// Not showing vendor prefixes.
-		var constraints = {
-			audio: false,
-			video: { facingMode: this.properties.facingMode }
-		};
-		navigator.mediaDevices
-			.getUserMedia(constraints)
-			.then(this.streamReady.bind(this))
-			.catch(onFailSoHard);
+        // Not showing vendor prefixes.
+        var constraints = {
+            audio: false,
+            video: { facingMode: this.properties.facingMode },
+        };
+        navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then(this.streamReady.bind(this))
+            .catch(onFailSoHard);
 
-		var that = this;
-		function onFailSoHard(e) {
-			LGraphTextureWebcam.is_webcam_open = false;
-			console.log("Webcam rejected", e);
-			that._webcam_stream = false;
-			that.boxcolor = "red";
-			that.trigger("stream_error");
-		}
-	};
+        var that = this;
+        function onFailSoHard(e) {
+            LGraphTextureWebcam.is_webcam_open = false;
+            console.log("Webcam rejected", e);
+            that._webcam_stream = false;
+            that.boxcolor = "red";
+            that.trigger("stream_error");
+        }
+    };
 
-	LGraphTextureWebcam.prototype.closeStream = function() {
-		if (this._webcam_stream) {
-			var tracks = this._webcam_stream.getTracks();
-			if (tracks.length) {
-				for (var i = 0; i < tracks.length; ++i) {
-					tracks[i].stop();
-				}
-			}
-			LGraphTextureWebcam.is_webcam_open = false;
-			this._webcam_stream = null;
-			this._video = null;
-			this.boxcolor = "black";
-			this.trigger("stream_closed");
-		}
-	};
+    LGraphTextureWebcam.prototype.closeStream = function () {
+        if (this._webcam_stream) {
+            var tracks = this._webcam_stream.getTracks();
+            if (tracks.length) {
+                for (var i = 0; i < tracks.length; ++i) {
+                    tracks[i].stop();
+                }
+            }
+            LGraphTextureWebcam.is_webcam_open = false;
+            this._webcam_stream = null;
+            this._video = null;
+            this.boxcolor = "black";
+            this.trigger("stream_closed");
+        }
+    };
 
-	LGraphTextureWebcam.prototype.streamReady = function(localMediaStream) {
-		this._webcam_stream = localMediaStream;
-		//this._waiting_confirmation = false;
-		this.boxcolor = "green";
-		var video = this._video;
-		if (!video) {
-			video = document.createElement("video");
-			video.autoplay = true;
-			video.srcObject = localMediaStream;
-			this._video = video;
-			//document.body.appendChild( video ); //debug
-			//when video info is loaded (size and so)
-			video.onloadedmetadata = function(e) {
-				// Ready to go. Do some stuff.
-				LGraphTextureWebcam.is_webcam_open = true;
-				console.log(e);
-			};
-		}
-		this.trigger("stream_ready", video);
-	};
+    LGraphTextureWebcam.prototype.streamReady = function (localMediaStream) {
+        this._webcam_stream = localMediaStream;
+        //this._waiting_confirmation = false;
+        this.boxcolor = "green";
+        var video = this._video;
+        if (!video) {
+            video = document.createElement("video");
+            video.autoplay = true;
+            video.srcObject = localMediaStream;
+            this._video = video;
+            //document.body.appendChild( video ); //debug
+            //when video info is loaded (size and so)
+            video.onloadedmetadata = function (e) {
+                // Ready to go. Do some stuff.
+                LGraphTextureWebcam.is_webcam_open = true;
+                console.log(e);
+            };
+        }
+        this.trigger("stream_ready", video);
+    };
 
-	LGraphTextureWebcam.prototype.onPropertyChanged = function(
-		name,
-		value
-	) {
-		if (name == "facingMode") {
-			this.properties.facingMode = value;
-			this.closeStream();
-			this.openStream();
-		}
-	};
+    LGraphTextureWebcam.prototype.onPropertyChanged = function (name, value) {
+        if (name == "facingMode") {
+            this.properties.facingMode = value;
+            this.closeStream();
+            this.openStream();
+        }
+    };
 
-	LGraphTextureWebcam.prototype.onRemoved = function() {
-		if (!this._webcam_stream) {
-			return;
-		}
+    LGraphTextureWebcam.prototype.onRemoved = function () {
+        if (!this._webcam_stream) {
+            return;
+        }
 
-		var tracks = this._webcam_stream.getTracks();
-		if (tracks.length) {
-			for (var i = 0; i < tracks.length; ++i) {
-				tracks[i].stop();
-			}
-		}
+        var tracks = this._webcam_stream.getTracks();
+        if (tracks.length) {
+            for (var i = 0; i < tracks.length; ++i) {
+                tracks[i].stop();
+            }
+        }
 
-		this._webcam_stream = null;
-		this._video = null;
-	};
+        this._webcam_stream = null;
+        this._video = null;
+    };
 
-	LGraphTextureWebcam.prototype.onDrawBackground = function(ctx) {
-		if (this.flags.collapsed || this.size[1] <= 20) {
-			return;
-		}
+    LGraphTextureWebcam.prototype.onDrawBackground = function (ctx) {
+        if (this.flags.collapsed || this.size[1] <= 20) {
+            return;
+        }
 
-		if (!this._video) {
-			return;
-		}
+        if (!this._video) {
+            return;
+        }
 
-		//render to graph canvas
-		ctx.save();
-		if (!ctx.webgl) {
-			//reverse image
-			ctx.drawImage(this._video, 0, 0, this.size[0], this.size[1]);
-		} else {
-			if (this._video_texture) {
-				ctx.drawImage(
-					this._video_texture,
-					0,
-					0,
-					this.size[0],
-					this.size[1]
-				);
-			}
-		}
-		ctx.restore();
-	};
+        //render to graph canvas
+        ctx.save();
+        if (!ctx.webgl) {
+            //reverse image
+            ctx.drawImage(this._video, 0, 0, this.size[0], this.size[1]);
+        } else {
+            if (this._video_texture) {
+                ctx.drawImage(
+                    this._video_texture,
+                    0,
+                    0,
+                    this.size[0],
+                    this.size[1]
+                );
+            }
+        }
+        ctx.restore();
+    };
 
-	LGraphTextureWebcam.prototype.onExecute = function() {
-		if (this._webcam_stream == null && !this._waiting_confirmation) {
-			this.openStream();
-		}
+    LGraphTextureWebcam.prototype.onExecute = function () {
+        if (this._webcam_stream == null && !this._waiting_confirmation) {
+            this.openStream();
+        }
 
-		if (!this._video || !this._video.videoWidth) {
-			return;
-		}
+        if (!this._video || !this._video.videoWidth) {
+            return;
+        }
 
-		var width = this._video.videoWidth;
-		var height = this._video.videoHeight;
+        var width = this._video.videoWidth;
+        var height = this._video.videoHeight;
 
-		var temp = this._video_texture;
-		if (!temp || temp.width != width || temp.height != height) {
-			this._video_texture = new GL.Texture(width, height, {
-				format: gl.RGB,
-				filter: gl.LINEAR
-			});
-		}
+        var temp = this._video_texture;
+        if (!temp || temp.width != width || temp.height != height) {
+            this._video_texture = new GL.Texture(width, height, {
+                format: gl.RGB,
+                filter: gl.LINEAR,
+            });
+        }
 
-		this._video_texture.uploadImage(this._video);
-		this._video_texture.version = ++this.version;
+        this._video_texture.uploadImage(this._video);
+        this._video_texture.version = ++this.version;
 
-		if (this.properties.texture_name) {
-			var container = LGraphTexture.getTexturesContainer();
-			container[this.properties.texture_name] = this._video_texture;
-		}
+        if (this.properties.texture_name) {
+            var container = LGraphTexture.getTexturesContainer();
+            container[this.properties.texture_name] = this._video_texture;
+        }
 
-		this.setOutputData(0, this._video_texture);
-		for (var i = 1; i < this.outputs.length; ++i) {
-			if (!this.outputs[i]) {
-				continue;
-			}
-			switch (this.outputs[i].name) {
-				case "width":
-					this.setOutputData(i, this._video.videoWidth);
-					break;
-				case "height":
-					this.setOutputData(i, this._video.videoHeight);
-					break;
-			}
-		}
-	};
+        this.setOutputData(0, this._video_texture);
+        for (var i = 1; i < this.outputs.length; ++i) {
+            if (!this.outputs[i]) {
+                continue;
+            }
+            switch (this.outputs[i].name) {
+                case "width":
+                    this.setOutputData(i, this._video.videoWidth);
+                    break;
+                case "height":
+                    this.setOutputData(i, this._video.videoHeight);
+                    break;
+            }
+        }
+    };
 
-	LGraphTextureWebcam.prototype.onGetOutputs = function() {
-		return [
-			["width", "number"],
-			["height", "number"],
-			["stream_ready", LiteGraph.EVENT],
-			["stream_closed", LiteGraph.EVENT],
-			["stream_error", LiteGraph.EVENT]
-		];
-	};
+    LGraphTextureWebcam.prototype.onGetOutputs = function () {
+        return [
+            ["width", "number"],
+            ["height", "number"],
+            ["stream_ready", LiteGraph.EVENT],
+            ["stream_closed", LiteGraph.EVENT],
+            ["stream_error", LiteGraph.EVENT],
+        ];
+    };
 
-	LiteGraph.registerNodeType("texture/webcam", LGraphTextureWebcam);
+    LiteGraph.registerNodeType("texture/webcam", LGraphTextureWebcam);
 
-	//from https://github.com/spite/Wagner
-	function LGraphLensFX() {
-		this.addInput("in", "Texture");
-		this.addInput("f", "number");
-		this.addOutput("out", "Texture");
-		this.properties = {
-			enabled: true,
-			factor: 1,
-			precision: LGraphTexture.LOW
-		};
+    //from https://github.com/spite/Wagner
+    function LGraphLensFX() {
+        this.addInput("in", "Texture");
+        this.addInput("f", "number");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            enabled: true,
+            factor: 1,
+            precision: LGraphTexture.LOW,
+        };
 
-		this._uniforms = { u_texture: 0, u_factor: 1 };
-	}
+        this._uniforms = { u_texture: 0, u_factor: 1 };
+    }
 
-	LGraphLensFX.title = "Lens FX";
-	LGraphLensFX.desc = "distortion and chromatic aberration";
+    LGraphLensFX.title = "Lens FX";
+    LGraphLensFX.desc = "distortion and chromatic aberration";
 
-	LGraphLensFX.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphLensFX.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphLensFX.prototype.onGetInputs = function() {
-		return [["enabled", "boolean"]];
-	};
+    LGraphLensFX.prototype.onGetInputs = function () {
+        return [["enabled", "boolean"]];
+    };
 
-	LGraphLensFX.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphLensFX.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		if (
-			this.properties.precision === LGraphTexture.PASS_THROUGH ||
-			this.getInputOrProperty("enabled") === false
-		) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (
+            this.properties.precision === LGraphTexture.PASS_THROUGH ||
+            this.getInputOrProperty("enabled") === false
+        ) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var temp = this._temp_texture;
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			temp = this._temp_texture = new GL.Texture(
-				tex.width,
-				tex.height,
-				{ type: tex.type, format: gl.RGBA, filter: gl.LINEAR }
-			);
-		}
+        var temp = this._temp_texture;
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            temp = this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var shader = LGraphLensFX._shader;
-		if (!shader) {
-			shader = LGraphLensFX._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphLensFX.pixel_shader
-			);
-		}
+        var shader = LGraphLensFX._shader;
+        if (!shader) {
+            shader = LGraphLensFX._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphLensFX.pixel_shader
+            );
+        }
 
-		var factor = this.getInputData(1);
-		if (factor == null) {
-			factor = this.properties.factor;
-		}
+        var factor = this.getInputData(1);
+        if (factor == null) {
+            factor = this.properties.factor;
+        }
 
-		var uniforms = this._uniforms;
-		uniforms.u_factor = factor;
+        var uniforms = this._uniforms;
+        uniforms.u_factor = factor;
 
-		//apply shader
-		gl.disable(gl.DEPTH_TEST);
-		temp.drawTo(function() {
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        //apply shader
+        gl.disable(gl.DEPTH_TEST);
+        temp.drawTo(function () {
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, temp);
-	};
+        this.setOutputData(0, temp);
+    };
 
-	LGraphLensFX.pixel_shader =
-		"precision highp float;\n\
+    LGraphLensFX.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
 		uniform float u_factor;\n\
@@ -20712,256 +20871,337 @@ void main(void){\n\
 			gl_FragColor = sumcol / sumw;\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/lensfx", LGraphLensFX);
+    LiteGraph.registerNodeType("texture/lensfx", LGraphLensFX);
 
+    function LGraphTextureFromData() {
+        this.addInput("in", "");
+        this.properties = {
+            precision: LGraphTexture.LOW,
+            width: 0,
+            height: 0,
+            channels: 1,
+        };
+        this.addOutput("out", "Texture");
+    }
 
-	function LGraphTextureFromData() {
-		this.addInput("in", "");
-		this.properties = { precision: LGraphTexture.LOW, width: 0, height: 0, channels: 1 };
-		this.addOutput("out", "Texture");
-	}
+    LGraphTextureFromData.title = "Data->Tex";
+    LGraphTextureFromData.desc = "Generates or applies a curve to a texture";
+    LGraphTextureFromData.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureFromData.title = "Data->Tex";
-	LGraphTextureFromData.desc = "Generates or applies a curve to a texture";
-	LGraphTextureFromData.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureFromData.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureFromData.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var data = this.getInputData(0);
+        if (!data) return;
 
-		var data = this.getInputData(0);
-		if(!data)
-			return;
+        var channels = this.properties.channels;
+        var w = this.properties.width;
+        var h = this.properties.height;
+        if (!w || !h) {
+            w = Math.floor(data.length / channels);
+            h = 1;
+        }
+        var format = gl.RGBA;
+        if (channels == 3) format = gl.RGB;
+        else if (channels == 1) format = gl.LUMINANCE;
 
-		var channels = this.properties.channels;
-		var w = this.properties.width;
-		var h = this.properties.height;
-		if(!w || !h)
-		{
-			w = Math.floor(data.length / channels);
-			h = 1;
-		}
-		var format = gl.RGBA;
-		if( channels == 3 )
-			format = gl.RGB;
-		else if( channels == 1 )
-			format = gl.LUMINANCE;
+        var temp = this._temp_texture;
+        var type = LGraphTexture.getTextureType(this.properties.precision);
+        if (!temp || temp.width != w || temp.height != h || temp.type != type) {
+            temp = this._temp_texture = new GL.Texture(w, h, {
+                type: type,
+                format: format,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var temp = this._temp_texture;
-		var type = LGraphTexture.getTextureType( this.properties.precision );
-		if ( !temp || temp.width != w || temp.height != h || temp.type != type ) {
-			temp = this._temp_texture = new GL.Texture( w, h, { type: type, format: format, filter: gl.LINEAR } );
-		}
+        temp.uploadData(data);
+        this.setOutputData(0, temp);
+    };
 
-		temp.uploadData( data );
-		this.setOutputData(0, temp);
-	}
+    LiteGraph.registerNodeType("texture/fromdata", LGraphTextureFromData);
 
-	LiteGraph.registerNodeType("texture/fromdata", LGraphTextureFromData);
+    //applies a curve (or generates one)
+    function LGraphTextureCurve() {
+        this.addInput("in", "Texture");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            precision: LGraphTexture.LOW,
+            split_channels: false,
+        };
+        this._values = new Uint8Array(256 * 4);
+        this._values.fill(255);
+        this._curve_texture = null;
+        this._uniforms = { u_texture: 0, u_curve: 1, u_range: 1.0 };
+        this._must_update = true;
+        this._points = {
+            RGB: [
+                [0, 0],
+                [1, 1],
+            ],
+            R: [
+                [0, 0],
+                [1, 1],
+            ],
+            G: [
+                [0, 0],
+                [1, 1],
+            ],
+            B: [
+                [0, 0],
+                [1, 1],
+            ],
+        };
+        this.curve_editor = null;
+        this.addWidget("toggle", "Split Channels", false, "split_channels");
+        this.addWidget("combo", "Channel", "RGB", {
+            values: ["RGB", "R", "G", "B"],
+        });
+        this.curve_offset = 68;
+        this.size = [240, 160];
+    }
 
-	//applies a curve (or generates one)
-	function LGraphTextureCurve() {
-		this.addInput("in", "Texture");
-		this.addOutput("out", "Texture");
-		this.properties = { precision: LGraphTexture.LOW, split_channels: false };
-		this._values = new Uint8Array(256*4);
-		this._values.fill(255);
-		this._curve_texture = null;
-		this._uniforms = { u_texture: 0, u_curve: 1, u_range: 1.0 };
-		this._must_update = true;
-		this._points = {
-			RGB: [[0,0],[1,1]],
-			R: [[0,0],[1,1]],
-			G: [[0,0],[1,1]],
-			B: [[0,0],[1,1]]
-		};
-		this.curve_editor = null;
-		this.addWidget("toggle","Split Channels",false,"split_channels");
-		this.addWidget("combo","Channel","RGB",{ values:["RGB","R","G","B"]});
-		this.curve_offset = 68;
-		this.size = [ 240, 160 ];
-	}
+    LGraphTextureCurve.title = "Curve";
+    LGraphTextureCurve.desc = "Generates or applies a curve to a texture";
+    LGraphTextureCurve.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureCurve.title = "Curve";
-	LGraphTextureCurve.desc = "Generates or applies a curve to a texture";
-	LGraphTextureCurve.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureCurve.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-	LGraphTextureCurve.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        var tex = this.getInputData(0);
 
-		var tex = this.getInputData(0);
+        var temp = this._temp_texture;
+        if (!tex) {
+            //generate one texture, nothing else
+            if (this._must_update || !this._curve_texture) this.updateCurve();
+            this.setOutputData(0, this._curve_texture);
+            return;
+        }
 
-		var temp = this._temp_texture;
-		if(!tex) //generate one texture, nothing else
-		{
-			if(this._must_update || !this._curve_texture )
-				this.updateCurve();
-			this.setOutputData(0, this._curve_texture);
-			return;
-		}
+        var type = LGraphTexture.getTextureType(this.properties.precision, tex);
 
-		var type = LGraphTexture.getTextureType( this.properties.precision, tex );
-		
-		//apply curve to input texture
-		if ( !temp || temp.type != type || temp.width != tex.width || temp.height != tex.height || temp.format != tex.format)
-			temp = this._temp_texture = new GL.Texture( tex.width, tex.height, { type: type, format: tex.format, filter: gl.LINEAR } );
+        //apply curve to input texture
+        if (
+            !temp ||
+            temp.type != type ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.format != tex.format
+        )
+            temp = this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: type,
+                format: tex.format,
+                filter: gl.LINEAR,
+            });
 
-		var shader = LGraphTextureCurve._shader;
-		if (!shader) {
-			shader = LGraphTextureCurve._shader = new GL.Shader( GL.Shader.SCREEN_VERTEX_SHADER, LGraphTextureCurve.pixel_shader );
-		}
+        var shader = LGraphTextureCurve._shader;
+        if (!shader) {
+            shader = LGraphTextureCurve._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureCurve.pixel_shader
+            );
+        }
 
-		if(this._must_update || !this._curve_texture )
-			this.updateCurve();
+        if (this._must_update || !this._curve_texture) this.updateCurve();
 
-		var uniforms = this._uniforms;
-		var curve_texture = this._curve_texture;
+        var uniforms = this._uniforms;
+        var curve_texture = this._curve_texture;
 
-		//apply shader
-		temp.drawTo(function() {
-			gl.disable(gl.DEPTH_TEST);
-			tex.bind(0);
-			curve_texture.bind(1);
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        //apply shader
+        temp.drawTo(function () {
+            gl.disable(gl.DEPTH_TEST);
+            tex.bind(0);
+            curve_texture.bind(1);
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, temp);
-	}
+        this.setOutputData(0, temp);
+    };
 
-	LGraphTextureCurve.prototype.sampleCurve = function(f,points)
-	{
-		var points = points || this._points.RGB;
-		if(!points)
-			return;
-		for(var i = 0; i < points.length - 1; ++i)
-		{
-			var p = points[i];
-			var pn = points[i+1];
-			if(pn[0] < f)
-				continue;
-			var r = (pn[0] - p[0]);
-			if( Math.abs(r) < 0.00001 )
-				return p[1];
-			var local_f = (f - p[0]) / r;
-			return p[1] * (1.0 - local_f) + pn[1] * local_f;
-		}
-		return 0;
-	}
+    LGraphTextureCurve.prototype.sampleCurve = function (f, points) {
+        var points = points || this._points.RGB;
+        if (!points) return;
+        for (var i = 0; i < points.length - 1; ++i) {
+            var p = points[i];
+            var pn = points[i + 1];
+            if (pn[0] < f) continue;
+            var r = pn[0] - p[0];
+            if (Math.abs(r) < 0.00001) return p[1];
+            var local_f = (f - p[0]) / r;
+            return p[1] * (1.0 - local_f) + pn[1] * local_f;
+        }
+        return 0;
+    };
 
-	LGraphTextureCurve.prototype.updateCurve = function()
-	{
-		var values = this._values;
-		var num = values.length / 4;
-		var split = this.properties.split_channels;
-		for(var i = 0; i < num; ++i)
-		{
-			if(split)
-			{
-				values[i*4] = Math.clamp( this.sampleCurve(i/num,this._points.R)*255,0,255);
-				values[i*4+1] = Math.clamp( this.sampleCurve(i/num,this._points.G)*255,0,255);
-				values[i*4+2] = Math.clamp( this.sampleCurve(i/num,this._points.B)*255,0,255);
-			}
-			else
-			{
-				var v = this.sampleCurve(i/num);//sample curve
-				values[i*4] = values[i*4+1] = values[i*4+2] = Math.clamp(v*255,0,255);
-			}
-			values[i*4+3] = 255; //alpha fixed
-		}
-		if(!this._curve_texture)
-			this._curve_texture = new GL.Texture(256,1,{ format: gl.RGBA, magFilter: gl.LINEAR, wrap: gl.CLAMP_TO_EDGE });
-		this._curve_texture.uploadData(values,null,true);
-	}
+    LGraphTextureCurve.prototype.updateCurve = function () {
+        var values = this._values;
+        var num = values.length / 4;
+        var split = this.properties.split_channels;
+        for (var i = 0; i < num; ++i) {
+            if (split) {
+                values[i * 4] = Math.clamp(
+                    this.sampleCurve(i / num, this._points.R) * 255,
+                    0,
+                    255
+                );
+                values[i * 4 + 1] = Math.clamp(
+                    this.sampleCurve(i / num, this._points.G) * 255,
+                    0,
+                    255
+                );
+                values[i * 4 + 2] = Math.clamp(
+                    this.sampleCurve(i / num, this._points.B) * 255,
+                    0,
+                    255
+                );
+            } else {
+                var v = this.sampleCurve(i / num); //sample curve
+                values[i * 4] = values[i * 4 + 1] = values[
+                    i * 4 + 2
+                ] = Math.clamp(v * 255, 0, 255);
+            }
+            values[i * 4 + 3] = 255; //alpha fixed
+        }
+        if (!this._curve_texture)
+            this._curve_texture = new GL.Texture(256, 1, {
+                format: gl.RGBA,
+                magFilter: gl.LINEAR,
+                wrap: gl.CLAMP_TO_EDGE,
+            });
+        this._curve_texture.uploadData(values, null, true);
+    };
 
-	LGraphTextureCurve.prototype.onSerialize = function(o)
-	{
-		var curves = {};
-		for(var i in this._points)
-			curves[i] = this._points[i].concat();
-		o.curves = curves;
-	}
+    LGraphTextureCurve.prototype.onSerialize = function (o) {
+        var curves = {};
+        for (var i in this._points) curves[i] = this._points[i].concat();
+        o.curves = curves;
+    };
 
-	LGraphTextureCurve.prototype.onConfigure = function(o)
-	{
-		this._points = o.curves;
-		if(this.curve_editor)
-			curve_editor.points = this._points;
-		this._must_update = true;
-	}
+    LGraphTextureCurve.prototype.onConfigure = function (o) {
+        this._points = o.curves;
+        if (this.curve_editor) curve_editor.points = this._points;
+        this._must_update = true;
+    };
 
-	LGraphTextureCurve.prototype.onMouseDown = function(e, localpos, graphcanvas)
-	{
-		if(this.curve_editor)
-		{
-			var r = this.curve_editor.onMouseDown([localpos[0],localpos[1]-this.curve_offset], graphcanvas);
-			if(r)
-				this.captureInput(true);
-			return r;
-		}
-	}
+    LGraphTextureCurve.prototype.onMouseDown = function (
+        e,
+        localpos,
+        graphcanvas
+    ) {
+        if (this.curve_editor) {
+            var r = this.curve_editor.onMouseDown(
+                [localpos[0], localpos[1] - this.curve_offset],
+                graphcanvas
+            );
+            if (r) this.captureInput(true);
+            return r;
+        }
+    };
 
-	LGraphTextureCurve.prototype.onMouseMove = function(e, localpos, graphcanvas)
-	{
-		if(this.curve_editor)
-			return this.curve_editor.onMouseMove([localpos[0],localpos[1]-this.curve_offset], graphcanvas);
-	}
+    LGraphTextureCurve.prototype.onMouseMove = function (
+        e,
+        localpos,
+        graphcanvas
+    ) {
+        if (this.curve_editor)
+            return this.curve_editor.onMouseMove(
+                [localpos[0], localpos[1] - this.curve_offset],
+                graphcanvas
+            );
+    };
 
-	LGraphTextureCurve.prototype.onMouseUp = function(e, localpos, graphcanvas)
-	{
-		if(this.curve_editor)
-			return this.curve_editor.onMouseUp([localpos[0],localpos[1]-this.curve_offset], graphcanvas);
-		this.captureInput(false);
-	}
+    LGraphTextureCurve.prototype.onMouseUp = function (
+        e,
+        localpos,
+        graphcanvas
+    ) {
+        if (this.curve_editor)
+            return this.curve_editor.onMouseUp(
+                [localpos[0], localpos[1] - this.curve_offset],
+                graphcanvas
+            );
+        this.captureInput(false);
+    };
 
-	LGraphTextureCurve.channel_line_colors = { "RGB":"#666","R":"#F33","G":"#3F3","B":"#33F" };
+    LGraphTextureCurve.channel_line_colors = {
+        RGB: "#666",
+        R: "#F33",
+        G: "#3F3",
+        B: "#33F",
+    };
 
-	LGraphTextureCurve.prototype.onDrawBackground = function(ctx, graphcanvas)
-	{
-		if(this.flags.collapsed)
-			return;
+    LGraphTextureCurve.prototype.onDrawBackground = function (
+        ctx,
+        graphcanvas
+    ) {
+        if (this.flags.collapsed) return;
 
-		if(!this.curve_editor)
-			this.curve_editor = new LiteGraph.CurveEditor(this._points.R);
-		ctx.save();
-		ctx.translate(0,this.curve_offset);
-		var channel = this.widgets[1].value;
+        if (!this.curve_editor)
+            this.curve_editor = new LiteGraph.CurveEditor(this._points.R);
+        ctx.save();
+        ctx.translate(0, this.curve_offset);
+        var channel = this.widgets[1].value;
 
-		if(this.properties.split_channels)
-		{
-			if(channel == "RGB")
-			{
-				this.widgets[1].value = channel = "R";
-				this.widgets[1].disabled = false;
-			}
-			this.curve_editor.points = this._points.R;
-			this.curve_editor.draw( ctx, [this.size[0],this.size[1] - this.curve_offset], graphcanvas, "#111", LGraphTextureCurve.channel_line_colors.R, true );
-			ctx.globalCompositeOperation = "lighten";
-			this.curve_editor.points = this._points.G;
-			this.curve_editor.draw( ctx, [this.size[0],this.size[1] - this.curve_offset], graphcanvas, null, LGraphTextureCurve.channel_line_colors.G, true );
-			this.curve_editor.points = this._points.B;
-			this.curve_editor.draw( ctx, [this.size[0],this.size[1] - this.curve_offset], graphcanvas, null, LGraphTextureCurve.channel_line_colors.B, true );
-			ctx.globalCompositeOperation = "source-over";
-		}
-		else
-		{
-			this.widgets[1].value = channel = "RGB";
-			this.widgets[1].disabled = true;
-		}
+        if (this.properties.split_channels) {
+            if (channel == "RGB") {
+                this.widgets[1].value = channel = "R";
+                this.widgets[1].disabled = false;
+            }
+            this.curve_editor.points = this._points.R;
+            this.curve_editor.draw(
+                ctx,
+                [this.size[0], this.size[1] - this.curve_offset],
+                graphcanvas,
+                "#111",
+                LGraphTextureCurve.channel_line_colors.R,
+                true
+            );
+            ctx.globalCompositeOperation = "lighten";
+            this.curve_editor.points = this._points.G;
+            this.curve_editor.draw(
+                ctx,
+                [this.size[0], this.size[1] - this.curve_offset],
+                graphcanvas,
+                null,
+                LGraphTextureCurve.channel_line_colors.G,
+                true
+            );
+            this.curve_editor.points = this._points.B;
+            this.curve_editor.draw(
+                ctx,
+                [this.size[0], this.size[1] - this.curve_offset],
+                graphcanvas,
+                null,
+                LGraphTextureCurve.channel_line_colors.B,
+                true
+            );
+            ctx.globalCompositeOperation = "source-over";
+        } else {
+            this.widgets[1].value = channel = "RGB";
+            this.widgets[1].disabled = true;
+        }
 
-		this.curve_editor.points = this._points[channel];
-		this.curve_editor.draw( ctx, [this.size[0],this.size[1] - this.curve_offset], graphcanvas, this.properties.split_channels ? null : "#111", LGraphTextureCurve.channel_line_colors[channel]  );
-		ctx.restore();
-	}
+        this.curve_editor.points = this._points[channel];
+        this.curve_editor.draw(
+            ctx,
+            [this.size[0], this.size[1] - this.curve_offset],
+            graphcanvas,
+            this.properties.split_channels ? null : "#111",
+            LGraphTextureCurve.channel_line_colors[channel]
+        );
+        ctx.restore();
+    };
 
-	LGraphTextureCurve.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureCurve.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
 		uniform sampler2D u_curve;\n\
@@ -20976,76 +21216,76 @@ void main(void){\n\
 			gl_FragColor = color;\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/curve", LGraphTextureCurve);
+    LiteGraph.registerNodeType("texture/curve", LGraphTextureCurve);
 
-	//simple exposition, but plan to expand it to support different gamma curves
-	function LGraphExposition() {
-		this.addInput("in", "Texture");
-		this.addInput("exp", "number");
-		this.addOutput("out", "Texture");
-		this.properties = { exposition: 1, precision: LGraphTexture.LOW };
-		this._uniforms = { u_texture: 0, u_exposition: 1 };
-	}
+    //simple exposition, but plan to expand it to support different gamma curves
+    function LGraphExposition() {
+        this.addInput("in", "Texture");
+        this.addInput("exp", "number");
+        this.addOutput("out", "Texture");
+        this.properties = { exposition: 1, precision: LGraphTexture.LOW };
+        this._uniforms = { u_texture: 0, u_exposition: 1 };
+    }
 
-	LGraphExposition.title = "Exposition";
-	LGraphExposition.desc = "Controls texture exposition";
+    LGraphExposition.title = "Exposition";
+    LGraphExposition.desc = "Controls texture exposition";
 
-	LGraphExposition.widgets_info = {
-		exposition: { widget: "slider", min: 0, max: 3 },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphExposition.widgets_info = {
+        exposition: { widget: "slider", min: 0, max: 3 },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphExposition.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphExposition.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var temp = this._temp_texture;
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			temp = this._temp_texture = new GL.Texture(
-				tex.width,
-				tex.height,
-				{ type: tex.type, format: gl.RGBA, filter: gl.LINEAR }
-			);
-		}
+        var temp = this._temp_texture;
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            temp = this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var shader = LGraphExposition._shader;
-		if (!shader) {
-			shader = LGraphExposition._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphExposition.pixel_shader
-			);
-		}
+        var shader = LGraphExposition._shader;
+        if (!shader) {
+            shader = LGraphExposition._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphExposition.pixel_shader
+            );
+        }
 
-		var exp = this.properties.exposition;
-		var exp_input = this.getInputData(1);
-		if (exp_input != null) {
-			exp = this.properties.exposition = exp_input;
-		}
-		var uniforms = this._uniforms;
+        var exp = this.properties.exposition;
+        var exp_input = this.getInputData(1);
+        if (exp_input != null) {
+            exp = this.properties.exposition = exp_input;
+        }
+        var uniforms = this._uniforms;
 
-		//apply shader
-		temp.drawTo(function() {
-			gl.disable(gl.DEPTH_TEST);
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        //apply shader
+        temp.drawTo(function () {
+            gl.disable(gl.DEPTH_TEST);
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, temp);
-	};
+        this.setOutputData(0, temp);
+    };
 
-	LGraphExposition.pixel_shader =
-		"precision highp float;\n\
+    LGraphExposition.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
 		uniform float u_exposition;\n\
@@ -21055,122 +21295,121 @@ void main(void){\n\
 			gl_FragColor = vec4( color.xyz * u_exposition, color.a );\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/exposition", LGraphExposition);
+    LiteGraph.registerNodeType("texture/exposition", LGraphExposition);
 
-	function LGraphToneMapping() {
-		this.addInput("in", "Texture");
-		this.addInput("avg", "number,Texture");
-		this.addOutput("out", "Texture");
-		this.properties = {
-			enabled: true,
-			scale: 1,
-			gamma: 1,
-			average_lum: 1,
-			lum_white: 1,
-			precision: LGraphTexture.LOW
-		};
+    function LGraphToneMapping() {
+        this.addInput("in", "Texture");
+        this.addInput("avg", "number,Texture");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            enabled: true,
+            scale: 1,
+            gamma: 1,
+            average_lum: 1,
+            lum_white: 1,
+            precision: LGraphTexture.LOW,
+        };
 
-		this._uniforms = {
-			u_texture: 0,
-			u_lumwhite2: 1,
-			u_igamma: 1,
-			u_scale: 1,
-			u_average_lum: 1
-		};
-	}
+        this._uniforms = {
+            u_texture: 0,
+            u_lumwhite2: 1,
+            u_igamma: 1,
+            u_scale: 1,
+            u_average_lum: 1,
+        };
+    }
 
-	LGraphToneMapping.title = "Tone Mapping";
-	LGraphToneMapping.desc =
-		"Applies Tone Mapping to convert from high to low";
+    LGraphToneMapping.title = "Tone Mapping";
+    LGraphToneMapping.desc = "Applies Tone Mapping to convert from high to low";
 
-	LGraphToneMapping.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphToneMapping.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphToneMapping.prototype.onGetInputs = function() {
-		return [["enabled", "boolean"]];
-	};
+    LGraphToneMapping.prototype.onGetInputs = function () {
+        return [["enabled", "boolean"]];
+    };
 
-	LGraphToneMapping.prototype.onExecute = function() {
-		var tex = this.getInputData(0);
-		if (!tex) {
-			return;
-		}
+    LGraphToneMapping.prototype.onExecute = function () {
+        var tex = this.getInputData(0);
+        if (!tex) {
+            return;
+        }
 
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		if (
-			this.properties.precision === LGraphTexture.PASS_THROUGH ||
-			this.getInputOrProperty("enabled") === false
-		) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (
+            this.properties.precision === LGraphTexture.PASS_THROUGH ||
+            this.getInputOrProperty("enabled") === false
+        ) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		var temp = this._temp_texture;
+        var temp = this._temp_texture;
 
-		if (
-			!temp ||
-			temp.width != tex.width ||
-			temp.height != tex.height ||
-			temp.type != tex.type
-		) {
-			temp = this._temp_texture = new GL.Texture(
-				tex.width,
-				tex.height,
-				{ type: tex.type, format: gl.RGBA, filter: gl.LINEAR }
-			);
-		}
+        if (
+            !temp ||
+            temp.width != tex.width ||
+            temp.height != tex.height ||
+            temp.type != tex.type
+        ) {
+            temp = this._temp_texture = new GL.Texture(tex.width, tex.height, {
+                type: tex.type,
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var avg = this.getInputData(1);
-		if (avg == null) {
-			avg = this.properties.average_lum;
-		}
+        var avg = this.getInputData(1);
+        if (avg == null) {
+            avg = this.properties.average_lum;
+        }
 
-		var uniforms = this._uniforms;
-		var shader = null;
+        var uniforms = this._uniforms;
+        var shader = null;
 
-		if (avg.constructor === Number) {
-			this.properties.average_lum = avg;
-			uniforms.u_average_lum = this.properties.average_lum;
-			shader = LGraphToneMapping._shader;
-			if (!shader) {
-				shader = LGraphToneMapping._shader = new GL.Shader(
-					GL.Shader.SCREEN_VERTEX_SHADER,
-					LGraphToneMapping.pixel_shader
-				);
-			}
-		} else if (avg.constructor === GL.Texture) {
-			uniforms.u_average_texture = avg.bind(1);
-			shader = LGraphToneMapping._shader_texture;
-			if (!shader) {
-				shader = LGraphToneMapping._shader_texture = new GL.Shader(
-					GL.Shader.SCREEN_VERTEX_SHADER,
-					LGraphToneMapping.pixel_shader,
-					{ AVG_TEXTURE: "" }
-				);
-			}
-		}
+        if (avg.constructor === Number) {
+            this.properties.average_lum = avg;
+            uniforms.u_average_lum = this.properties.average_lum;
+            shader = LGraphToneMapping._shader;
+            if (!shader) {
+                shader = LGraphToneMapping._shader = new GL.Shader(
+                    GL.Shader.SCREEN_VERTEX_SHADER,
+                    LGraphToneMapping.pixel_shader
+                );
+            }
+        } else if (avg.constructor === GL.Texture) {
+            uniforms.u_average_texture = avg.bind(1);
+            shader = LGraphToneMapping._shader_texture;
+            if (!shader) {
+                shader = LGraphToneMapping._shader_texture = new GL.Shader(
+                    GL.Shader.SCREEN_VERTEX_SHADER,
+                    LGraphToneMapping.pixel_shader,
+                    { AVG_TEXTURE: "" }
+                );
+            }
+        }
 
-		uniforms.u_lumwhite2 =
-			this.properties.lum_white * this.properties.lum_white;
-		uniforms.u_scale = this.properties.scale;
-		uniforms.u_igamma = 1 / this.properties.gamma;
+        uniforms.u_lumwhite2 =
+            this.properties.lum_white * this.properties.lum_white;
+        uniforms.u_scale = this.properties.scale;
+        uniforms.u_igamma = 1 / this.properties.gamma;
 
-		//apply shader
-		gl.disable(gl.DEPTH_TEST);
-		temp.drawTo(function() {
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        //apply shader
+        gl.disable(gl.DEPTH_TEST);
+        temp.drawTo(function () {
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, this._temp_texture);
-	};
+        this.setOutputData(0, this._temp_texture);
+    };
 
-	LGraphToneMapping.pixel_shader =
-		"precision highp float;\n\
+    LGraphToneMapping.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
 		uniform float u_scale;\n\
@@ -21219,140 +21458,135 @@ void main(void){\n\
 			gl_FragColor = vec4( rgb, color.a );\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/tonemapping", LGraphToneMapping);
+    LiteGraph.registerNodeType("texture/tonemapping", LGraphToneMapping);
 
-	function LGraphTexturePerlin() {
-		this.addOutput("out", "Texture");
-		this.properties = {
-			width: 512,
-			height: 512,
-			seed: 0,
-			persistence: 0.1,
-			octaves: 8,
-			scale: 1,
-			offset: [0, 0],
-			amplitude: 1,
-			precision: LGraphTexture.DEFAULT
-		};
-		this._key = 0;
-		this._texture = null;
-		this._uniforms = {
-			u_persistence: 0.1,
-			u_seed: 0,
-			u_offset: vec2.create(),
-			u_scale: 1,
-			u_viewport: vec2.create()
-		};
-	}
+    function LGraphTexturePerlin() {
+        this.addOutput("out", "Texture");
+        this.properties = {
+            width: 512,
+            height: 512,
+            seed: 0,
+            persistence: 0.1,
+            octaves: 8,
+            scale: 1,
+            offset: [0, 0],
+            amplitude: 1,
+            precision: LGraphTexture.DEFAULT,
+        };
+        this._key = 0;
+        this._texture = null;
+        this._uniforms = {
+            u_persistence: 0.1,
+            u_seed: 0,
+            u_offset: vec2.create(),
+            u_scale: 1,
+            u_viewport: vec2.create(),
+        };
+    }
 
-	LGraphTexturePerlin.title = "Perlin";
-	LGraphTexturePerlin.desc = "Generates a perlin noise texture";
+    LGraphTexturePerlin.title = "Perlin";
+    LGraphTexturePerlin.desc = "Generates a perlin noise texture";
 
-	LGraphTexturePerlin.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
-		width: { type: "number", precision: 0, step: 1 },
-		height: { type: "number", precision: 0, step: 1 },
-		octaves: { type: "number", precision: 0, step: 1, min: 1, max: 50 }
-	};
+    LGraphTexturePerlin.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+        width: { type: "number", precision: 0, step: 1 },
+        height: { type: "number", precision: 0, step: 1 },
+        octaves: { type: "number", precision: 0, step: 1, min: 1, max: 50 },
+    };
 
-	LGraphTexturePerlin.prototype.onGetInputs = function() {
-		return [
-			["seed", "number"],
-			["persistence", "number"],
-			["octaves", "number"],
-			["scale", "number"],
-			["amplitude", "number"],
-			["offset", "vec2"]
-		];
-	};
+    LGraphTexturePerlin.prototype.onGetInputs = function () {
+        return [
+            ["seed", "number"],
+            ["persistence", "number"],
+            ["octaves", "number"],
+            ["scale", "number"],
+            ["amplitude", "number"],
+            ["offset", "vec2"],
+        ];
+    };
 
-	LGraphTexturePerlin.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+    LGraphTexturePerlin.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var w = this.properties.width | 0;
-		var h = this.properties.height | 0;
-		if (w == 0) {
-			w = gl.viewport_data[2];
-		} //0 means default
-		if (h == 0) {
-			h = gl.viewport_data[3];
-		} //0 means default
-		var type = LGraphTexture.getTextureType(this.properties.precision);
+        var w = this.properties.width | 0;
+        var h = this.properties.height | 0;
+        if (w == 0) {
+            w = gl.viewport_data[2];
+        } //0 means default
+        if (h == 0) {
+            h = gl.viewport_data[3];
+        } //0 means default
+        var type = LGraphTexture.getTextureType(this.properties.precision);
 
-		var temp = this._texture;
-		if (
-			!temp ||
-			temp.width != w ||
-			temp.height != h ||
-			temp.type != type
-		) {
-			temp = this._texture = new GL.Texture(w, h, {
-				type: type,
-				format: gl.RGB,
-				filter: gl.LINEAR
-			});
-		}
+        var temp = this._texture;
+        if (!temp || temp.width != w || temp.height != h || temp.type != type) {
+            temp = this._texture = new GL.Texture(w, h, {
+                type: type,
+                format: gl.RGB,
+                filter: gl.LINEAR,
+            });
+        }
 
-		var persistence = this.getInputOrProperty("persistence");
-		var octaves = this.getInputOrProperty("octaves");
-		var offset = this.getInputOrProperty("offset");
-		var scale = this.getInputOrProperty("scale");
-		var amplitude = this.getInputOrProperty("amplitude");
-		var seed = this.getInputOrProperty("seed");
+        var persistence = this.getInputOrProperty("persistence");
+        var octaves = this.getInputOrProperty("octaves");
+        var offset = this.getInputOrProperty("offset");
+        var scale = this.getInputOrProperty("scale");
+        var amplitude = this.getInputOrProperty("amplitude");
+        var seed = this.getInputOrProperty("seed");
 
-		//reusing old texture
-		var key =
-			"" +
-			w +
-			h +
-			type +
-			persistence +
-			octaves +
-			scale +
-			seed +
-			offset[0] +
-			offset[1] +
-			amplitude;
-		if (key == this._key) {
-			this.setOutputData(0, temp);
-			return;
-		}
-		this._key = key;
+        //reusing old texture
+        var key =
+            "" +
+            w +
+            h +
+            type +
+            persistence +
+            octaves +
+            scale +
+            seed +
+            offset[0] +
+            offset[1] +
+            amplitude;
+        if (key == this._key) {
+            this.setOutputData(0, temp);
+            return;
+        }
+        this._key = key;
 
-		//gather uniforms
-		var uniforms = this._uniforms;
-		uniforms.u_persistence = persistence;
-		uniforms.u_octaves = octaves;
-		uniforms.u_offset.set(offset);
-		uniforms.u_scale = scale;
-		uniforms.u_amplitude = amplitude;
-		uniforms.u_seed = seed * 128;
-		uniforms.u_viewport[0] = w;
-		uniforms.u_viewport[1] = h;
+        //gather uniforms
+        var uniforms = this._uniforms;
+        uniforms.u_persistence = persistence;
+        uniforms.u_octaves = octaves;
+        uniforms.u_offset.set(offset);
+        uniforms.u_scale = scale;
+        uniforms.u_amplitude = amplitude;
+        uniforms.u_seed = seed * 128;
+        uniforms.u_viewport[0] = w;
+        uniforms.u_viewport[1] = h;
 
-		//render
-		var shader = LGraphTexturePerlin._shader;
-		if (!shader) {
-			shader = LGraphTexturePerlin._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTexturePerlin.pixel_shader
-			);
-		}
+        //render
+        var shader = LGraphTexturePerlin._shader;
+        if (!shader) {
+            shader = LGraphTexturePerlin._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTexturePerlin.pixel_shader
+            );
+        }
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		temp.drawTo(function() {
-			shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
-		});
+        temp.drawTo(function () {
+            shader.uniforms(uniforms).draw(GL.Mesh.getScreenQuad());
+        });
 
-		this.setOutputData(0, temp);
-	};
+        this.setOutputData(0, temp);
+    };
 
-	LGraphTexturePerlin.pixel_shader =
-		"precision highp float;\n\
+    LGraphTexturePerlin.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform vec2 u_offset;\n\
 		uniform float u_scale;\n\
@@ -21405,230 +21639,259 @@ void main(void){\n\
 			gl_FragColor = color;\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/perlin", LGraphTexturePerlin);
+    LiteGraph.registerNodeType("texture/perlin", LGraphTexturePerlin);
 
-	function LGraphTextureCanvas2D() {
-		this.addInput("v");
-		this.addOutput("out", "Texture");
-		this.properties = {
-			code: LGraphTextureCanvas2D.default_code,
-			width: 512,
-			height: 512,
-			clear: true,
-			precision: LGraphTexture.DEFAULT,
-			use_html_canvas: false
-		};
-		this._func = null;
-		this._temp_texture = null;
-		this.compileCode();
-	}
+    function LGraphTextureCanvas2D() {
+        this.addInput("v");
+        this.addOutput("out", "Texture");
+        this.properties = {
+            code: LGraphTextureCanvas2D.default_code,
+            width: 512,
+            height: 512,
+            clear: true,
+            precision: LGraphTexture.DEFAULT,
+            use_html_canvas: false,
+        };
+        this._func = null;
+        this._temp_texture = null;
+        this.compileCode();
+    }
 
-	LGraphTextureCanvas2D.title = "Canvas2D";
-	LGraphTextureCanvas2D.desc = "Executes Canvas2D code inside a texture or the viewport.";
-	LGraphTextureCanvas2D.help = "Set width and height to 0 to match viewport size.";
+    LGraphTextureCanvas2D.title = "Canvas2D";
+    LGraphTextureCanvas2D.desc =
+        "Executes Canvas2D code inside a texture or the viewport.";
+    LGraphTextureCanvas2D.help =
+        "Set width and height to 0 to match viewport size.";
 
-	LGraphTextureCanvas2D.default_code = "//vars: canvas,ctx,time\nctx.fillStyle='red';\nctx.fillRect(0,0,50,50);\n";
+    LGraphTextureCanvas2D.default_code =
+        "//vars: canvas,ctx,time\nctx.fillStyle='red';\nctx.fillRect(0,0,50,50);\n";
 
-	LGraphTextureCanvas2D.widgets_info = {
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
-		code: { type: "code" },
-		width: { type: "number", precision: 0, step: 1 },
-		height: { type: "number", precision: 0, step: 1 }
-	};
+    LGraphTextureCanvas2D.widgets_info = {
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+        code: { type: "code" },
+        width: { type: "number", precision: 0, step: 1 },
+        height: { type: "number", precision: 0, step: 1 },
+    };
 
-	LGraphTextureCanvas2D.prototype.onPropertyChanged = function( name, value ) {
-		if (name == "code" )
-			this.compileCode( value );
-	}
-	
-	LGraphTextureCanvas2D.prototype.compileCode = function( code ) {
-		this._func = null;
-		if( !LiteGraph.allow_scripts )
-			return;
+    LGraphTextureCanvas2D.prototype.onPropertyChanged = function (name, value) {
+        if (name == "code") this.compileCode(value);
+    };
 
-		try {
-			this._func = new Function( "canvas", "ctx", "time", "script","v", code );
-			this.boxcolor = "#00FF00";
-		} catch (err) {
-			this.boxcolor = "#FF0000";
-			console.error("Error parsing script");
-			console.error(err);
-		}
-	};
+    LGraphTextureCanvas2D.prototype.compileCode = function (code) {
+        this._func = null;
+        if (!LiteGraph.allow_scripts) return;
 
-	LGraphTextureCanvas2D.prototype.onExecute = function() {
-		var func = this._func;
-		if (!func || !this.isOutputConnected(0)) {
-			return;
-		}
-		this.executeDraw( func );
-	}
+        try {
+            this._func = new Function(
+                "canvas",
+                "ctx",
+                "time",
+                "script",
+                "v",
+                code
+            );
+            this.boxcolor = "#00FF00";
+        } catch (err) {
+            this.boxcolor = "#FF0000";
+            console.error("Error parsing script");
+            console.error(err);
+        }
+    };
 
-	LGraphTextureCanvas2D.prototype.executeDraw = function( func_context ) {
+    LGraphTextureCanvas2D.prototype.onExecute = function () {
+        var func = this._func;
+        if (!func || !this.isOutputConnected(0)) {
+            return;
+        }
+        this.executeDraw(func);
+    };
 
-		var width = this.properties.width || gl.canvas.width;
-		var height = this.properties.height || gl.canvas.height;
-		var temp = this._temp_texture;
-		var type = LGraphTexture.getTextureType( this.properties.precision );
-		if (!temp || temp.width != width || temp.height != height || temp.type != type ) {
-			temp = this._temp_texture = new GL.Texture(width, height, {
-				format: gl.RGBA,
-				filter: gl.LINEAR,
-				type: type
-			});
-		}
+    LGraphTextureCanvas2D.prototype.executeDraw = function (func_context) {
+        var width = this.properties.width || gl.canvas.width;
+        var height = this.properties.height || gl.canvas.height;
+        var temp = this._temp_texture;
+        var type = LGraphTexture.getTextureType(this.properties.precision);
+        if (
+            !temp ||
+            temp.width != width ||
+            temp.height != height ||
+            temp.type != type
+        ) {
+            temp = this._temp_texture = new GL.Texture(width, height, {
+                format: gl.RGBA,
+                filter: gl.LINEAR,
+                type: type,
+            });
+        }
 
-		var v = this.getInputData(0);
+        var v = this.getInputData(0);
 
-		var properties = this.properties;
-		var that = this;
-		var time = this.graph.getTime();
-		var ctx = gl;
-		var canvas = gl.canvas;
-		if( this.properties.use_html_canvas || !global.enableWebGLCanvas )
-		{
-			if(!this._canvas)
-			{
-				canvas = this._canvas = createCanvas(width.height);
-				ctx = this._ctx = canvas.getContext("2d");
-			}
-			else
-			{
-				canvas = this._canvas;
-				ctx = this._ctx;
-			}
-			canvas.width = width;
-			canvas.height = height;
-		}
+        var properties = this.properties;
+        var that = this;
+        var time = this.graph.getTime();
+        var ctx = gl;
+        var canvas = gl.canvas;
+        if (this.properties.use_html_canvas || !global.enableWebGLCanvas) {
+            if (!this._canvas) {
+                canvas = this._canvas = createCanvas(width.height);
+                ctx = this._ctx = canvas.getContext("2d");
+            } else {
+                canvas = this._canvas;
+                ctx = this._ctx;
+            }
+            canvas.width = width;
+            canvas.height = height;
+        }
 
-		if(ctx == gl) //using Canvas2DtoWebGL
-			temp.drawTo(function() {
-				gl.start2D();
-				if(properties.clear)
-				{
-					gl.clearColor(0,0,0,0);
-					gl.clear( gl.COLOR_BUFFER_BIT );
-				}
+        if (ctx == gl)
+            //using Canvas2DtoWebGL
+            temp.drawTo(function () {
+                gl.start2D();
+                if (properties.clear) {
+                    gl.clearColor(0, 0, 0, 0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                }
 
-				try {
-					if (func_context.draw) {
-						func_context.draw.call(that, canvas, ctx, time, func_context, v);
-					} else {
-						func_context.call(that, canvas, ctx, time, func_context,v);
-					}
-					that.boxcolor = "#00FF00";
-				} catch (err) {
-					that.boxcolor = "#FF0000";
-					console.error("Error executing script");
-					console.error(err);
-				}
-				gl.finish2D();
-			});
-		else //rendering to offscren canvas and uploading to texture
-		{
-			if(properties.clear)
-				ctx.clearRect(0,0,canvas.width,canvas.height);
+                try {
+                    if (func_context.draw) {
+                        func_context.draw.call(
+                            that,
+                            canvas,
+                            ctx,
+                            time,
+                            func_context,
+                            v
+                        );
+                    } else {
+                        func_context.call(
+                            that,
+                            canvas,
+                            ctx,
+                            time,
+                            func_context,
+                            v
+                        );
+                    }
+                    that.boxcolor = "#00FF00";
+                } catch (err) {
+                    that.boxcolor = "#FF0000";
+                    console.error("Error executing script");
+                    console.error(err);
+                }
+                gl.finish2D();
+            });
+        //rendering to offscren canvas and uploading to texture
+        else {
+            if (properties.clear)
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			try {
-				if (func_context.draw) {
-					func_context.draw.call(this, canvas, ctx, time, func_context, v);
-				} else {
-					func_context.call(this, canvas, ctx, time, func_context,v);
-				}
-				this.boxcolor = "#00FF00";
-			} catch (err) {
-				this.boxcolor = "#FF0000";
-				console.error("Error executing script");
-				console.error(err);
-			}
-			temp.uploadImage( canvas );
-		}
+            try {
+                if (func_context.draw) {
+                    func_context.draw.call(
+                        this,
+                        canvas,
+                        ctx,
+                        time,
+                        func_context,
+                        v
+                    );
+                } else {
+                    func_context.call(this, canvas, ctx, time, func_context, v);
+                }
+                this.boxcolor = "#00FF00";
+            } catch (err) {
+                this.boxcolor = "#FF0000";
+                console.error("Error executing script");
+                console.error(err);
+            }
+            temp.uploadImage(canvas);
+        }
 
-		this.setOutputData(0, temp);
-	};
+        this.setOutputData(0, temp);
+    };
 
-	LiteGraph.registerNodeType("texture/canvas2D", LGraphTextureCanvas2D);
+    LiteGraph.registerNodeType("texture/canvas2D", LGraphTextureCanvas2D);
 
-	// To do chroma keying *****************
+    // To do chroma keying *****************
 
-	function LGraphTextureMatte() {
-		this.addInput("in", "Texture");
+    function LGraphTextureMatte() {
+        this.addInput("in", "Texture");
 
-		this.addOutput("out", "Texture");
-		this.properties = {
-			key_color: vec3.fromValues(0, 1, 0),
-			threshold: 0.8,
-			slope: 0.2,
-			precision: LGraphTexture.DEFAULT
-		};
-	}
+        this.addOutput("out", "Texture");
+        this.properties = {
+            key_color: vec3.fromValues(0, 1, 0),
+            threshold: 0.8,
+            slope: 0.2,
+            precision: LGraphTexture.DEFAULT,
+        };
+    }
 
-	LGraphTextureMatte.title = "Matte";
-	LGraphTextureMatte.desc = "Extracts background";
+    LGraphTextureMatte.title = "Matte";
+    LGraphTextureMatte.desc = "Extracts background";
 
-	LGraphTextureMatte.widgets_info = {
-		key_color: { widget: "color" },
-		precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
-	};
+    LGraphTextureMatte.widgets_info = {
+        key_color: { widget: "color" },
+        precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
+    };
 
-	LGraphTextureMatte.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0)) {
-			return;
-		} //saves work
+    LGraphTextureMatte.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) {
+            return;
+        } //saves work
 
-		var tex = this.getInputData(0);
+        var tex = this.getInputData(0);
 
-		if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
-			this.setOutputData(0, tex);
-			return;
-		}
+        if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
+            this.setOutputData(0, tex);
+            return;
+        }
 
-		if (!tex) {
-			return;
-		}
+        if (!tex) {
+            return;
+        }
 
-		this._tex = LGraphTexture.getTargetTexture(
-			tex,
-			this._tex,
-			this.properties.precision
-		);
+        this._tex = LGraphTexture.getTargetTexture(
+            tex,
+            this._tex,
+            this.properties.precision
+        );
 
-		gl.disable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-		if (!this._uniforms) {
-			this._uniforms = {
-				u_texture: 0,
-				u_key_color: this.properties.key_color,
-				u_threshold: 1,
-				u_slope: 1
-			};
-		}
-		var uniforms = this._uniforms;
+        if (!this._uniforms) {
+            this._uniforms = {
+                u_texture: 0,
+                u_key_color: this.properties.key_color,
+                u_threshold: 1,
+                u_slope: 1,
+            };
+        }
+        var uniforms = this._uniforms;
 
-		var mesh = Mesh.getScreenQuad();
-		var shader = LGraphTextureMatte._shader;
-		if (!shader) {
-			shader = LGraphTextureMatte._shader = new GL.Shader(
-				GL.Shader.SCREEN_VERTEX_SHADER,
-				LGraphTextureMatte.pixel_shader
-			);
-		}
+        var mesh = Mesh.getScreenQuad();
+        var shader = LGraphTextureMatte._shader;
+        if (!shader) {
+            shader = LGraphTextureMatte._shader = new GL.Shader(
+                GL.Shader.SCREEN_VERTEX_SHADER,
+                LGraphTextureMatte.pixel_shader
+            );
+        }
 
-		uniforms.u_key_color = this.properties.key_color;
-		uniforms.u_threshold = this.properties.threshold;
-		uniforms.u_slope = this.properties.slope;
+        uniforms.u_key_color = this.properties.key_color;
+        uniforms.u_threshold = this.properties.threshold;
+        uniforms.u_slope = this.properties.slope;
 
-		this._tex.drawTo(function() {
-			tex.bind(0);
-			shader.uniforms(uniforms).draw(mesh);
-		});
+        this._tex.drawTo(function () {
+            tex.bind(0);
+            shader.uniforms(uniforms).draw(mesh);
+        });
 
-		this.setOutputData(0, this._tex);
-	};
+        this.setOutputData(0, this._tex);
+    };
 
-	LGraphTextureMatte.pixel_shader =
-		"precision highp float;\n\
+    LGraphTextureMatte.pixel_shader =
+        "precision highp float;\n\
 		varying vec2 v_coord;\n\
 		uniform sampler2D u_texture;\n\
 		uniform vec3 u_key_color;\n\
@@ -21643,37 +21906,49 @@ void main(void){\n\
 			gl_FragColor = vec4( color, alpha );\n\
 		}";
 
-	LiteGraph.registerNodeType("texture/matte", LGraphTextureMatte);
+    LiteGraph.registerNodeType("texture/matte", LGraphTextureMatte);
 
-	//***********************************
-	function LGraphCubemapToTexture2D() {
-		this.addInput("in", "texture");
-		this.addInput("yaw", "number");
-		this.addOutput("out", "texture");
-		this.properties = { yaw: 0 };
-	}
+    //***********************************
+    function LGraphCubemapToTexture2D() {
+        this.addInput("in", "texture");
+        this.addInput("yaw", "number");
+        this.addOutput("out", "texture");
+        this.properties = { yaw: 0 };
+    }
 
-	LGraphCubemapToTexture2D.title = "CubemapToTexture2D";
-	LGraphCubemapToTexture2D.desc = "Transforms a CUBEMAP texture into a TEXTURE2D in Polar Representation";
+    LGraphCubemapToTexture2D.title = "CubemapToTexture2D";
+    LGraphCubemapToTexture2D.desc =
+        "Transforms a CUBEMAP texture into a TEXTURE2D in Polar Representation";
 
-	LGraphCubemapToTexture2D.prototype.onExecute = function() {
-		if (!this.isOutputConnected(0))
-			return;
+    LGraphCubemapToTexture2D.prototype.onExecute = function () {
+        if (!this.isOutputConnected(0)) return;
 
-		var tex = this.getInputData(0);
-		if ( !tex || tex.texture_type != GL.TEXTURE_CUBE_MAP )
-			return;
-		if( this._last_tex && ( this._last_tex.height != tex.height || this._last_tex.type != tex.type ))
-			this._last_tex = null;
-		var yaw = this.getInputOrProperty("yaw");
-		this._last_tex = GL.Texture.cubemapToTexture2D( tex, tex.height, this._last_tex, true, yaw );
-		this.setOutputData( 0, this._last_tex );
-	};
+        var tex = this.getInputData(0);
+        if (!tex || tex.texture_type != GL.TEXTURE_CUBE_MAP) return;
+        if (
+            this._last_tex &&
+            (this._last_tex.height != tex.height ||
+                this._last_tex.type != tex.type)
+        )
+            this._last_tex = null;
+        var yaw = this.getInputOrProperty("yaw");
+        this._last_tex = GL.Texture.cubemapToTexture2D(
+            tex,
+            tex.height,
+            this._last_tex,
+            true,
+            yaw
+        );
+        this.setOutputData(0, this._last_tex);
+    };
 
-	LiteGraph.registerNodeType( "texture/cubemapToTexture2D", LGraphCubemapToTexture2D );
+    LiteGraph.registerNodeType(
+        "texture/cubemapToTexture2D",
+        LGraphCubemapToTexture2D
+    );
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
     var LGraphTexture = global.LGraphTexture;
 
@@ -21690,7 +21965,7 @@ void main(void){\n\
                 aberration: 1.0,
                 distortion: 1.0,
                 blur: 1.0,
-                precision: LGraphTexture.DEFAULT
+                precision: LGraphTexture.DEFAULT,
             };
 
             if (!LGraphFXLens._shader) {
@@ -21703,7 +21978,7 @@ void main(void){\n\
                     wrap: gl.CLAMP_TO_EDGE,
                     magFilter: gl.LINEAR,
                     minFilter: gl.LINEAR,
-                    pixel_data: [255, 0, 0, 0, 255, 0, 0, 0, 255]
+                    pixel_data: [255, 0, 0, 0, 255, 0, 0, 0, 255],
                 });
             }
         }
@@ -21711,10 +21986,10 @@ void main(void){\n\
         LGraphFXLens.title = "Lens";
         LGraphFXLens.desc = "Camera Lens distortion";
         LGraphFXLens.widgets_info = {
-            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
+            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
         };
 
-        LGraphFXLens.prototype.onExecute = function() {
+        LGraphFXLens.prototype.onExecute = function () {
             var tex = this.getInputData(0);
             if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
                 this.setOutputData(0, tex);
@@ -21755,14 +22030,14 @@ void main(void){\n\
             var shader = LGraphFXLens._shader;
             //var camera = LS.Renderer._current_camera;
 
-            this._tex.drawTo(function() {
+            this._tex.drawTo(function () {
                 tex.bind(0);
                 shader
                     .uniforms({
                         u_texture: 0,
                         u_aberration: aberration,
                         u_distortion: distortion,
-                        u_blur: blur
+                        u_blur: blur,
                     })
                     .draw(mesh);
             });
@@ -21932,7 +22207,7 @@ void main(void){\n\
                 size: 10,
                 alpha: 1.0,
                 threshold: 1.0,
-                high_precision: false
+                high_precision: false,
             };
         }
 
@@ -21941,7 +22216,7 @@ void main(void){\n\
 
         LGraphFXBokeh.widgets_info = { shape: { widget: "texture" } };
 
-        LGraphFXBokeh.prototype.onExecute = function() {
+        LGraphFXBokeh.prototype.onExecute = function () {
             var tex = this.getInputData(0);
             var blurred_tex = this.getInputData(1);
             var mask_tex = this.getInputData(2);
@@ -21978,7 +22253,7 @@ void main(void){\n\
                 this._temp_texture = new GL.Texture(tex.width, tex.height, {
                     type: precision,
                     format: gl.RGBA,
-                    filter: gl.LINEAR
+                    filter: gl.LINEAR,
                 });
             }
 
@@ -22020,7 +22295,7 @@ void main(void){\n\
             gl.disable(gl.DEPTH_TEST);
             gl.disable(gl.BLEND);
 
-            this._temp_texture.drawTo(function() {
+            this._temp_texture.drawTo(function () {
                 tex.bind(0);
                 blurred_tex.bind(1);
                 mask_tex.bind(2);
@@ -22029,12 +22304,12 @@ void main(void){\n\
                         u_texture: 0,
                         u_texture_blur: 1,
                         u_mask: 2,
-                        u_texsize: [tex.width, tex.height]
+                        u_texsize: [tex.width, tex.height],
                     })
                     .draw(screen_mesh);
             });
 
-            this._temp_texture.drawTo(function() {
+            this._temp_texture.drawTo(function () {
                 //clear because we use blending
                 //gl.clearColor(0.0,0.0,0.0,1.0);
                 //gl.clear( gl.COLOR_BUFFER_BIT );
@@ -22051,7 +22326,7 @@ void main(void){\n\
                         u_alpha: alpha,
                         u_threshold: threshold,
                         u_pointSize: point_size,
-                        u_itexsize: [1.0 / tex.width, 1.0 / tex.height]
+                        u_itexsize: [1.0 / tex.width, 1.0 / tex.height],
                     })
                     .draw(points_mesh, gl.POINTS);
             });
@@ -22059,7 +22334,7 @@ void main(void){\n\
             this.setOutputData(0, this._temp_texture);
         };
 
-        LGraphFXBokeh.prototype.createPointsMesh = function(
+        LGraphFXBokeh.prototype.createPointsMesh = function (
             width,
             height,
             spacing
@@ -22176,7 +22451,7 @@ void main(void){\n\
                 fx: "halftone",
                 value1: 1,
                 value2: 1,
-                precision: LGraphTexture.DEFAULT
+                precision: LGraphTexture.DEFAULT,
             };
         }
 
@@ -22186,13 +22461,19 @@ void main(void){\n\
         LGraphFXGeneric.widgets_info = {
             fx: {
                 widget: "combo",
-                values: ["halftone", "pixelate", "lowpalette", "noise", "gamma"]
+                values: [
+                    "halftone",
+                    "pixelate",
+                    "lowpalette",
+                    "noise",
+                    "gamma",
+                ],
             },
-            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
+            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
         };
         LGraphFXGeneric.shaders = {};
 
-        LGraphFXGeneric.prototype.onExecute = function() {
+        LGraphFXGeneric.prototype.onExecute = function () {
             if (!this.isOutputConnected(0)) {
                 return;
             } //saves work
@@ -22248,7 +22529,7 @@ void main(void){\n\
             if (camera) {
                 camera_planes = [
                     LS.Renderer._current_camera.near,
-                    LS.Renderer._current_camera.far
+                    LS.Renderer._current_camera.far,
                 ];
             } else {
                 camera_planes = [1, 100];
@@ -22259,7 +22540,7 @@ void main(void){\n\
                 noise = LGraphTexture.getNoiseTexture();
             }
 
-            this._tex.drawTo(function() {
+            this._tex.drawTo(function () {
                 tex.bind(0);
                 if (fx == "noise") {
                     noise.bind(1);
@@ -22273,7 +22554,7 @@ void main(void){\n\
                         u_rand: [Math.random(), Math.random()],
                         u_value1: value1,
                         u_value2: value2,
-                        u_camera_planes: camera_planes
+                        u_camera_planes: camera_planes,
                     })
                     .draw(mesh);
             });
@@ -22375,7 +22656,7 @@ void main(void){\n\
             this.properties = {
                 intensity: 1,
                 invert: false,
-                precision: LGraphTexture.DEFAULT
+                precision: LGraphTexture.DEFAULT,
             };
 
             if (!LGraphFXVigneting._shader) {
@@ -22390,10 +22671,10 @@ void main(void){\n\
         LGraphFXVigneting.desc = "Vigneting";
 
         LGraphFXVigneting.widgets_info = {
-            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES }
+            precision: { widget: "combo", values: LGraphTexture.MODE_VALUES },
         };
 
-        LGraphFXVigneting.prototype.onExecute = function() {
+        LGraphFXVigneting.prototype.onExecute = function () {
             var tex = this.getInputData(0);
 
             if (this.properties.precision === LGraphTexture.PASS_THROUGH) {
@@ -22424,14 +22705,14 @@ void main(void){\n\
             var shader = LGraphFXVigneting._shader;
             var invert = this.properties.invert;
 
-            this._tex.drawTo(function() {
+            this._tex.drawTo(function () {
                 tex.bind(0);
                 shader
                     .uniforms({
                         u_texture: 0,
                         u_intensity: intensity,
                         u_isize: [1 / tex.width, 1 / tex.height],
-                        u_invert: invert ? 1 : 0
+                        u_invert: invert ? 1 : 0,
                     })
                     .draw(mesh);
             });
@@ -22462,7 +22743,7 @@ void main(void){\n\
     }
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
     var MIDI_COLOR = "#243";
 
@@ -22478,11 +22759,11 @@ void main(void){\n\
 
     LiteGraph.MIDIEvent = MIDIEvent;
 
-    MIDIEvent.prototype.fromJSON = function(o) {
+    MIDIEvent.prototype.fromJSON = function (o) {
         this.setup(o.data);
     };
 
-    MIDIEvent.prototype.setup = function(data) {
+    MIDIEvent.prototype.setup = function (data) {
         var raw_data = data;
         if (data.constructor === Object) {
             raw_data = data.data;
@@ -22516,16 +22797,16 @@ void main(void){\n\
     };
 
     Object.defineProperty(MIDIEvent.prototype, "velocity", {
-        get: function() {
+        get: function () {
             if (this.cmd == MIDIEvent.NOTEON) {
                 return this.data[2];
             }
             return -1;
         },
-        set: function(v) {
+        set: function (v) {
             this.data[2] = v; //  v / 127;
         },
-        enumerable: true
+        enumerable: true,
     });
 
     MIDIEvent.notes = [
@@ -22540,7 +22821,7 @@ void main(void){\n\
         "F",
         "F#",
         "G",
-        "G#"
+        "G#",
     ];
     MIDIEvent.note_to_index = {
         A: 0,
@@ -22554,67 +22835,67 @@ void main(void){\n\
         F: 8,
         "F#": 9,
         G: 10,
-        "G#": 11
+        "G#": 11,
     };
 
     Object.defineProperty(MIDIEvent.prototype, "note", {
-        get: function() {
+        get: function () {
             if (this.cmd != MIDIEvent.NOTEON) {
                 return -1;
             }
             return MIDIEvent.toNoteString(this.data[1], true);
         },
-        set: function(v) {
+        set: function (v) {
             throw "notes cannot be assigned this way, must modify the data[1]";
         },
-        enumerable: true
+        enumerable: true,
     });
 
     Object.defineProperty(MIDIEvent.prototype, "octave", {
-        get: function() {
+        get: function () {
             if (this.cmd != MIDIEvent.NOTEON) {
                 return -1;
             }
             var octave = this.data[1] - 24;
             return Math.floor(octave / 12 + 1);
         },
-        set: function(v) {
+        set: function (v) {
             throw "octave cannot be assigned this way, must modify the data[1]";
         },
-        enumerable: true
+        enumerable: true,
     });
 
     //returns HZs
-    MIDIEvent.prototype.getPitch = function() {
+    MIDIEvent.prototype.getPitch = function () {
         return Math.pow(2, (this.data[1] - 69) / 12) * 440;
     };
 
-    MIDIEvent.computePitch = function(note) {
+    MIDIEvent.computePitch = function (note) {
         return Math.pow(2, (note - 69) / 12) * 440;
     };
 
-    MIDIEvent.prototype.getCC = function() {
+    MIDIEvent.prototype.getCC = function () {
         return this.data[1];
     };
 
-    MIDIEvent.prototype.getCCValue = function() {
+    MIDIEvent.prototype.getCCValue = function () {
         return this.data[2];
     };
 
     //not tested, there is a formula missing here
-    MIDIEvent.prototype.getPitchBend = function() {
+    MIDIEvent.prototype.getPitchBend = function () {
         return this.data[1] + (this.data[2] << 7) - 8192;
     };
 
-    MIDIEvent.computePitchBend = function(v1, v2) {
+    MIDIEvent.computePitchBend = function (v1, v2) {
         return v1 + (v2 << 7) - 8192;
     };
 
-    MIDIEvent.prototype.setCommandFromString = function(str) {
+    MIDIEvent.prototype.setCommandFromString = function (str) {
         this.cmd = MIDIEvent.computeCommandFromString(str);
     };
 
-    MIDIEvent.computeCommandFromString = function(str) {
+    MIDIEvent.computeCommandFromString = function (str) {
         if (!str) {
             return 0;
         }
@@ -22665,7 +22946,7 @@ void main(void){\n\
     };
 
     //transform from a pitch number to string like "C4"
-    MIDIEvent.toNoteString = function(d, skip_octave) {
+    MIDIEvent.toNoteString = function (d, skip_octave) {
         d = Math.round(d); //in case it has decimals
         var note = d - 21;
         var octave = Math.floor((d - 24) / 12 + 1);
@@ -22676,7 +22957,7 @@ void main(void){\n\
         return MIDIEvent.notes[note] + (skip_octave ? "" : octave);
     };
 
-    MIDIEvent.NoteStringToPitch = function(str) {
+    MIDIEvent.NoteStringToPitch = function (str) {
         str = str.toUpperCase();
         var note = str[0];
         var octave = 4;
@@ -22698,7 +22979,7 @@ void main(void){\n\
         return (octave - 1) * 12 + pitch + 21;
     };
 
-    MIDIEvent.prototype.toString = function() {
+    MIDIEvent.prototype.toString = function () {
         var str = "" + this.channel + ". ";
         switch (this.cmd) {
             case MIDIEvent.NOTEON:
@@ -22724,17 +23005,17 @@ void main(void){\n\
         return str;
     };
 
-    MIDIEvent.prototype.toHexString = function() {
+    MIDIEvent.prototype.toHexString = function () {
         var str = "";
         for (var i = 0; i < this.data.length; i++) {
             str += this.data[i].toString(16) + " ";
         }
     };
 
-    MIDIEvent.prototype.toJSON = function() {
+    MIDIEvent.prototype.toJSON = function () {
         return {
             data: [this.data[0], this.data[1], this.data[2]],
-            object_class: "MIDIEvent"
+            object_class: "MIDIEvent",
         };
     };
 
@@ -22764,7 +23045,7 @@ void main(void){\n\
         0xfb: "Continue Song",
         0xfc: "Stop Song",
         0xfe: "Sensing",
-        0xff: "Reset"
+        0xff: "Reset",
     };
 
     MIDIEvent.commands_short = {
@@ -22784,7 +23065,7 @@ void main(void){\n\
         0xfb: "CONTINUE",
         0xfc: "STOP",
         0xfe: "SENS",
-        0xff: "RESET"
+        0xff: "RESET",
     };
 
     MIDIEvent.commands_reversed = {};
@@ -22808,22 +23089,24 @@ void main(void){\n\
 
         this.state = {
             note: [],
-            cc: []
+            cc: [],
         };
 
-		this.input_ports = null;
-		this.input_ports_info = [];
-		this.output_ports = null;
-		this.output_ports_info = [];
+        this.input_ports = null;
+        this.input_ports_info = [];
+        this.output_ports = null;
+        this.output_ports_info = [];
 
-        navigator.requestMIDIAccess().then(this.onMIDISuccess.bind(this), this.onMIDIFailure.bind(this));
+        navigator
+            .requestMIDIAccess()
+            .then(this.onMIDISuccess.bind(this), this.onMIDIFailure.bind(this));
     }
 
     MIDIInterface.input = null;
 
     MIDIInterface.MIDIEvent = MIDIEvent;
 
-    MIDIInterface.prototype.onMIDISuccess = function(midiAccess) {
+    MIDIInterface.prototype.onMIDISuccess = function (midiAccess) {
         console.log("MIDI ready!");
         console.log(midiAccess);
         this.midi = midiAccess; // store in the global (in real usage, would probably keep in an object instance)
@@ -22834,12 +23117,12 @@ void main(void){\n\
         }
     };
 
-    MIDIInterface.prototype.updatePorts = function() {
+    MIDIInterface.prototype.updatePorts = function () {
         var midi = this.midi;
         this.input_ports = midi.inputs;
-		this.input_ports_info = [];
+        this.input_ports_info = [];
         this.output_ports = midi.outputs;
-		this.output_ports_info = [];
+        this.output_ports_info = [];
 
         var num = 0;
 
@@ -22847,8 +23130,20 @@ void main(void){\n\
         var it_value = it.next();
         while (it_value && it_value.done === false) {
             var port_info = it_value.value;
-			this.input_ports_info.push(port_info);
-            console.log( "Input port [type:'" + port_info.type + "'] id:'" + port_info.id + "' manufacturer:'" + port_info.manufacturer + "' name:'" + port_info.name + "' version:'" + port_info.version + "'" );
+            this.input_ports_info.push(port_info);
+            console.log(
+                "Input port [type:'" +
+                    port_info.type +
+                    "'] id:'" +
+                    port_info.id +
+                    "' manufacturer:'" +
+                    port_info.manufacturer +
+                    "' name:'" +
+                    port_info.name +
+                    "' version:'" +
+                    port_info.version +
+                    "'"
+            );
             num++;
             it_value = it.next();
         }
@@ -22859,19 +23154,31 @@ void main(void){\n\
         var it_value = it.next();
         while (it_value && it_value.done === false) {
             var port_info = it_value.value;
-			this.output_ports_info.push(port_info);
-            console.log( "Output port [type:'" + port_info.type + "'] id:'" + port_info.id + "' manufacturer:'" + port_info.manufacturer + "' name:'" + port_info.name + "' version:'" + port_info.version + "'" );
+            this.output_ports_info.push(port_info);
+            console.log(
+                "Output port [type:'" +
+                    port_info.type +
+                    "'] id:'" +
+                    port_info.id +
+                    "' manufacturer:'" +
+                    port_info.manufacturer +
+                    "' name:'" +
+                    port_info.name +
+                    "' version:'" +
+                    port_info.version +
+                    "'"
+            );
             num++;
             it_value = it.next();
         }
         this.num_output_ports = num;
     };
 
-    MIDIInterface.prototype.onMIDIFailure = function(msg) {
+    MIDIInterface.prototype.onMIDIFailure = function (msg) {
         console.error("Failed to get MIDI access - " + msg);
     };
 
-    MIDIInterface.prototype.openInputPort = function(port, callback) {
+    MIDIInterface.prototype.openInputPort = function (port, callback) {
         var input_port = this.input_ports.get("input-" + port);
         if (!input_port) {
             return false;
@@ -22879,7 +23186,7 @@ void main(void){\n\
         MIDIInterface.input = this;
         var that = this;
 
-        input_port.onmidimessage = function(a) {
+        input_port.onmidimessage = function (a) {
             var midi_event = new MIDIEvent(a.data);
             that.updateState(midi_event);
             if (callback) {
@@ -22893,9 +23200,9 @@ void main(void){\n\
         return true;
     };
 
-    MIDIInterface.parseMsg = function(data) {};
+    MIDIInterface.parseMsg = function (data) {};
 
-    MIDIInterface.prototype.updateState = function(midi_event) {
+    MIDIInterface.prototype.updateState = function (midi_event) {
         switch (midi_event.cmd) {
             case MIDIEvent.NOTEON:
                 this.state.note[midi_event.value1 | 0] = midi_event.value2;
@@ -22909,12 +23216,12 @@ void main(void){\n\
         }
     };
 
-    MIDIInterface.prototype.sendMIDI = function(port, midi_data) {
+    MIDIInterface.prototype.sendMIDI = function (port, midi_data) {
         if (!midi_data) {
             return;
         }
 
-        var output_port = this.output_ports_info[port];//this.output_ports.get("output-" + port);
+        var output_port = this.output_ports_info[port]; //this.output_ports.get("output-" + port);
         if (!output_port) {
             return;
         }
@@ -22938,7 +23245,7 @@ void main(void){\n\
         this._last_time = 0;
 
         var that = this;
-        new MIDIInterface(function(midi) {
+        new MIDIInterface(function (midi) {
             //open
             that._midi = midi;
             if (that._waiting) {
@@ -22954,7 +23261,7 @@ void main(void){\n\
     LGMIDIIn.desc = "Reads MIDI from a input port";
     LGMIDIIn.color = MIDI_COLOR;
 
-    LGMIDIIn.prototype.getPropertyInfo = function(name) {
+    LGMIDIIn.prototype.getPropertyInfo = function (name) {
         if (!this._midi) {
             return;
         }
@@ -22963,13 +23270,14 @@ void main(void){\n\
             var values = {};
             for (var i = 0; i < this._midi.input_ports_info.length; ++i) {
                 var input = this._midi.input_ports_info[i];
-                values[i] = i + ".- " + input.name + " version:" + input.version;
+                values[i] =
+                    i + ".- " + input.name + " version:" + input.version;
             }
             return { type: "enum", values: values };
         }
     };
 
-    LGMIDIIn.prototype.onStart = function() {
+    LGMIDIIn.prototype.onStart = function () {
         if (this._midi) {
             this._midi.openInputPort(
                 this.properties.port,
@@ -22980,7 +23288,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIIn.prototype.onMIDIEvent = function(data, midi_event) {
+    LGMIDIIn.prototype.onMIDIEvent = function (data, midi_event) {
         this._last_midi_event = midi_event;
         this.boxcolor = "#AFA";
         this._last_time = LiteGraph.getTime();
@@ -22998,7 +23306,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIIn.prototype.onDrawBackground = function(ctx) {
+    LGMIDIIn.prototype.onDrawBackground = function (ctx) {
         this.boxcolor = "#AAA";
         if (!this.flags.collapsed && this._last_midi_event) {
             ctx.fillStyle = "white";
@@ -23019,7 +23327,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIIn.prototype.onExecute = function() {
+    LGMIDIIn.prototype.onExecute = function () {
         if (this.outputs) {
             var last = this._last_midi_event;
             for (var i = 0; i < this.outputs.length; ++i) {
@@ -23040,7 +23348,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIIn.prototype.onGetOutputs = function() {
+    LGMIDIIn.prototype.onGetOutputs = function () {
         return [
             ["last_midi", "midi"],
             ["on_midi", LiteGraph.EVENT],
@@ -23048,7 +23356,7 @@ void main(void){\n\
             ["on_noteoff", LiteGraph.EVENT],
             ["on_cc", LiteGraph.EVENT],
             ["on_pc", LiteGraph.EVENT],
-            ["on_pitchbend", LiteGraph.EVENT]
+            ["on_pitchbend", LiteGraph.EVENT],
         ];
     };
 
@@ -23059,12 +23367,15 @@ void main(void){\n\
         this.properties = { port: 0 };
 
         var that = this;
-        new MIDIInterface(function(midi) {
+        new MIDIInterface(function (midi) {
             that._midi = midi;
-			that.widget.options.values = that.getMIDIOutputs();
+            that.widget.options.values = that.getMIDIOutputs();
         });
-		this.widget = this.addWidget("combo","Device",this.properties.port,{ property: "port", values: this.getMIDIOutputs.bind(this) });
-		this.size = [340,60];
+        this.widget = this.addWidget("combo", "Device", this.properties.port, {
+            property: "port",
+            values: this.getMIDIOutputs.bind(this),
+        });
+        this.size = [340, 60];
     }
 
     LGMIDIOut.MIDIInterface = MIDIInterface;
@@ -23073,35 +23384,33 @@ void main(void){\n\
     LGMIDIOut.desc = "Sends MIDI to output channel";
     LGMIDIOut.color = MIDI_COLOR;
 
-    LGMIDIOut.prototype.onGetPropertyInfo = function(name) {
+    LGMIDIOut.prototype.onGetPropertyInfo = function (name) {
         if (!this._midi) {
             return;
         }
 
         if (name == "port") {
-			var values = this.getMIDIOutputs();
+            var values = this.getMIDIOutputs();
             return { type: "enum", values: values };
         }
     };
-	LGMIDIOut.default_ports = {0:"unknown"};
+    LGMIDIOut.default_ports = { 0: "unknown" };
 
-	LGMIDIOut.prototype.getMIDIOutputs = function()
-	{
-		var values = {};
-		if(!this._midi)
-			return LGMIDIOut.default_ports;
-		if(this._midi.output_ports_info)
-		for (var i = 0; i < this._midi.output_ports_info.length; ++i) {
-			var output = this._midi.output_ports_info[i];
-			if(!output)
-				continue;
-			var name = i + ".- " + output.name + " version:" + output.version;
-			values[i] = name;
-		}
-		return values;
-	}
+    LGMIDIOut.prototype.getMIDIOutputs = function () {
+        var values = {};
+        if (!this._midi) return LGMIDIOut.default_ports;
+        if (this._midi.output_ports_info)
+            for (var i = 0; i < this._midi.output_ports_info.length; ++i) {
+                var output = this._midi.output_ports_info[i];
+                if (!output) continue;
+                var name =
+                    i + ".- " + output.name + " version:" + output.version;
+                values[i] = name;
+            }
+        return values;
+    };
 
-    LGMIDIOut.prototype.onAction = function(event, midi_event) {
+    LGMIDIOut.prototype.onAction = function (event, midi_event) {
         //console.log(midi_event);
         if (!this._midi) {
             return;
@@ -23112,16 +23421,15 @@ void main(void){\n\
         this.trigger("midi", midi_event);
     };
 
-    LGMIDIOut.prototype.onGetInputs = function() {
+    LGMIDIOut.prototype.onGetInputs = function () {
         return [["send", LiteGraph.ACTION]];
     };
 
-    LGMIDIOut.prototype.onGetOutputs = function() {
+    LGMIDIOut.prototype.onGetOutputs = function () {
         return [["on_midi", LiteGraph.EVENT]];
     };
 
     LiteGraph.registerNodeType("midi/output", LGMIDIOut);
-
 
     function LGMIDIShow() {
         this.addInput("on_midi", LiteGraph.EVENT);
@@ -23133,14 +23441,14 @@ void main(void){\n\
     LGMIDIShow.desc = "Shows MIDI in the graph";
     LGMIDIShow.color = MIDI_COLOR;
 
-    LGMIDIShow.prototype.getTitle = function() {
+    LGMIDIShow.prototype.getTitle = function () {
         if (this.flags.collapsed) {
             return this._str;
         }
         return this.title;
     };
 
-    LGMIDIShow.prototype.onAction = function(event, midi_event) {
+    LGMIDIShow.prototype.onAction = function (event, midi_event) {
         if (!midi_event) {
             return;
         }
@@ -23151,7 +23459,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIShow.prototype.onDrawForeground = function(ctx) {
+    LGMIDIShow.prototype.onDrawForeground = function (ctx) {
         if (!this._str || this.flags.collapsed) {
             return;
         }
@@ -23160,11 +23468,11 @@ void main(void){\n\
         ctx.fillText(this._str, 10, this.size[1] * 0.8);
     };
 
-    LGMIDIShow.prototype.onGetInputs = function() {
+    LGMIDIShow.prototype.onGetInputs = function () {
         return [["in", LiteGraph.ACTION]];
     };
 
-    LGMIDIShow.prototype.onGetOutputs = function() {
+    LGMIDIShow.prototype.onGetOutputs = function () {
         return [["on_midi", LiteGraph.EVENT]];
     };
 
@@ -23175,12 +23483,12 @@ void main(void){\n\
             channel: -1,
             cmd: -1,
             min_value: -1,
-            max_value: -1
+            max_value: -1,
         };
 
         var that = this;
         this._learning = false;
-        this.addWidget("button", "Learn", "", function() {
+        this.addWidget("button", "Learn", "", function () {
             that._learning = true;
             that.boxcolor = "#FA3";
         });
@@ -23197,10 +23505,10 @@ void main(void){\n\
     LGMIDIFilter["@cmd"] = {
         type: "enum",
         title: "Command",
-        values: MIDIEvent.commands_reversed
+        values: MIDIEvent.commands_reversed,
     };
 
-    LGMIDIFilter.prototype.getTitle = function() {
+    LGMIDIFilter.prototype.getTitle = function () {
         var str = null;
         if (this.properties.cmd == -1) {
             str = "Nothing";
@@ -23224,7 +23532,7 @@ void main(void){\n\
         return "Filter: " + str;
     };
 
-    LGMIDIFilter.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIFilter.prototype.onPropertyChanged = function (name, value) {
         if (name == "cmd") {
             var num = Number(value);
             if (isNaN(num)) {
@@ -23234,7 +23542,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIFilter.prototype.onAction = function(event, midi_event) {
+    LGMIDIFilter.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -23283,7 +23591,7 @@ void main(void){\n\
             channel: 0,
             cmd: 144, //0x90
             value1: 1,
-            value2: 1
+            value2: 1,
         };
 
         this.addInput("send", LiteGraph.EVENT);
@@ -23298,7 +23606,7 @@ void main(void){\n\
     LGMIDIEvent.desc = "Create a MIDI Event";
     LGMIDIEvent.color = MIDI_COLOR;
 
-    LGMIDIEvent.prototype.onAction = function(event, midi_event) {
+    LGMIDIEvent.prototype.onAction = function (event, midi_event) {
         if (event == "assign") {
             this.properties.channel = midi_event.channel;
             this.properties.cmd = midi_event.cmd;
@@ -23327,7 +23635,7 @@ void main(void){\n\
         this.trigger("on_midi", midi_event);
     };
 
-    LGMIDIEvent.prototype.onExecute = function() {
+    LGMIDIEvent.prototype.onExecute = function () {
         var props = this.properties;
 
         if (this.inputs) {
@@ -23355,13 +23663,13 @@ void main(void){\n\
                     case "value1":
                         var v = this.getInputData(i);
                         if (v != null) {
-                            this.properties.value1 = Math.clamp(v|0,0,127);
+                            this.properties.value1 = Math.clamp(v | 0, 0, 127);
                         }
                         break;
                     case "value2":
                         var v = this.getInputData(i);
                         if (v != null) {
-                            this.properties.value2 = Math.clamp(v|0,0,127);
+                            this.properties.value2 = Math.clamp(v | 0, 0, 127);
                         }
                         break;
                 }
@@ -23425,17 +23733,22 @@ void main(void){\n\
         }
     };
 
-    LGMIDIEvent.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIEvent.prototype.onPropertyChanged = function (name, value) {
         if (name == "cmd") {
             this.properties.cmd = MIDIEvent.computeCommandFromString(value);
         }
     };
 
-    LGMIDIEvent.prototype.onGetInputs = function() {
-        return [["cmd", "number"],["note", "number"],["value1", "number"],["value2", "number"]];
+    LGMIDIEvent.prototype.onGetInputs = function () {
+        return [
+            ["cmd", "number"],
+            ["note", "number"],
+            ["value1", "number"],
+            ["value2", "number"],
+        ];
     };
 
-    LGMIDIEvent.prototype.onGetOutputs = function() {
+    LGMIDIEvent.prototype.onGetOutputs = function () {
         return [
             ["midi", "midi"],
             ["on_midi", LiteGraph.EVENT],
@@ -23446,7 +23759,7 @@ void main(void){\n\
             ["cc_value", "number"],
             ["pitch", "number"],
             ["gate", "bool"],
-            ["pitchbend", "number"]
+            ["pitchbend", "number"],
         ];
     };
 
@@ -23456,7 +23769,7 @@ void main(void){\n\
         this.properties = {
             //		channel: 0,
             cc: 1,
-            value: 0
+            value: 0,
         };
 
         this.addOutput("value", "number");
@@ -23466,7 +23779,7 @@ void main(void){\n\
     LGMIDICC.desc = "gets a Controller Change";
     LGMIDICC.color = MIDI_COLOR;
 
-    LGMIDICC.prototype.onExecute = function() {
+    LGMIDICC.prototype.onExecute = function () {
         var props = this.properties;
         if (MIDIInterface.input) {
             this.properties.value =
@@ -23486,7 +23799,7 @@ void main(void){\n\
             notes: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#",
             octave: 2,
             duration: 0.5,
-            mode: "sequence"
+            mode: "sequence",
         };
 
         this.notes_pitches = LGMIDIGenerator.processScale(
@@ -23499,7 +23812,7 @@ void main(void){\n\
     LGMIDIGenerator.desc = "Generates a random MIDI note";
     LGMIDIGenerator.color = MIDI_COLOR;
 
-    LGMIDIGenerator.processScale = function(scale) {
+    LGMIDIGenerator.processScale = function (scale) {
         var notes = scale.split(",");
         for (var i = 0; i < notes.length; ++i) {
             var n = notes[i];
@@ -23512,13 +23825,13 @@ void main(void){\n\
         return notes;
     };
 
-    LGMIDIGenerator.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIGenerator.prototype.onPropertyChanged = function (name, value) {
         if (name == "notes") {
             this.notes_pitches = LGMIDIGenerator.processScale(value);
         }
     };
 
-    LGMIDIGenerator.prototype.onExecute = function() {
+    LGMIDIGenerator.prototype.onExecute = function () {
         var octave = this.getInputData(2);
         if (octave != null) {
             this.properties.octave = octave;
@@ -23530,7 +23843,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIGenerator.prototype.onAction = function(event, midi_event) {
+    LGMIDIGenerator.prototype.onAction = function (event, midi_event) {
         //var range = this.properties.max - this.properties.min;
         //var pitch = this.properties.min + ((Math.random() * range)|0);
         var pitch = 0;
@@ -23557,7 +23870,7 @@ void main(void){\n\
 
         //noteoff
         setTimeout(
-            function() {
+            function () {
                 var midi_event = new MIDIEvent();
                 midi_event.setup([MIDIEvent.NOTEOFF, pitch, 0]);
                 this.trigger("note", midi_event);
@@ -23570,7 +23883,7 @@ void main(void){\n\
 
     function LGMIDITranspose() {
         this.properties = {
-            amount: 0
+            amount: 0,
         };
         this.addInput("in", LiteGraph.ACTION);
         this.addInput("amount", "number");
@@ -23583,7 +23896,7 @@ void main(void){\n\
     LGMIDITranspose.desc = "Transpose a MIDI note";
     LGMIDITranspose.color = MIDI_COLOR;
 
-    LGMIDITranspose.prototype.onAction = function(event, midi_event) {
+    LGMIDITranspose.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -23603,7 +23916,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDITranspose.prototype.onExecute = function() {
+    LGMIDITranspose.prototype.onExecute = function () {
         var amount = this.getInputData(1);
         if (amount != null) {
             this.properties.amount = amount;
@@ -23614,7 +23927,7 @@ void main(void){\n\
 
     function LGMIDIQuantize() {
         this.properties = {
-            scale: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#"
+            scale: "A,A#,B,C,C#,D,D#,E,F,F#,G,G#",
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("scale", "string");
@@ -23629,13 +23942,13 @@ void main(void){\n\
     LGMIDIQuantize.desc = "Transpose a MIDI note tp fit an scale";
     LGMIDIQuantize.color = MIDI_COLOR;
 
-    LGMIDIQuantize.prototype.onPropertyChanged = function(name, value) {
+    LGMIDIQuantize.prototype.onPropertyChanged = function (name, value) {
         if (name == "scale") {
             this.processScale(value);
         }
     };
 
-    LGMIDIQuantize.prototype.processScale = function(scale) {
+    LGMIDIQuantize.prototype.processScale = function (scale) {
         this._current_scale = scale;
         this.notes_pitches = LGMIDIGenerator.processScale(scale);
         for (var i = 0; i < 12; ++i) {
@@ -23659,7 +23972,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIQuantize.prototype.onAction = function(event, midi_event) {
+    LGMIDIQuantize.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -23680,7 +23993,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIQuantize.prototype.onExecute = function() {
+    LGMIDIQuantize.prototype.onExecute = function () {
         var scale = this.getInputData(1);
         if (scale != null && scale != this._current_scale) {
             this.processScale(scale);
@@ -23689,126 +24002,110 @@ void main(void){\n\
 
     LiteGraph.registerNodeType("midi/quantize", LGMIDIQuantize);
 
-	function LGMIDIFromFile() {
+    function LGMIDIFromFile() {
         this.properties = {
             url: "",
-			autoplay: true
+            autoplay: true,
         };
 
         this.addInput("play", LiteGraph.ACTION);
         this.addInput("pause", LiteGraph.ACTION);
         this.addOutput("note", LiteGraph.EVENT);
-		this._midi = null;
-		this._current_time = 0;
-		this._playing = false;
+        this._midi = null;
+        this._current_time = 0;
+        this._playing = false;
 
         if (typeof MidiParser == "undefined") {
             console.error(
                 "midi-parser.js not included, LGMidiPlay requires that library: https://raw.githubusercontent.com/colxi/midi-parser-js/master/src/main.js"
             );
             this.boxcolor = "red";
-		}
-
-	}
+        }
+    }
 
     LGMIDIFromFile.title = "MIDI fromFile";
     LGMIDIFromFile.desc = "Plays a MIDI file";
     LGMIDIFromFile.color = MIDI_COLOR;
 
-	LGMIDIFromFile.prototype.onAction = function( name )
-	{
-		if(name == "play")
-			this.play();
-		else if(name == "pause")
-			this._playing = !this._playing;
-	}
-
-	LGMIDIFromFile.prototype.onPropertyChanged = function(name,value)
-	{
-		if(name == "url")
-			this.loadMIDIFile(value);
-	}
-
-    LGMIDIFromFile.prototype.onExecute = function() {
-		if(!this._midi)
-			return;
-
-		if(!this._playing)
-			return;
-
-		this._current_time += this.graph.elapsed_time;
-		var current_time = this._current_time * 100;
-
-		for(var i = 0; i < this._midi.tracks; ++i)
-		{
-			var track = this._midi.track[i];
-			if(!track._last_pos)
-			{
-				track._last_pos = 0;
-				track._time = 0;
-			}
-
-			var elem = track.event[ track._last_pos ];
-			if(elem && (track._time + elem.deltaTime) <= current_time )
-			{
-				track._last_pos++;
-				track._time += elem.deltaTime;
-
-				if(elem.data)
-				{
-					var midi_cmd = elem.type << 4 + elem.channel;
-					var midi_event = new MIDIEvent();
-					midi_event.setup([midi_cmd, elem.data[0], elem.data[1]]);
-					this.trigger("note", midi_event);
-				}
-			}
-			
-		}
+    LGMIDIFromFile.prototype.onAction = function (name) {
+        if (name == "play") this.play();
+        else if (name == "pause") this._playing = !this._playing;
     };
 
-	LGMIDIFromFile.prototype.play = function()
-	{
-		this._playing = true;
-		this._current_time = 0;
-		if(!this._midi)
-			return;
+    LGMIDIFromFile.prototype.onPropertyChanged = function (name, value) {
+        if (name == "url") this.loadMIDIFile(value);
+    };
 
-		for(var i = 0; i < this._midi.tracks; ++i)
-		{
-			var track = this._midi.track[i];
-			track._last_pos = 0;
-			track._time = 0;
-		}		
-	}
+    LGMIDIFromFile.prototype.onExecute = function () {
+        if (!this._midi) return;
 
-	LGMIDIFromFile.prototype.loadMIDIFile = function(url)
-	{
-		var that = this;
-		LiteGraph.fetchFile( url, "arraybuffer", function(data)
-		{
-			that.boxcolor = "#AFA";
-			that._midi = MidiParser.parse( new Uint8Array(data) );
-			if(that.properties.autoplay)
-				that.play();
-		}, function(err){
-			that.boxcolor = "#FAA";
-			that._midi = null;
-		});
-	}
+        if (!this._playing) return;
 
-	LGMIDIFromFile.prototype.onDropFile = function(file)
-	{
-		this.properties.url = "";
-		this.loadMIDIFile( file );
-	}
+        this._current_time += this.graph.elapsed_time;
+        var current_time = this._current_time * 100;
+
+        for (var i = 0; i < this._midi.tracks; ++i) {
+            var track = this._midi.track[i];
+            if (!track._last_pos) {
+                track._last_pos = 0;
+                track._time = 0;
+            }
+
+            var elem = track.event[track._last_pos];
+            if (elem && track._time + elem.deltaTime <= current_time) {
+                track._last_pos++;
+                track._time += elem.deltaTime;
+
+                if (elem.data) {
+                    var midi_cmd = elem.type << (4 + elem.channel);
+                    var midi_event = new MIDIEvent();
+                    midi_event.setup([midi_cmd, elem.data[0], elem.data[1]]);
+                    this.trigger("note", midi_event);
+                }
+            }
+        }
+    };
+
+    LGMIDIFromFile.prototype.play = function () {
+        this._playing = true;
+        this._current_time = 0;
+        if (!this._midi) return;
+
+        for (var i = 0; i < this._midi.tracks; ++i) {
+            var track = this._midi.track[i];
+            track._last_pos = 0;
+            track._time = 0;
+        }
+    };
+
+    LGMIDIFromFile.prototype.loadMIDIFile = function (url) {
+        var that = this;
+        LiteGraph.fetchFile(
+            url,
+            "arraybuffer",
+            function (data) {
+                that.boxcolor = "#AFA";
+                that._midi = MidiParser.parse(new Uint8Array(data));
+                if (that.properties.autoplay) that.play();
+            },
+            function (err) {
+                that.boxcolor = "#FAA";
+                that._midi = null;
+            }
+        );
+    };
+
+    LGMIDIFromFile.prototype.onDropFile = function (file) {
+        this.properties.url = "";
+        this.loadMIDIFile(file);
+    };
 
     LiteGraph.registerNodeType("midi/fromFile", LGMIDIFromFile);
-
 
     function LGMIDIPlay() {
         this.properties = {
             volume: 0.5,
-            duration: 1
+            duration: 1,
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("volume", "number");
@@ -23830,7 +24127,7 @@ void main(void){\n\
     LGMIDIPlay.desc = "Plays a MIDI note";
     LGMIDIPlay.color = MIDI_COLOR;
 
-    LGMIDIPlay.prototype.onAction = function(event, midi_event) {
+    LGMIDIPlay.prototype.onAction = function (event, midi_event) {
         if (!midi_event || midi_event.constructor !== MIDIEvent) {
             return;
         }
@@ -23850,7 +24147,7 @@ void main(void){\n\
         this.trigger("note", midi_event);
     };
 
-    LGMIDIPlay.prototype.onExecute = function() {
+    LGMIDIPlay.prototype.onExecute = function () {
         var volume = this.getInputData(1);
         if (volume != null) {
             this.properties.volume = volume;
@@ -23867,7 +24164,7 @@ void main(void){\n\
     function LGMIDIKeys() {
         this.properties = {
             num_octaves: 2,
-            start_octave: 2
+            start_octave: 2,
         };
         this.addInput("note", LiteGraph.ACTION);
         this.addInput("reset", LiteGraph.ACTION);
@@ -23893,10 +24190,10 @@ void main(void){\n\
         { x: 4.75, w: 0.5, h: 0.6, t: 1 },
         { x: 5, w: 1, h: 1, t: 0 },
         { x: 5.75, w: 0.5, h: 0.6, t: 1 },
-        { x: 6, w: 1, h: 1, t: 0 }
+        { x: 6, w: 1, h: 1, t: 0 },
     ];
 
-    LGMIDIKeys.prototype.onDrawForeground = function(ctx) {
+    LGMIDIKeys.prototype.onDrawForeground = function (ctx) {
         if (this.flags.collapsed) {
             return;
         }
@@ -23935,7 +24232,7 @@ void main(void){\n\
         }
     };
 
-    LGMIDIKeys.prototype.getKeyIndex = function(pos) {
+    LGMIDIKeys.prototype.getKeyIndex = function (pos) {
         var num_keys = this.properties.num_octaves * 12;
         var key_width = this.size[0] / (this.properties.num_octaves * 7);
         var key_height = this.size[1];
@@ -23963,7 +24260,7 @@ void main(void){\n\
         return -1;
     };
 
-    LGMIDIKeys.prototype.onAction = function(event, params) {
+    LGMIDIKeys.prototype.onAction = function (event, params) {
         if (event == "reset") {
             for (var i = 0; i < this.keys.length; ++i) {
                 this.keys[i] = false;
@@ -23988,7 +24285,7 @@ void main(void){\n\
         this.trigger("note", midi_event);
     };
 
-    LGMIDIKeys.prototype.onMouseDown = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseDown = function (e, pos) {
         if (pos[1] < 0) {
             return;
         }
@@ -24002,7 +24299,7 @@ void main(void){\n\
         return true;
     };
 
-    LGMIDIKeys.prototype.onMouseMove = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseMove = function (e, pos) {
         if (pos[1] < 0 || this._last_key == -1) {
             return;
         }
@@ -24028,7 +24325,7 @@ void main(void){\n\
         return true;
     };
 
-    LGMIDIKeys.prototype.onMouseUp = function(e, pos) {
+    LGMIDIKeys.prototype.onMouseUp = function (e, pos) {
         if (pos[1] < 0) {
             return;
         }
@@ -24049,13 +24346,13 @@ void main(void){\n\
     }
 })(this);
 
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     var LGAudio = {};
     global.LGAudio = LGAudio;
 
-    LGAudio.getAudioContext = function() {
+    LGAudio.getAudioContext = function () {
         if (!this._audio_context) {
             window.AudioContext =
                 window.AudioContext || window.webkitAudioContext;
@@ -24064,13 +24361,13 @@ void main(void){\n\
                 return null;
             }
             this._audio_context = new AudioContext();
-            this._audio_context.onmessage = function(msg) {
+            this._audio_context.onmessage = function (msg) {
                 console.log("msg", msg);
             };
-            this._audio_context.onended = function(msg) {
+            this._audio_context.onended = function (msg) {
                 console.log("ended", msg);
             };
-            this._audio_context.oncomplete = function(msg) {
+            this._audio_context.oncomplete = function (msg) {
                 console.log("complete", msg);
             };
         }
@@ -24081,7 +24378,7 @@ void main(void){\n\
         return this._audio_context;
     };
 
-    LGAudio.connect = function(audionodeA, audionodeB) {
+    LGAudio.connect = function (audionodeA, audionodeB) {
         try {
             audionodeA.connect(audionodeB);
         } catch (err) {
@@ -24089,7 +24386,7 @@ void main(void){\n\
         }
     };
 
-    LGAudio.disconnect = function(audionodeA, audionodeB) {
+    LGAudio.disconnect = function (audionodeA, audionodeB) {
         try {
             audionodeA.disconnect(audionodeB);
         } catch (err) {
@@ -24097,7 +24394,7 @@ void main(void){\n\
         }
     };
 
-    LGAudio.changeAllAudiosConnections = function(node, connect) {
+    LGAudio.changeAllAudiosConnections = function (node, connect) {
         if (node.inputs) {
             for (var i = 0; i < node.inputs.length; ++i) {
                 var input = node.inputs[i];
@@ -24170,7 +24467,7 @@ void main(void){\n\
     };
 
     //used by many nodes
-    LGAudio.onConnectionsChange = function(
+    LGAudio.onConnectionsChange = function (
         connection,
         slot,
         connected,
@@ -24217,10 +24514,10 @@ void main(void){\n\
     };
 
     //this function helps creating wrappers to existing classes
-    LGAudio.createAudioNodeWrapper = function(class_object) {
+    LGAudio.createAudioNodeWrapper = function (class_object) {
         var old_func = class_object.prototype.onPropertyChanged;
 
-        class_object.prototype.onPropertyChanged = function(name, value) {
+        class_object.prototype.onPropertyChanged = function (name, value) {
             if (old_func) {
                 old_func.call(this, name, value);
             }
@@ -24247,7 +24544,7 @@ void main(void){\n\
     //contains the samples decoded of the loaded audios in AudioBuffer format
     LGAudio.cached_audios = {};
 
-    LGAudio.loadSound = function(url, on_complete, on_error) {
+    LGAudio.loadSound = function (url, on_complete, on_error) {
         if (LGAudio.cached_audios[url] && url.indexOf("blob:") == -1) {
             if (on_complete) {
                 on_complete(LGAudio.cached_audios[url]);
@@ -24267,11 +24564,11 @@ void main(void){\n\
         var context = LGAudio.getAudioContext();
 
         // Decode asynchronously
-        request.onload = function() {
+        request.onload = function () {
             console.log("AudioSource loaded");
             context.decodeAudioData(
                 request.response,
-                function(buffer) {
+                function (buffer) {
                     console.log("AudioSource decoded");
                     LGAudio.cached_audios[url] = buffer;
                     if (on_complete) {
@@ -24301,7 +24598,7 @@ void main(void){\n\
             gain: 0.5,
             loop: true,
             autoplay: true,
-            playbackRate: 1
+            playbackRate: 1,
         };
 
         this._loading_audio = false;
@@ -24326,47 +24623,47 @@ void main(void){\n\
         }
     }
 
-	LGAudioSource.desc = "Plays an audio file";
+    LGAudioSource.desc = "Plays an audio file";
     LGAudioSource["@src"] = { widget: "resource" };
     LGAudioSource.supported_extensions = ["wav", "ogg", "mp3"];
 
-    LGAudioSource.prototype.onAdded = function(graph) {
+    LGAudioSource.prototype.onAdded = function (graph) {
         if (graph.status === LGraph.STATUS_RUNNING) {
             this.onStart();
         }
     };
 
-    LGAudioSource.prototype.onStart = function() {
+    LGAudioSource.prototype.onStart = function () {
         if (!this._audiobuffer) {
             return;
         }
 
         if (this.properties.autoplay) {
-			this.playBuffer(this._audiobuffer);
+            this.playBuffer(this._audiobuffer);
         }
     };
 
-    LGAudioSource.prototype.onStop = function() {
+    LGAudioSource.prototype.onStop = function () {
         this.stopAllSounds();
     };
 
-    LGAudioSource.prototype.onPause = function() {
+    LGAudioSource.prototype.onPause = function () {
         this.pauseAllSounds();
     };
 
-    LGAudioSource.prototype.onUnpause = function() {
+    LGAudioSource.prototype.onUnpause = function () {
         this.unpauseAllSounds();
         //this.onStart();
     };
 
-    LGAudioSource.prototype.onRemoved = function() {
+    LGAudioSource.prototype.onRemoved = function () {
         this.stopAllSounds();
         if (this._dropped_url) {
             URL.revokeObjectURL(this._url);
         }
     };
 
-    LGAudioSource.prototype.stopAllSounds = function() {
+    LGAudioSource.prototype.stopAllSounds = function () {
         //iterate and stop
         for (var i = 0; i < this._audionodes.length; ++i) {
             if (this._audionodes[i].started) {
@@ -24378,15 +24675,15 @@ void main(void){\n\
         this._audionodes.length = 0;
     };
 
-    LGAudioSource.prototype.pauseAllSounds = function() {
+    LGAudioSource.prototype.pauseAllSounds = function () {
         LGAudio.getAudioContext().suspend();
     };
 
-    LGAudioSource.prototype.unpauseAllSounds = function() {
+    LGAudioSource.prototype.unpauseAllSounds = function () {
         LGAudio.getAudioContext().resume();
     };
 
-    LGAudioSource.prototype.onExecute = function() {
+    LGAudioSource.prototype.onExecute = function () {
         if (this.inputs) {
             for (var i = 0; i < this.inputs.length; ++i) {
                 var input = this.inputs[i];
@@ -24397,10 +24694,9 @@ void main(void){\n\
                 if (v === undefined) {
                     continue;
                 }
-                if (input.name == "gain")
-                    this.audionode.gain.value = v;
+                if (input.name == "gain") this.audionode.gain.value = v;
                 else if (input.name == "src") {
-                    this.setProperty("src",v);
+                    this.setProperty("src", v);
                 } else if (input.name == "playbackRate") {
                     this.properties.playbackRate = v;
                     for (var j = 0; j < this._audionodes.length; ++j) {
@@ -24420,7 +24716,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioSource.prototype.onAction = function(event) {
+    LGAudioSource.prototype.onAction = function (event) {
         if (this._audiobuffer) {
             if (event == "Play") {
                 this.playBuffer(this._audiobuffer);
@@ -24430,7 +24726,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioSource.prototype.onPropertyChanged = function(name, value) {
+    LGAudioSource.prototype.onPropertyChanged = function (name, value) {
         if (name == "src") {
             this.loadSound(value);
         } else if (name == "gain") {
@@ -24442,7 +24738,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioSource.prototype.playBuffer = function(buffer) {
+    LGAudioSource.prototype.playBuffer = function (buffer) {
         var that = this;
         var context = LGAudio.getAudioContext();
 
@@ -24456,11 +24752,11 @@ void main(void){\n\
         this._audionodes.push(audionode);
         audionode.connect(this.audionode); //connect to gain
 
-		this._audionodes.push(audionode);
+        this._audionodes.push(audionode);
 
-		this.trigger("start");
+        this.trigger("start");
 
-        audionode.onended = function() {
+        audionode.onended = function () {
             //console.log("ended!");
             that.trigger("ended");
             //remove
@@ -24477,7 +24773,7 @@ void main(void){\n\
         return audionode;
     };
 
-    LGAudioSource.prototype.loadSound = function(url) {
+    LGAudioSource.prototype.loadSound = function (url) {
         var that = this;
 
         //kill previous load
@@ -24512,20 +24808,24 @@ void main(void){\n\
     //Helps connect/disconnect AudioNodes when new connections are made in the node
     LGAudioSource.prototype.onConnectionsChange = LGAudio.onConnectionsChange;
 
-    LGAudioSource.prototype.onGetInputs = function() {
+    LGAudioSource.prototype.onGetInputs = function () {
         return [
             ["playbackRate", "number"],
-			["src","string"],
+            ["src", "string"],
             ["Play", LiteGraph.ACTION],
-            ["Stop", LiteGraph.ACTION]
+            ["Stop", LiteGraph.ACTION],
         ];
     };
 
-    LGAudioSource.prototype.onGetOutputs = function() {
-        return [["buffer", "audiobuffer"], ["start", LiteGraph.EVENT], ["ended", LiteGraph.EVENT]];
+    LGAudioSource.prototype.onGetOutputs = function () {
+        return [
+            ["buffer", "audiobuffer"],
+            ["start", LiteGraph.EVENT],
+            ["ended", LiteGraph.EVENT],
+        ];
     };
 
-    LGAudioSource.prototype.onDropFile = function(file) {
+    LGAudioSource.prototype.onDropFile = function (file) {
         if (this._dropped_url) {
             URL.revokeObjectURL(this._dropped_url);
         }
@@ -24543,7 +24843,7 @@ void main(void){\n\
 
     function LGAudioMediaSource() {
         this.properties = {
-            gain: 0.5
+            gain: 0.5,
         };
 
         this._audionodes = [];
@@ -24559,31 +24859,31 @@ void main(void){\n\
         this.audionode.gain.value = this.properties.gain;
     }
 
-    LGAudioMediaSource.prototype.onAdded = function(graph) {
+    LGAudioMediaSource.prototype.onAdded = function (graph) {
         if (graph.status === LGraph.STATUS_RUNNING) {
             this.onStart();
         }
     };
 
-    LGAudioMediaSource.prototype.onStart = function() {
+    LGAudioMediaSource.prototype.onStart = function () {
         if (this._media_stream == null && !this._waiting_confirmation) {
             this.openStream();
         }
     };
 
-    LGAudioMediaSource.prototype.onStop = function() {
+    LGAudioMediaSource.prototype.onStop = function () {
         this.audionode.gain.value = 0;
     };
 
-    LGAudioMediaSource.prototype.onPause = function() {
+    LGAudioMediaSource.prototype.onPause = function () {
         this.audionode.gain.value = 0;
     };
 
-    LGAudioMediaSource.prototype.onUnpause = function() {
+    LGAudioMediaSource.prototype.onUnpause = function () {
         this.audionode.gain.value = this.properties.gain;
     };
 
-    LGAudioMediaSource.prototype.onRemoved = function() {
+    LGAudioMediaSource.prototype.onRemoved = function () {
         this.audionode.gain.value = 0;
         if (this.audiosource_node) {
             this.audiosource_node.disconnect(this.audionode);
@@ -24597,7 +24897,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioMediaSource.prototype.openStream = function() {
+    LGAudioMediaSource.prototype.openStream = function () {
         if (!navigator.mediaDevices) {
             console.log(
                 "getUserMedia() is not supported in your browser, use chrome and enable WebRTC from about://flags"
@@ -24621,7 +24921,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioMediaSource.prototype.streamReady = function(localMediaStream) {
+    LGAudioMediaSource.prototype.streamReady = function (localMediaStream) {
         this._media_stream = localMediaStream;
         //this._waiting_confirmation = false;
 
@@ -24638,7 +24938,7 @@ void main(void){\n\
         this.boxcolor = "white";
     };
 
-    LGAudioMediaSource.prototype.onExecute = function() {
+    LGAudioMediaSource.prototype.onExecute = function () {
         if (this._media_stream == null && !this._waiting_confirmation) {
             this.openStream();
         }
@@ -24660,7 +24960,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioMediaSource.prototype.onAction = function(event) {
+    LGAudioMediaSource.prototype.onAction = function (event) {
         if (event == "Play") {
             this.audionode.gain.value = this.properties.gain;
         } else if (event == "Stop") {
@@ -24668,7 +24968,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioMediaSource.prototype.onPropertyChanged = function(name, value) {
+    LGAudioMediaSource.prototype.onPropertyChanged = function (name, value) {
         if (name == "gain") {
             this.audionode.gain.value = value;
         }
@@ -24678,11 +24978,11 @@ void main(void){\n\
     LGAudioMediaSource.prototype.onConnectionsChange =
         LGAudio.onConnectionsChange;
 
-    LGAudioMediaSource.prototype.onGetInputs = function() {
+    LGAudioMediaSource.prototype.onGetInputs = function () {
         return [
             ["playbackRate", "number"],
             ["Play", LiteGraph.ACTION],
-            ["Stop", LiteGraph.ACTION]
+            ["Stop", LiteGraph.ACTION],
         ];
     };
 
@@ -24697,7 +24997,7 @@ void main(void){\n\
             fftSize: 2048,
             minDecibels: -100,
             maxDecibels: -10,
-            smoothingTimeConstant: 0.5
+            smoothingTimeConstant: 0.5,
         };
 
         var context = LGAudio.getAudioContext();
@@ -24717,11 +25017,11 @@ void main(void){\n\
         this._time_bin = null;
     }
 
-    LGAudioAnalyser.prototype.onPropertyChanged = function(name, value) {
+    LGAudioAnalyser.prototype.onPropertyChanged = function (name, value) {
         this.audionode[name] = value;
     };
 
-    LGAudioAnalyser.prototype.onExecute = function() {
+    LGAudioAnalyser.prototype.onExecute = function () {
         if (this.isOutputConnected(0)) {
             //send FFT
             var bufferLength = this.audionode.frequencyBinCount;
@@ -24759,16 +25059,19 @@ void main(void){\n\
         //this.audionode.getFloatTimeDomainData( dataArray );
     };
 
-    LGAudioAnalyser.prototype.onGetInputs = function() {
+    LGAudioAnalyser.prototype.onGetInputs = function () {
         return [
             ["minDecibels", "number"],
             ["maxDecibels", "number"],
-            ["smoothingTimeConstant", "number"]
+            ["smoothingTimeConstant", "number"],
         ];
     };
 
-    LGAudioAnalyser.prototype.onGetOutputs = function() {
-        return [["freqs", "array"], ["samples", "array"]];
+    LGAudioAnalyser.prototype.onGetOutputs = function () {
+        return [
+            ["freqs", "array"],
+            ["samples", "array"],
+        ];
     };
 
     LGAudioAnalyser.title = "Analyser";
@@ -24780,7 +25083,7 @@ void main(void){\n\
     function LGAudioGain() {
         //default
         this.properties = {
-            gain: 1
+            gain: 1,
         };
 
         this.audionode = LGAudio.getAudioContext().createGain();
@@ -24789,7 +25092,7 @@ void main(void){\n\
         this.addOutput("out", "audio");
     }
 
-    LGAudioGain.prototype.onExecute = function() {
+    LGAudioGain.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -24813,7 +25116,7 @@ void main(void){\n\
         //default
         this.properties = {
             impulse_src: "",
-            normalize: true
+            normalize: true,
         };
 
         this.audionode = LGAudio.getAudioContext().createConvolver();
@@ -24823,13 +25126,13 @@ void main(void){\n\
 
     LGAudio.createAudioNodeWrapper(LGAudioConvolver);
 
-    LGAudioConvolver.prototype.onRemove = function() {
+    LGAudioConvolver.prototype.onRemove = function () {
         if (this._dropped_url) {
             URL.revokeObjectURL(this._dropped_url);
         }
     };
 
-    LGAudioConvolver.prototype.onPropertyChanged = function(name, value) {
+    LGAudioConvolver.prototype.onPropertyChanged = function (name, value) {
         if (name == "impulse_src") {
             this.loadImpulse(value);
         } else if (name == "normalize") {
@@ -24837,7 +25140,7 @@ void main(void){\n\
         }
     };
 
-    LGAudioConvolver.prototype.onDropFile = function(file) {
+    LGAudioConvolver.prototype.onDropFile = function (file) {
         if (this._dropped_url) {
             URL.revokeObjectURL(this._dropped_url);
         }
@@ -24846,7 +25149,7 @@ void main(void){\n\
         this.loadImpulse(this._dropped_url);
     };
 
-    LGAudioConvolver.prototype.loadImpulse = function(url) {
+    LGAudioConvolver.prototype.loadImpulse = function (url) {
         var that = this;
 
         //kill previous load
@@ -24887,7 +25190,7 @@ void main(void){\n\
             ratio: 12,
             reduction: -20,
             attack: 0,
-            release: 0.25
+            release: 0.25,
         };
 
         this.audionode = LGAudio.getAudioContext().createDynamicsCompressor();
@@ -24897,7 +25200,7 @@ void main(void){\n\
 
     LGAudio.createAudioNodeWrapper(LGAudioDynamicsCompressor);
 
-    LGAudioDynamicsCompressor.prototype.onExecute = function() {
+    LGAudioDynamicsCompressor.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -24913,14 +25216,14 @@ void main(void){\n\
         }
     };
 
-    LGAudioDynamicsCompressor.prototype.onGetInputs = function() {
+    LGAudioDynamicsCompressor.prototype.onGetInputs = function () {
         return [
             ["threshold", "number"],
             ["knee", "number"],
             ["ratio", "number"],
             ["reduction", "number"],
             ["attack", "number"],
-            ["release", "number"]
+            ["release", "number"],
         ];
     };
 
@@ -24941,7 +25244,7 @@ void main(void){\n\
         this.addOutput("out", "audio");
     }
 
-    LGAudioWaveShaper.prototype.onExecute = function() {
+    LGAudioWaveShaper.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -24952,7 +25255,7 @@ void main(void){\n\
         this.audionode.curve = v;
     };
 
-    LGAudioWaveShaper.prototype.setWaveShape = function(shape) {
+    LGAudioWaveShaper.prototype.setWaveShape = function (shape) {
         this.audionode.curve = shape;
     };
 
@@ -24968,7 +25271,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         //default
         this.properties = {
             gain1: 0.5,
-            gain2: 0.5
+            gain2: 0.5,
         };
 
         this.audionode = LGAudio.getAudioContext().createGain();
@@ -24989,7 +25292,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.addOutput("out", "audio");
     }
 
-    LGAudioMixer.prototype.getAudioNodeInInputSlot = function(slot) {
+    LGAudioMixer.prototype.getAudioNodeInInputSlot = function (slot) {
         if (slot == 0) {
             return this.audionode1;
         } else if (slot == 2) {
@@ -24997,7 +25300,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioMixer.prototype.onPropertyChanged = function(name, value) {
+    LGAudioMixer.prototype.onPropertyChanged = function (name, value) {
         if (name == "gain1") {
             this.audionode1.gain.value = value;
         } else if (name == "gain2") {
@@ -25005,7 +25308,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioMixer.prototype.onExecute = function() {
+    LGAudioMixer.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -25042,7 +25345,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
             A: 0.1,
             D: 0.1,
             S: 0.1,
-            R: 0.1
+            R: 0.1,
         };
 
         this.audionode = LGAudio.getAudioContext().createGain();
@@ -25053,7 +25356,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.gate = false;
     }
 
-    LGAudioADSR.prototype.onExecute = function() {
+    LGAudioADSR.prototype.onExecute = function () {
         var audioContext = LGAudio.getAudioContext();
         var now = audioContext.currentTime;
         var node = this.audionode;
@@ -25079,12 +25382,12 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.gate = current_gate;
     };
 
-    LGAudioADSR.prototype.onGetInputs = function() {
+    LGAudioADSR.prototype.onGetInputs = function () {
         return [
             ["A", "number"],
             ["D", "number"],
             ["S", "number"],
-            ["R", "number"]
+            ["R", "number"],
         ];
     };
 
@@ -25097,7 +25400,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
     function LGAudioDelay() {
         //default
         this.properties = {
-            delayTime: 0.5
+            delayTime: 0.5,
         };
 
         this.audionode = LGAudio.getAudioContext().createDelay(10);
@@ -25109,7 +25412,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
 
     LGAudio.createAudioNodeWrapper(LGAudioDelay);
 
-    LGAudioDelay.prototype.onExecute = function() {
+    LGAudioDelay.prototype.onExecute = function () {
         var v = this.getInputData(1);
         if (v !== undefined) {
             this.audionode.delayTime.value = v;
@@ -25125,7 +25428,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.properties = {
             frequency: 350,
             detune: 0,
-            Q: 1
+            Q: 1,
         };
         this.addProperty("type", "lowpass", "enum", {
             values: [
@@ -25136,8 +25439,8 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
                 "highshelf",
                 "peaking",
                 "notch",
-                "allpass"
-            ]
+                "allpass",
+            ],
         });
 
         //create node
@@ -25148,7 +25451,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.addOutput("out", "audio");
     }
 
-    LGAudioBiquadFilter.prototype.onExecute = function() {
+    LGAudioBiquadFilter.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -25165,8 +25468,12 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioBiquadFilter.prototype.onGetInputs = function() {
-        return [["frequency", "number"], ["detune", "number"], ["Q", "number"]];
+    LGAudioBiquadFilter.prototype.onGetInputs = function () {
+        return [
+            ["frequency", "number"],
+            ["detune", "number"],
+            ["Q", "number"],
+        ];
     };
 
     LGAudio.createAudioNodeWrapper(LGAudioBiquadFilter);
@@ -25180,10 +25487,10 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.properties = {
             frequency: 440,
             detune: 0,
-            type: "sine"
+            type: "sine",
         };
         this.addProperty("type", "sine", "enum", {
-            values: ["sine", "square", "sawtooth", "triangle", "custom"]
+            values: ["sine", "square", "sawtooth", "triangle", "custom"],
         });
 
         //create node
@@ -25193,7 +25500,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.addOutput("out", "audio");
     }
 
-    LGAudioOscillatorNode.prototype.onStart = function() {
+    LGAudioOscillatorNode.prototype.onStart = function () {
         if (!this.audionode.started) {
             this.audionode.started = true;
             try {
@@ -25202,22 +25509,22 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioOscillatorNode.prototype.onStop = function() {
+    LGAudioOscillatorNode.prototype.onStop = function () {
         if (this.audionode.started) {
             this.audionode.started = false;
             this.audionode.stop();
         }
     };
 
-    LGAudioOscillatorNode.prototype.onPause = function() {
+    LGAudioOscillatorNode.prototype.onPause = function () {
         this.onStop();
     };
 
-    LGAudioOscillatorNode.prototype.onUnpause = function() {
+    LGAudioOscillatorNode.prototype.onUnpause = function () {
         this.onStart();
     };
 
-    LGAudioOscillatorNode.prototype.onExecute = function() {
+    LGAudioOscillatorNode.prototype.onExecute = function () {
         if (!this.inputs || !this.inputs.length) {
             return;
         }
@@ -25234,11 +25541,11 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioOscillatorNode.prototype.onGetInputs = function() {
+    LGAudioOscillatorNode.prototype.onGetInputs = function () {
         return [
             ["frequency", "number"],
             ["detune", "number"],
-            ["type", "string"]
+            ["type", "string"],
         ];
     };
 
@@ -25255,7 +25562,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
     function LGAudioVisualization() {
         this.properties = {
             continuous: true,
-            mark: -1
+            mark: -1,
         };
 
         this.addInput("data", "array");
@@ -25264,7 +25571,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this._last_buffer = null;
     }
 
-    LGAudioVisualization.prototype.onExecute = function() {
+    LGAudioVisualization.prototype.onExecute = function () {
         this._last_buffer = this.getInputData(0);
         var v = this.getInputData(1);
         if (v !== undefined) {
@@ -25273,7 +25580,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.setDirtyCanvas(true, false);
     };
 
-    LGAudioVisualization.prototype.onDrawForeground = function(ctx) {
+    LGAudioVisualization.prototype.onDrawForeground = function (ctx) {
         if (!this._last_buffer) {
             return;
         }
@@ -25328,14 +25635,14 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         //default
         this.properties = {
             band: 440,
-            amplitude: 1
+            amplitude: 1,
         };
 
         this.addInput("freqs", "array");
         this.addOutput("signal", "number");
     }
 
-    LGAudioBandSignal.prototype.onExecute = function() {
+    LGAudioBandSignal.prototype.onExecute = function () {
         this._freqs = this.getInputData(0);
         if (!this._freqs) {
             return;
@@ -25367,7 +25674,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.setOutputData(0, (v / 255) * this.properties.amplitude);
     };
 
-    LGAudioBandSignal.prototype.onGetInputs = function() {
+    LGAudioBandSignal.prototype.onGetInputs = function () {
         return [["band", "number"]];
     };
 
@@ -25385,7 +25692,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
 
         //default
         this.properties = {
-            code: LGAudioScript.default_code
+            code: LGAudioScript.default_code,
         };
 
         //create node
@@ -25409,7 +25716,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.addOutput("out", "audio");
     }
 
-    LGAudioScript.prototype.onAdded = function(graph) {
+    LGAudioScript.prototype.onAdded = function (graph) {
         if (graph.status == LGraph.STATUS_RUNNING) {
             this.audionode.onaudioprocess = this._callback;
         }
@@ -25417,31 +25724,31 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
 
     LGAudioScript["@code"] = { widget: "code", type: "code" };
 
-    LGAudioScript.prototype.onStart = function() {
+    LGAudioScript.prototype.onStart = function () {
         this.audionode.onaudioprocess = this._callback;
     };
 
-    LGAudioScript.prototype.onStop = function() {
+    LGAudioScript.prototype.onStop = function () {
         this.audionode.onaudioprocess = LGAudioScript._bypass_function;
     };
 
-    LGAudioScript.prototype.onPause = function() {
+    LGAudioScript.prototype.onPause = function () {
         this.audionode.onaudioprocess = LGAudioScript._bypass_function;
     };
 
-    LGAudioScript.prototype.onUnpause = function() {
+    LGAudioScript.prototype.onUnpause = function () {
         this.audionode.onaudioprocess = this._callback;
     };
 
-    LGAudioScript.prototype.onExecute = function() {
+    LGAudioScript.prototype.onExecute = function () {
         //nothing! because we need an onExecute to receive onStart... fix that
     };
 
-    LGAudioScript.prototype.onRemoved = function() {
+    LGAudioScript.prototype.onRemoved = function () {
         this.audionode.onaudioprocess = LGAudioScript._bypass_function;
     };
 
-    LGAudioScript.prototype.processCode = function() {
+    LGAudioScript.prototype.processCode = function () {
         try {
             var func = new Function("properties", this.properties.code);
             this._script = new func(this.properties);
@@ -25454,7 +25761,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioScript.prototype.onPropertyChanged = function(name, value) {
+    LGAudioScript.prototype.onPropertyChanged = function (name, value) {
         if (name == "code") {
             this.properties.code = value;
             this.processCode();
@@ -25464,8 +25771,8 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGAudioScript.default_function = function() {
-        this.onaudioprocess = function(audioProcessingEvent) {
+    LGAudioScript.default_function = function () {
+        this.onaudioprocess = function (audioProcessingEvent) {
             // The input buffer is the song we loaded earlier
             var inputBuffer = audioProcessingEvent.inputBuffer;
 
@@ -25507,7 +25814,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
 })(this);
 
 //event related nodes
-(function(global) {
+(function (global) {
     var LiteGraph = global.LiteGraph;
 
     function LGWebSocket() {
@@ -25519,7 +25826,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.properties = {
             url: "",
             room: "lgraph", //allows to filter messages,
-            only_send_changes: true
+            only_send_changes: true,
         };
         this._ws = null;
         this._last_sent_data = [];
@@ -25529,13 +25836,13 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
     LGWebSocket.title = "WebSocket";
     LGWebSocket.desc = "Send data through a websocket";
 
-    LGWebSocket.prototype.onPropertyChanged = function(name, value) {
+    LGWebSocket.prototype.onPropertyChanged = function (name, value) {
         if (name == "url") {
             this.connectSocket();
         }
     };
 
-    LGWebSocket.prototype.onExecute = function() {
+    LGWebSocket.prototype.onExecute = function () {
         if (!this._ws && this.properties.url) {
             this.connectSocket();
         }
@@ -25558,7 +25865,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
                     type: 0,
                     room: room,
                     channel: i,
-                    data: data
+                    data: data,
                 });
             } catch (err) {
                 continue;
@@ -25580,18 +25887,18 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGWebSocket.prototype.connectSocket = function() {
+    LGWebSocket.prototype.connectSocket = function () {
         var that = this;
         var url = this.properties.url;
         if (url.substr(0, 2) != "ws") {
             url = "ws://" + url;
         }
         this._ws = new WebSocket(url);
-        this._ws.onopen = function() {
+        this._ws.onopen = function () {
             console.log("ready");
             that.boxcolor = "#6C6";
         };
-        this._ws.onmessage = function(e) {
+        this._ws.onmessage = function (e) {
             that.boxcolor = "#AFA";
             var data = JSON.parse(e.data);
             if (data.room && data.room != that.properties.room) {
@@ -25616,24 +25923,24 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
                 that._last_received_data[data.channel || 0] = data.data;
             }
         };
-        this._ws.onerror = function(e) {
+        this._ws.onerror = function (e) {
             console.log("couldnt connect to websocket");
             that.boxcolor = "#E88";
         };
-        this._ws.onclose = function(e) {
+        this._ws.onclose = function (e) {
             console.log("connection closed");
             that.boxcolor = "#000";
         };
     };
 
-    LGWebSocket.prototype.send = function(data) {
+    LGWebSocket.prototype.send = function (data) {
         if (!this._ws || this._ws.readyState != WebSocket.OPEN) {
             return;
         }
         this._ws.send(JSON.stringify({ type: 1, msg: data }));
     };
 
-    LGWebSocket.prototype.onAction = function(action, param) {
+    LGWebSocket.prototype.onAction = function (action, param) {
         if (!this._ws || this._ws.readyState != WebSocket.OPEN) {
             return;
         }
@@ -25641,15 +25948,15 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
             type: 1,
             room: this.properties.room,
             action: action,
-            data: param
+            data: param,
         });
     };
 
-    LGWebSocket.prototype.onGetInputs = function() {
+    LGWebSocket.prototype.onGetInputs = function () {
         return [["in", 0]];
     };
 
-    LGWebSocket.prototype.onGetOutputs = function() {
+    LGWebSocket.prototype.onGetOutputs = function () {
         return [["out", 0]];
     };
 
@@ -25680,7 +25987,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this.properties = {
             url: "tamats.com:55000",
             room: "lgraph",
-            only_send_changes: true
+            only_send_changes: true,
         };
 
         this._server = null;
@@ -25688,28 +25995,30 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         this._last_sent_data = [];
         this._last_received_data = [];
 
-		if(typeof(SillyClient) == "undefined")
-			console.warn("remember to add SillyClient.js to your project: https://tamats.com/projects/sillyserver/src/sillyclient.js");
+        if (typeof SillyClient == "undefined")
+            console.warn(
+                "remember to add SillyClient.js to your project: https://tamats.com/projects/sillyserver/src/sillyclient.js"
+            );
     }
 
     LGSillyClient.title = "SillyClient";
     LGSillyClient.desc = "Connects to SillyServer to broadcast messages";
 
-    LGSillyClient.prototype.onPropertyChanged = function(name, value) {
+    LGSillyClient.prototype.onPropertyChanged = function (name, value) {
         if (name == "room") {
             this.room_widget.value = value;
         }
         this.connectSocket();
     };
 
-    LGSillyClient.prototype.setRoom = function(room_name) {
+    LGSillyClient.prototype.setRoom = function (room_name) {
         this.properties.room = room_name;
         this.room_widget.value = room_name;
         this.connectSocket();
     };
 
     //force label names
-    LGSillyClient.prototype.onDrawForeground = function() {
+    LGSillyClient.prototype.onDrawForeground = function () {
         for (var i = 1; i < this.inputs.length; ++i) {
             var slot = this.inputs[i];
             slot.label = "in_" + i;
@@ -25720,7 +26029,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGSillyClient.prototype.onExecute = function() {
+    LGSillyClient.prototype.onExecute = function () {
         if (!this._server || !this._server.is_connected) {
             return;
         }
@@ -25729,44 +26038,42 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
 
         for (var i = 1; i < this.inputs.length; ++i) {
             var data = this.getInputData(i);
-			var prev_data = this._last_sent_data[i];
+            var prev_data = this._last_sent_data[i];
             if (data != null) {
-                if (only_send_changes)
-				{	
-					var is_equal = true;
-					if( data && data.length && prev_data && prev_data.length == data.length && data.constructor !== String)
-					{
-						for(var j = 0; j < data.length; ++j)
-							if( prev_data[j] != data[j] )
-							{
-								is_equal = false;
-								break;
-							}
-					}
-					else if(this._last_sent_data[i] != data)
-						is_equal = false;
-					if(is_equal)
-							continue;
+                if (only_send_changes) {
+                    var is_equal = true;
+                    if (
+                        data &&
+                        data.length &&
+                        prev_data &&
+                        prev_data.length == data.length &&
+                        data.constructor !== String
+                    ) {
+                        for (var j = 0; j < data.length; ++j)
+                            if (prev_data[j] != data[j]) {
+                                is_equal = false;
+                                break;
+                            }
+                    } else if (this._last_sent_data[i] != data)
+                        is_equal = false;
+                    if (is_equal) continue;
                 }
                 this._server.sendMessage({ type: 0, channel: i, data: data });
-				if( data.length && data.constructor !== String )
-				{
-					if( this._last_sent_data[i] )
-					{
-						this._last_sent_data[i].length = data.length;
-						for(var j = 0; j < data.length; ++j)
-							this._last_sent_data[i][j] = data[j];
-					}
-					else //create
-					{
-						if(data.constructor === Array)
-							this._last_sent_data[i] = data.concat();
-						else
-							this._last_sent_data[i] = new data.constructor( data );
-					}
-				}
-				else
-	                this._last_sent_data[i] = data; //should be cloned
+                if (data.length && data.constructor !== String) {
+                    if (this._last_sent_data[i]) {
+                        this._last_sent_data[i].length = data.length;
+                        for (var j = 0; j < data.length; ++j)
+                            this._last_sent_data[i][j] = data[j];
+                    } //create
+                    else {
+                        if (data.constructor === Array)
+                            this._last_sent_data[i] = data.concat();
+                        else
+                            this._last_sent_data[i] = new data.constructor(
+                                data
+                            );
+                    }
+                } else this._last_sent_data[i] = data; //should be cloned
             }
         }
 
@@ -25779,7 +26086,7 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGSillyClient.prototype.connectSocket = function() {
+    LGSillyClient.prototype.connectSocket = function () {
         var that = this;
         if (typeof SillyClient == "undefined") {
             if (!this._error) {
@@ -25792,11 +26099,11 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
 
         this._server = new SillyClient();
-        this._server.on_ready = function() {
+        this._server.on_ready = function () {
             console.log("ready");
             that.boxcolor = "#6C6";
         };
-        this._server.on_message = function(id, msg) {
+        this._server.on_message = function (id, msg) {
             var data = null;
             try {
                 data = JSON.parse(msg);
@@ -25826,11 +26133,11 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
             }
             that.boxcolor = "#AFA";
         };
-        this._server.on_error = function(e) {
+        this._server.on_error = function (e) {
             console.log("couldnt connect to websocket");
             that.boxcolor = "#E88";
         };
-        this._server.on_close = function(e) {
+        this._server.on_close = function (e) {
             console.log("connection closed");
             that.boxcolor = "#000";
         };
@@ -25847,25 +26154,25 @@ LiteGraph.registerNodeType("audio/waveShaper", LGAudioWaveShaper);
         }
     };
 
-    LGSillyClient.prototype.send = function(data) {
+    LGSillyClient.prototype.send = function (data) {
         if (!this._server || !this._server.is_connected) {
             return;
         }
         this._server.sendMessage({ type: 1, data: data });
     };
 
-    LGSillyClient.prototype.onAction = function(action, param) {
+    LGSillyClient.prototype.onAction = function (action, param) {
         if (!this._server || !this._server.is_connected) {
             return;
         }
         this._server.sendMessage({ type: 1, action: action, data: param });
     };
 
-    LGSillyClient.prototype.onGetInputs = function() {
+    LGSillyClient.prototype.onGetInputs = function () {
         return [["in", 0]];
     };
 
-    LGSillyClient.prototype.onGetOutputs = function() {
+    LGSillyClient.prototype.onGetOutputs = function () {
         return [["out", 0]];
     };
 
