@@ -6918,7 +6918,7 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.arc(
                         this.connecting_pos[0],
                         this.connecting_pos[1],
-                        4,
+                        6,
                         0,
                         Math.PI * 2
                     );
