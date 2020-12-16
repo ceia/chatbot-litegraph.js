@@ -7501,7 +7501,7 @@ LGraphNode.prototype.executeAction = function(action)
 						if(low_quality)
 	                        ctx.rect(pos[0] - 4, pos[1] - 4, 8, 8 ); //faster
 						else
-	                        ctx.arc(pos[0], pos[1], 4, 0, Math.PI * 2);
+	                        ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
                     }
                     ctx.fill();
 
@@ -7526,7 +7526,7 @@ LGraphNode.prototype.executeAction = function(action)
             }
 
             ctx.textAlign = horizontal ? "center" : "right";
-            ctx.strokeStyle = "black";
+            ctx.strokeStyle = "white";
             if (node.outputs) {
                 for (var i = 0; i < node.outputs.length; i++) {
                     var slot = node.outputs[i];
