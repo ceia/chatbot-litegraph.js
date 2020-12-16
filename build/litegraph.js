@@ -7456,7 +7456,7 @@ LGraphNode.prototype.executeAction = function(action)
                     if ( this.connecting_node && !LiteGraph.isValidConnection( slot.type , out_slot.type) ) {
                         ctx.globalAlpha = 0.4 * editor_alpha;
                     }
-
+                    ctx.strokeStyle = "white";
                     ctx.fillStyle =
                         slot.link != null
                             ? slot.color_on ||
@@ -7501,7 +7501,7 @@ LGraphNode.prototype.executeAction = function(action)
 						if(low_quality)
 	                        ctx.rect(pos[0] - 4, pos[1] - 4, 8, 8 ); //faster
 						else
-	                        ctx.arc(pos[0], pos[1], 5, 0, Math.PI * 2);
+	                        ctx.arc(pos[0], pos[1], 6, 0, Math.PI * 2);
                     }
                     ctx.fill();
 
@@ -7575,7 +7575,7 @@ LGraphNode.prototype.executeAction = function(action)
 						if(low_quality)
 	                        ctx.rect(pos[0] - 4, pos[1] - 4, 8, 8 );
 						else
-	                        ctx.arc(pos[0], pos[1], 4, 0, Math.PI * 2);
+	                        ctx.arc(pos[0], pos[1], 6, 0, Math.PI * 2);
                     }
 
                     //trigger
