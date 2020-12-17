@@ -7933,7 +7933,11 @@ LGraphNode.prototype.executeAction = function(action)
                         var side = box_size * 0.75;
                         var h = side * (Math.sqrt(3)/2);
                         ctx.translate(title_height * 0.5, title_height * -0.5);
-                        ctx.rotate(45);
+                        if (node.flags.collapsed) {
+                            ctx.rotate(90 * Math.PI / 180);
+                        } else {
+                            ctx.rotate(180 * Math.PI / 180);
+                        }
                         ctx.moveTo(0, -h / 2);
                         ctx.lineTo( -side / 2, h / 2);
                         ctx.lineTo(side / 2, h / 2);
@@ -7941,7 +7945,11 @@ LGraphNode.prototype.executeAction = function(action)
                         
                         ctx.stroke();
                         ctx.fill(); 
-                        ctx.rotate(-45);
+                        if (node.flags.collapsed) {
+                            ctx.rotate(-90 * Math.PI / 180);
+                        } else {
+                            ctx.rotate(-180 * Math.PI / 180);
+                        }
                         ctx.translate(title_height * -0.5, title_height * 0.5);
                     ctx.closePath();
 				}
