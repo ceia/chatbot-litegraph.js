@@ -8633,12 +8633,12 @@ LGraphNode.prototype.executeAction = function(action)
                         w.clicked = false;
                         this.dirty_canvas = true;
                     }
-                    ctx.fillRect(margin, y, widget_width - margin * 2, H);
+                    ctx.fillRect(margin, y, widget_width + margin * 2, H);
 					if(show_text && !w.disabled)
 	                    ctx.strokeRect( margin, y, widget_width - margin * 2, H );
                     if (show_text) {
                         ctx.textAlign = "center";
-                        ctx.fillStyle = text_color;
+                        ctx.fillStyle = background_color;
                         ctx.fillText(w.name, widget_width * 0.5, y + H * 0.7);
                     }
                     break;
