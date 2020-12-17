@@ -8620,8 +8620,8 @@ LGraphNode.prototype.executeAction = function(action)
             }
             w.last_y = y;
             ctx.strokeStyle = outline_color;
-            ctx.fillStyle = "#222";
-            ctx.textAlign = "left";
+            ctx.fillStyle = background_color;
+            ctx.textAlign = "right";
 			if(w.disabled)
 				ctx.globalAlpha *= 0.5;
 			var widget_width = w.width || width;
@@ -8633,7 +8633,7 @@ LGraphNode.prototype.executeAction = function(action)
                         w.clicked = false;
                         this.dirty_canvas = true;
                     }
-                    ctx.fillRect(margin, y, widget_width + margin * 2, H);
+                    ctx.fillRect(margin, y, widget_width - margin * 4, H);
 					if(show_text && !w.disabled)
 	                    ctx.strokeRect( margin, y, widget_width - margin * 2, H );
                     if (show_text) {
@@ -8782,7 +8782,7 @@ LGraphNode.prototype.executeAction = function(action)
                         }
                         ctx.fillStyle = text_color;
                         ctx.textAlign = "right";
-                        ctx.fillText(String(w.value).substr(0,30), widget_width - margin * 2, y + H * 0.7); //30 chars max
+                        ctx.fillText(String(w.value).substr(0,300), widget_width - margin * 2, y + H * 0.7); //30 chars max
 						ctx.restore();
                     }
                     break;
