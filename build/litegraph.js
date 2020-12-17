@@ -7922,13 +7922,27 @@ LGraphNode.prototype.executeAction = function(action)
 				else
 				{
 					ctx.beginPath();
-					ctx.arc(
-						title_height * 0.5,
-						title_height * -0.5,
-						box_size * 0.25,
-						0,
-						Math.PI * 2
-					);
+                        // ctx.arc(
+                        //     title_height * 0.5,
+                        //     title_height * -0.5,
+                        //     box_size * 0.5,
+                        //     0,
+                        //     Math.PI * 2
+                        // );
+                        // Draws a triangle instead of a circle
+                        var h = side * (Math.sqrt(3)/2);
+                        var side = box_size * 0.5;
+                        ctx.translate(title_height * 0.5, title_height * -0.5);
+                        ctx.moveTo(0, -h / 2);
+                        ctx.lineTo( -side / 2, h / 2);
+                        ctx.lineTo(side / 2, h / 2);
+                        ctx.lineTo(0, -h / 2);
+                        
+                        ctx.stroke();
+                        ctx.fill(); 
+                        
+                    ctx.closePath();
+                    ctx.save();
 					ctx.fill();
 				}
             } else {
@@ -8610,7 +8624,7 @@ LGraphNode.prototype.executeAction = function(action)
         var background_color = LiteGraph.WIDGET_BGCOLOR;
         var text_color = LiteGraph.WIDGET_TEXT_COLOR;
 		var secondary_text_color = LiteGraph.WIDGET_SECONDARY_TEXT_COLOR;
-        var margin = 15;
+        var margin = 18;
 
         for (var i = 0; i < widgets.length; ++i) {
             var w = widgets[i];
@@ -8621,7 +8635,7 @@ LGraphNode.prototype.executeAction = function(action)
             w.last_y = y;
             ctx.strokeStyle = outline_color;
             ctx.fillStyle = background_color;
-            ctx.textAlign = "right";
+            ctx.textAlign = "left";
 			if(w.disabled)
 				ctx.globalAlpha *= 0.5;
 			var widget_width = w.width || width;
@@ -8633,12 +8647,12 @@ LGraphNode.prototype.executeAction = function(action)
                         w.clicked = false;
                         this.dirty_canvas = true;
                     }
-                    ctx.fillRect(margin, y, widget_width - margin * 4, H);
+                    ctx.fillRect(margin*2, y, widget_width - margin * 4, H);
 					if(show_text && !w.disabled)
 	                    ctx.strokeRect( margin, y, widget_width - margin * 2, H );
                     if (show_text) {
                         ctx.textAlign = "center";
-                        ctx.fillStyle = background_color;
+                        ctx.fillStyle = text_color;
                         ctx.fillText(w.name, widget_width * 0.5, y + H * 0.7);
                     }
                     break;
