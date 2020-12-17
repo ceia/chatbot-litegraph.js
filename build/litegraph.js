@@ -6918,14 +6918,14 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.arc(
                         this.connecting_pos[0],
                         this.connecting_pos[1],
-                        6,
+                        4,
                         0,
                         Math.PI * 2
                     );
                 }
                 ctx.fill();
 
-                ctx.fillStyle = "#ffcc00";
+                ctx.fillStyle = "#65a747";
                 if (this._highlight_input) {
                     ctx.beginPath();
                     ctx.arc(
@@ -7654,7 +7654,7 @@ LGraphNode.prototype.executeAction = function(action)
                     x = node._collapsed_width * 0.5;
                     y = -LiteGraph.NODE_TITLE_HEIGHT;
                 }
-                ctx.fillStyle = "#686";
+                ctx.fillStyle = "#7886ab";
                 ctx.beginPath();
                 if (
                     slot.type === LiteGraph.EVENT ||
@@ -7667,7 +7667,7 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.lineTo(x + -4, y + 4);
                     ctx.closePath();
                 } else {
-                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
                 }
                 ctx.fill();
             }
@@ -7679,8 +7679,8 @@ LGraphNode.prototype.executeAction = function(action)
                     x = node._collapsed_width * 0.5;
                     y = 0;
                 }
-                ctx.fillStyle = "#686";
-                ctx.strokeStyle = "black";
+                ctx.fillStyle = "#8295a1";
+                ctx.strokeStyle = "white";
                 ctx.beginPath();
                 if (
                     slot.type === LiteGraph.EVENT ||
@@ -7693,7 +7693,7 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.lineTo(x - 6, y + 4);
                     ctx.closePath();
                 } else {
-                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
                 }
                 ctx.fill();
                 //ctx.stroke();
@@ -7711,9 +7711,9 @@ LGraphNode.prototype.executeAction = function(action)
 	LGraphCanvas.prototype.drawLinkTooltip = function( ctx, link )
 	{
 		var pos = link._pos;
-		ctx.fillStyle = "black";
+		ctx.fillStyle = "white";
 		ctx.beginPath();
-		ctx.arc( pos[0], pos[1], 3, 0, Math.PI * 2 );
+		ctx.arc( pos[0], pos[1], 5, 0, Math.PI * 2 );
 		ctx.fill();
 
 		if(link.data == null)
@@ -7925,7 +7925,7 @@ LGraphNode.prototype.executeAction = function(action)
 					ctx.arc(
 						title_height * 0.5,
 						title_height * -0.5,
-						box_size * 0.5,
+						box_size * 0.25,
 						0,
 						Math.PI * 2
 					);
