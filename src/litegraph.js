@@ -7930,8 +7930,9 @@ LGraphNode.prototype.executeAction = function(action)
                         //     Math.PI * 2
                         // );
                         // Draws a triangle instead of a circle
-                        var side = box_size * 0.75;
+                        var side = box_size * 0.5;
                         var h = side * (Math.sqrt(3)/2);
+                        ctx.translate(title_height * 0.5, title_height * -0.5);
                         ctx.moveTo(0, -h / 2);
                         ctx.lineTo( -side / 2, h / 2);
                         ctx.lineTo(side / 2, h / 2);
@@ -7939,7 +7940,7 @@ LGraphNode.prototype.executeAction = function(action)
                         
                         ctx.stroke();
                         ctx.fill(); 
-                        
+                        ctx.translate(title_height * -0.5, title_height * 0.5);
                     ctx.closePath();
 				}
             } else {
