@@ -7941,7 +7941,7 @@ LGraphNode.prototype.executeAction = function(action)
                         
                         ctx.stroke();
                         ctx.fill(); 
-                        ctx.rotate(45);
+                        ctx.rotate(-45);
                         ctx.translate(title_height * -0.5, title_height * 0.5);
                     ctx.closePath();
 				}
