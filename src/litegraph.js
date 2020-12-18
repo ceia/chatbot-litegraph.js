@@ -5743,8 +5743,10 @@ LGraphNode.prototype.executeAction = function(action)
 				if (this.canvas) {
                     this.canvas.style.cursor = "";
 
-                    if (this.canvas.onMouseLeaveNodes && this.canvas.mouseOverSomeNode)
-                        this.canvas.onMouseLeaveNodes(e)
+                    if (this.canvas.onMouseLeaveNodes && this.canvas.mouseOverSomeNode) {
+                        this.canvas.mouseOverSomeNode = false;
+                        this.canvas.onMouseLeaveNodes();
+                    }
 				}
 			} //end
 
