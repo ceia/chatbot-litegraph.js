@@ -4719,7 +4719,8 @@ LGraphNode.prototype.executeAction = function(action)
 		this.onSelectionChange = null; //called if the selection changes
 		this.onConnectingChange = null; //called before any link changes
 		this.onBeforeChange = null; //called before modifying the graph
-		this.onAfterChange = null; //called after modifying the graph
+        this.onAfterChange = null; //called after modifying the graph
+        this.mouseOverSomeNode = false;
 
         this.connections_width = 3;
         this.round_radius = 8;
@@ -5661,6 +5662,7 @@ LGraphNode.prototype.executeAction = function(action)
                 //this.canvas.style.cursor = "move";
                 if (!node.mouseOver) {
                     //mouse enter
+                    this.canvas.mouseOverSomeNode = true;
                     node.mouseOver = true;
                     this.node_over = node;
                     this.dirty_canvas = true;
@@ -5740,6 +5742,9 @@ LGraphNode.prototype.executeAction = function(action)
 
 				if (this.canvas) {
                     this.canvas.style.cursor = "";
+
+                    if (this.canvas.onMouseLeaveNodes && this.canvas.mouseOverSomeNode)
+                        this.canvas.onMouseLeaveNodes(e)
 				}
 			} //end
 
