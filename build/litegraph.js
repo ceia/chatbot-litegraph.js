@@ -5643,6 +5643,10 @@ LGraphNode.prototype.executeAction = function(action)
                     this.graph._nodes[i].mouseOver = false;
                     if (this.node_over && this.node_over.onMouseLeave) {
                         this.node_over.onMouseLeave(e);
+
+                        if (node.onMouseLeave) {
+                            node.onMouseLeave(e);
+                        }
                     }
                     this.node_over = null;
                     this.dirty_canvas = true;
