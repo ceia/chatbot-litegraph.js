@@ -4653,9 +4653,9 @@ LGraphNode.prototype.executeAction = function(action)
         this.ds = new DragAndScale();
         this.zoom_modify_alpha = true; //otherwise it generates ugly patterns when scaling down too much
 
-        this.title_text_font = "" + LiteGraph.NODE_TEXT_SIZE + "px Arial";
+        this.title_text_font = "" + LiteGraph.NODE_TEXT_SIZE + "px Courier New";
         this.inner_text_font =
-            "normal " + LiteGraph.NODE_SUBTEXT_SIZE + "px Arial";
+            "normal " + LiteGraph.NODE_SUBTEXT_SIZE + "px Courier New";
         this.node_title_color = LiteGraph.NODE_TITLE_COLOR;
         this.default_link_color = LiteGraph.LINK_COLOR;
         this.default_connection_color = {
@@ -7021,7 +7021,7 @@ LGraphNode.prototype.executeAction = function(action)
 		ctx.globalAlpha = 1;
 
 		ctx.fillStyle = "#888";
-		ctx.font = "14px Arial";
+		ctx.font = "14px Courier New";
 		ctx.textAlign = "left";
 		ctx.fillText( "Graph Inputs", 20, 34 );
 		var pos = this.mouse;
@@ -7033,7 +7033,7 @@ LGraphNode.prototype.executeAction = function(action)
 		}
 
 		var y = 50;
-		ctx.font = "20px Arial";
+		ctx.font = "20px Courier New";
 		if(subnode.inputs)
 		for(var i = 0; i < subnode.inputs.length; ++i)
 		{
@@ -7112,7 +7112,7 @@ LGraphNode.prototype.executeAction = function(action)
 			{
 				ctx.fillStyle = textcolor;
 				ctx.textAlign = "center";
-				ctx.font = ((h * 0.65)|0) + "px Arial";
+				ctx.font = ((h * 0.65)|0) + "px Courier New";
 				ctx.fillText( text, x + w * 0.5,y + h * 0.75 );
 				ctx.textAlign = "left";
 			}
@@ -7147,7 +7147,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx.save();
         ctx.translate(x, y);
 
-        ctx.font = "10px Arial";
+        ctx.font = "10px Courier New";
         ctx.fillStyle = "#888";
         if (this.graph) {
             ctx.fillText( "T: " + this.graph.globaltime.toFixed(2) + "s", 5, 13 * 1 );
@@ -7196,7 +7196,7 @@ LGraphNode.prototype.executeAction = function(action)
             ctx.lineWidth = 10;
             ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
             ctx.lineWidth = 1;
-            ctx.font = "40px Arial";
+            ctx.font = "40px Courier New";
             ctx.textAlign = "center";
             ctx.fillStyle = subgraph_node.bgcolor || "#AAA";
             var title = "";
@@ -9069,7 +9069,7 @@ LGraphNode.prototype.executeAction = function(action)
 
             var font_size =
                 group.font_size || LiteGraph.DEFAULT_GROUP_FONT_SIZE;
-            ctx.font = font_size + "px Arial";
+            ctx.font = font_size + "px Courier New";
             ctx.fillText(group.title, pos[0] + 4, pos[1] + font_size);
         }
 
