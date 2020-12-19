@@ -3335,7 +3335,7 @@
         const fontLetterWidth = 7.6;
         let outputWidth = 0;
         let widgetWidth = 0;
-        let titleWidth = (fontLetterWidth * this.title.length) + 40;
+        let titleWidth = this.title ? ((fontLetterWidth * this.title.length) + 40) : 0;
 
         if (this.horizontal) {
             if (this.outputs && this.outputs.length) {
