@@ -8628,7 +8628,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx,
         active_widget
     ) {
-        console.log(node);
+        
         if (!node.widgets || !node.widgets.length) {
             return 0;
         }
@@ -8644,6 +8644,9 @@ LGraphNode.prototype.executeAction = function(action)
         var text_color = LiteGraph.WIDGET_TEXT_COLOR;
 		var secondary_text_color = LiteGraph.WIDGET_SECONDARY_TEXT_COLOR;
         var margin = 18;
+
+        if (node.horizontal)
+            margin = 6;
 
         for (var i = 0; i < widgets.length; ++i) {
             var w = widgets[i];
