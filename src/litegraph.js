@@ -3337,11 +3337,11 @@
         if (this.widgets && this.widgets.length) {
             for (var i = 0, l = this.widgets.length; i < l; ++i) {
                 if (this.widgets[i].computeSize)
-                    widgets_height += this.widgets[i].computeSize(size[0])[1] + 4;
+                    widgets_height += this.widgets[i].computeSize(size[0])[1] + 6;
                 else
-                    widgets_height += LiteGraph.NODE_WIDGET_HEIGHT + 4;
+                    widgets_height += LiteGraph.NODE_WIDGET_HEIGHT + 6;
             }
-            widgets_height += 8;
+            widgets_height += 12;
         }
 
         //compute height using widgets height
@@ -3356,7 +3356,7 @@
             if (!text) {
                 return 0;
             }
-            return font_size * text.length * 0.6;
+            return font_size * text.length;
         }
 
         if (
@@ -3366,7 +3366,7 @@
             size[1] = this.constructor.min_height;
         }
 
-        size[1] += 6; //margin
+        size[1] += 10; //margin
 
         return size;
     };
@@ -8628,6 +8628,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx,
         active_widget
     ) {
+        console.log(node);
         if (!node.widgets || !node.widgets.length) {
             return 0;
         }
