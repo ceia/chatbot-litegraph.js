@@ -7365,10 +7365,13 @@ LGraphNode.prototype.executeAction = function(action)
         ctx.globalAlpha = editor_alpha;
 
         if (this.render_shadows && !low_quality) {
-            ctx.shadowColor = LiteGraph.DEFAULT_SHADOW_COLOR;
+            if (node.selected)
+                ctx.shadowColor = "rgba(12,23,128,0.45)";
+            else
+                ctx.shadowColor = LiteGraph.DEFAULT_SHADOW_COLOR;
             ctx.shadowOffsetX = 0 * this.ds.scale;
             ctx.shadowOffsetY = 1 * this.ds.scale;
-            ctx.shadowBlur = 6 * this.ds.scale;
+            ctx.shadowBlur = 9 * this.ds.scale;
         } else {
             ctx.shadowColor = "transparent";
         }
