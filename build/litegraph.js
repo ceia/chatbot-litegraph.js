@@ -3287,6 +3287,7 @@
      */
     LGraphNode.prototype.computeSize = function(out) {
         if (this.constructor.size) {
+            console.log(this.constructor.size)
             return this.constructor.size.concat();
         }
 
@@ -3295,41 +3296,67 @@
             this.outputs ? this.outputs.length : 1
         );
         var size = out || new Float32Array([0, 0]);
+        console.log(size)
         rows = Math.max(rows, 1);
         var font_size = LiteGraph.NODE_TEXT_SIZE; //although it should be graphcanvas.inner_text_font size
 
-        var font_size = font_size;
-        var title_width = compute_text_size(this.title);
-        var input_width = 0;
-        var output_width = 0;
+        // var title_width = compute_text_size(this.title);
+        // var input_width = 0;
+        // var output_width = 0;
 
-        if (this.inputs) {
-            for (var i = 0, l = this.inputs.length; i < l; ++i) {
-                var input = this.inputs[i];
-                var text = input.label || input.name || "";
-                var text_width = compute_text_size(text);
-                if (input_width < text_width) {
-                    input_width = text_width;
-                }
+        // if (this.inputs) {
+        //     for (var i = 0, l = this.inputs.length; i < l; ++i) {
+        //         var input = this.inputs[i];
+        //         var text = input.label || input.name || "";
+        //         var text_width = compute_text_size(text);
+        //         if (input_width < text_width) {
+        //             input_width = text_width;
+        //         }
+        //     }
+        // }
+
+        // if (this.outputs) {
+        //     for (var i = 0, l = this.outputs.length; i < l; ++i) {
+        //         var output = this.outputs[i];
+        //         var text = output.label || output.name || "";
+        //         var text_width = compute_text_size(text);
+        //         if (output_width < text_width) {
+        //             output_width = text_width;
+        //         }
+        //     }
+        // }
+
+        // size[0] = Math.max(input_width + output_width + 10, title_width);
+        // size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH);
+        // if (this.widgets && this.widgets.length) {
+        //     size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH * 1.5);
+        // }
+
+        const fontLetterWidth = 7.6;
+        let outputWidth = 0;
+        let widgetWidth = 0;
+        let titleWidth = (fontLetterWidth * this.title.length) + 40;
+
+        if (this.horizontal) {
+            if (this.outputs && this.outputs.length) {
+                this.outputs.forEach((output) => {
+                    let text = output.label || output.name || "";
+                    let textWidth = fontLetterWidth * text.length;
+                    outputWidth += textWidth + (fontLetterWidth * 2);
+                });
             }
         }
-
-        if (this.outputs) {
-            for (var i = 0, l = this.outputs.length; i < l; ++i) {
-                var output = this.outputs[i];
-                var text = output.label || output.name || "";
-                var text_width = compute_text_size(text);
-                if (output_width < text_width) {
-                    output_width = text_width;
-                }
-            }
-        }
-
-        size[0] = Math.max(input_width + output_width + 10, title_width);
-        size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH);
+        
         if (this.widgets && this.widgets.length) {
-            size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH * 1.5);
+            this.widgets.forEach((widget) => {
+                let text = widget.name + widget.value;
+                let textWidth = fontLetterWidth * text.length;
+                if (widgetWidth < textWidth)
+                    widgetWidth = textWidth;  
+            });
+            widgetWidth += 60; // Lateral margin where connections usually are placed
         }
+        size[0] = Math.ceil(Math.max(outputWidth, widgetWidth, titleWidth));
 
         size[1] = (this.constructor.slot_start_y || 0) + rows * LiteGraph.NODE_SLOT_HEIGHT;
 
@@ -5772,7 +5799,7 @@ LGraphNode.prototype.executeAction = function(action)
                 //convert mouse to node space
 				var desired_size = [ e.canvasX - this.resizing_node.pos[0], e.canvasY - this.resizing_node.pos[1] ];
                 var min_size = this.resizing_node.computeSize();
-                console.log(min_size)
+                
 				desired_size[0] = Math.max( min_size[0], desired_size[0] );
 				desired_size[1] = Math.max( min_size[1], desired_size[1] );
 				this.resizing_node.setSize( desired_size );
