@@ -3336,7 +3336,11 @@
                 else
                     widgets_height += LiteGraph.NODE_WIDGET_HEIGHT + 8;
             }
-            widgets_height += 16;
+            
+            if (this.horizontal)
+                widgets_height += 16; //margin
+            else
+                widgets_height += 6; //margin
         }
 
         //compute height using widgets height
@@ -3346,7 +3350,7 @@
             size[1] = Math.max( size[1], widgets_height + this.widgets_start_y );
         else
             size[1] += widgets_height;
-        console.log(this.constructor.minHeight)
+
         if (
             this.constructor.min_height &&
             size[1] < this.constructor.min_height
