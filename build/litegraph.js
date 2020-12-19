@@ -3337,11 +3337,11 @@
         if (this.widgets && this.widgets.length) {
             for (var i = 0, l = this.widgets.length; i < l; ++i) {
                 if (this.widgets[i].computeSize)
-                    widgets_height += this.widgets[i].computeSize(size[0])[1] + 6;
+                    widgets_height += this.widgets[i].computeSize(size[0])[1] + 8;
                 else
-                    widgets_height += LiteGraph.NODE_WIDGET_HEIGHT + 6;
+                    widgets_height += LiteGraph.NODE_WIDGET_HEIGHT + 8;
             }
-            widgets_height += 12;
+            widgets_height += 16;
         }
 
         //compute height using widgets height
@@ -7371,7 +7371,7 @@ LGraphNode.prototype.executeAction = function(action)
                 ctx.shadowColor = LiteGraph.DEFAULT_SHADOW_COLOR;
             ctx.shadowOffsetX = 0 * this.ds.scale;
             ctx.shadowOffsetY = 1 * this.ds.scale;
-            ctx.shadowBlur = 9 * this.ds.scale;
+            ctx.shadowBlur = 8 * this.ds.scale;
         } else {
             ctx.shadowColor = "transparent";
         }
@@ -8637,7 +8637,7 @@ LGraphNode.prototype.executeAction = function(action)
         }
         var width = node.size[0];
         var widgets = node.widgets;
-        posY += 4;
+        posY += 6;
         var H = LiteGraph.NODE_WIDGET_HEIGHT;
         var show_text = this.ds.scale > 0.5;
         ctx.save();
@@ -8649,7 +8649,7 @@ LGraphNode.prototype.executeAction = function(action)
         var margin = 18;
 
         if (node.horizontal)
-            margin = 6;
+            margin = 8;
 
         for (var i = 0; i < widgets.length; ++i) {
             var w = widgets[i];
