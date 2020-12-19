@@ -5771,7 +5771,8 @@ LGraphNode.prototype.executeAction = function(action)
             if (this.resizing_node && !this.live_mode) {
                 //convert mouse to node space
 				var desired_size = [ e.canvasX - this.resizing_node.pos[0], e.canvasY - this.resizing_node.pos[1] ];
-				var min_size = this.resizing_node.computeSize();
+                var min_size = this.resizing_node.computeSize();
+                console.log(min_size)
 				desired_size[0] = Math.max( min_size[0], desired_size[0] );
 				desired_size[1] = Math.max( min_size[1], desired_size[1] );
 				this.resizing_node.setSize( desired_size );
