@@ -3340,7 +3340,7 @@
             if (this.horizontal)
                 widgets_height += 16; //margin
             else
-                widgets_height += 3; //margin
+                widgets_height += 2; //margin
         }
 
         //compute height using widgets height
@@ -3358,7 +3358,7 @@
             size[1] = this.constructor.min_height;
         }
 
-        size[1] += 10; //margin
+        size[1] += 12; //margin
 
         return size;
     };
