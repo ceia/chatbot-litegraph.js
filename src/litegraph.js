@@ -8633,13 +8633,13 @@ LGraphNode.prototype.executeAction = function(action)
         }
         var width = node.size[0];
         var widgets = node.widgets;
-        posY += 2;
+        posY += 4;
         var H = LiteGraph.NODE_WIDGET_HEIGHT;
         var show_text = this.ds.scale > 0.5;
         ctx.save();
         ctx.globalAlpha = this.editor_alpha;
         var outline_color = LiteGraph.WIDGET_OUTLINE_COLOR;
-        var background_color = LiteGraph.WIDGET_BGCOLOR;
+        var background_color = node.color || LiteGraph.WIDGET_BGCOLOR;
         var text_color = LiteGraph.WIDGET_TEXT_COLOR;
 		var secondary_text_color = LiteGraph.WIDGET_SECONDARY_TEXT_COLOR;
         var margin = 18;
@@ -8665,14 +8665,19 @@ LGraphNode.prototype.executeAction = function(action)
                         w.clicked = false;
                         this.dirty_canvas = true;
                     }
-                    ctx.fillRect(margin*2, y, widget_width - margin * 4, H);
+
+                    ctx.fillStyle = LiteGraph.WIDGET_BGCOLOR;
+                    ctx.fillRect(margin*3, y, widget_width - margin * 6, H);
 					if(show_text && !w.disabled)
 	                    ctx.strokeRect( margin, y, widget_width - margin * 2, H );
                     if (show_text) {
                         ctx.textAlign = "center";
+                        ctx.font = 'italic 12px Courier New';
                         ctx.fillStyle = text_color;
                         ctx.fillText(w.name, widget_width * 0.5, y + H * 0.7);
+                        ctx.font = 'normal 12px Courier New';
                     }
+                    ctx.fillStyle = background_color;
                     break;
                 case "toggle":
                     ctx.textAlign = "left";
@@ -8797,7 +8802,7 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.fillStyle = background_color;
                     ctx.beginPath();
                     if (show_text)
-	                    ctx.roundRect(margin, posY, widget_width - margin * 2, H, H * 0.5);
+	                    ctx.roundRect(margin, posY, widget_width - margin * 2, H, H * 0.125);
 					else
 	                    ctx.rect( margin, posY, widget_width - margin * 2, H );
                     ctx.fill();
@@ -8814,7 +8819,7 @@ LGraphNode.prototype.executeAction = function(action)
                         }
                         ctx.fillStyle = text_color;
                         ctx.textAlign = "right";
-                        ctx.fillText(String(w.value).substr(0,300), widget_width - margin * 2, y + H * 0.7); //30 chars max
+                        ctx.fillText(String(w.value).substr(0,300), widget_width - margin * 2, y + H * 0.7); //300 chars max
 						ctx.restore();
                     }
                     break;
@@ -8824,7 +8829,7 @@ LGraphNode.prototype.executeAction = function(action)
                     }
                     break;
             }
-            posY += (w.computeSize ? w.computeSize(widget_width)[1] : H) + 4;
+            posY += (w.computeSize ? w.computeSize(widget_width)[1] : H) + 6;
 			ctx.globalAlpha = this.editor_alpha;
 
         }
