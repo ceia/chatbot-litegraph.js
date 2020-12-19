@@ -3300,38 +3300,6 @@
         rows = Math.max(rows, 1);
         var font_size = LiteGraph.NODE_TEXT_SIZE; //although it should be graphcanvas.inner_text_font size
 
-        // var title_width = compute_text_size(this.title);
-        // var input_width = 0;
-        // var output_width = 0;
-
-        // if (this.inputs) {
-        //     for (var i = 0, l = this.inputs.length; i < l; ++i) {
-        //         var input = this.inputs[i];
-        //         var text = input.label || input.name || "";
-        //         var text_width = compute_text_size(text);
-        //         if (input_width < text_width) {
-        //             input_width = text_width;
-        //         }
-        //     }
-        // }
-
-        // if (this.outputs) {
-        //     for (var i = 0, l = this.outputs.length; i < l; ++i) {
-        //         var output = this.outputs[i];
-        //         var text = output.label || output.name || "";
-        //         var text_width = compute_text_size(text);
-        //         if (output_width < text_width) {
-        //             output_width = text_width;
-        //         }
-        //     }
-        // }
-
-        // size[0] = Math.max(input_width + output_width + 10, title_width);
-        // size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH);
-        // if (this.widgets && this.widgets.length) {
-        //     size[0] = Math.max(size[0], LiteGraph.NODE_WIDTH * 1.5);
-        // }
-
         const fontLetterWidth = 7.6;
         let outputWidth = 0;
         let widgetWidth = 0;
@@ -3379,13 +3347,6 @@
         else
             size[1] += widgets_height;
 
-        function compute_text_size(text) {
-            if (!text) {
-                return 0;
-            }
-            return font_size * text.length;
-        }
-
         if (
             this.constructor.min_height &&
             size[1] < this.constructor.min_height
@@ -3393,7 +3354,10 @@
             size[1] = this.constructor.min_height;
         }
 
-        size[1] += 10; //margin
+        if (this.horizontal)
+            size[1] += 10; //margin
+        else
+            size[1] += 4; //margin
 
         return size;
     };
