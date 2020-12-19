@@ -3287,7 +3287,6 @@
      */
     LGraphNode.prototype.computeSize = function(out) {
         if (this.constructor.size) {
-            console.log(this.constructor.size)
             return this.constructor.size.concat();
         }
 
@@ -3296,7 +3295,7 @@
             this.outputs ? this.outputs.length : 1
         );
         var size = out || new Float32Array([0, 0]);
-        console.log(size)
+        
         rows = Math.max(rows, 1);
         var font_size = LiteGraph.NODE_TEXT_SIZE; //although it should be graphcanvas.inner_text_font size
 
@@ -5809,7 +5808,6 @@ LGraphNode.prototype.executeAction = function(action)
 
 		if(this.block_click)
 		{
-			console.log("foo");
 			this.block_click = false; //used to avoid sending twice a click in a immediate button
 		}
 
@@ -9546,7 +9544,6 @@ LGraphNode.prototype.executeAction = function(action)
 
     LGraphCanvas.prototype.showLinkMenu = function(link, e) {
         var that = this;
-		console.log(link);
 		var options = ["Add Node",null,"Delete"];
         var menu = new LiteGraph.ContextMenu(options, {
             event: e,
