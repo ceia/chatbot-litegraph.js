@@ -3317,7 +3317,7 @@
         
         if (this.widgets && this.widgets.length) {
             this.widgets.forEach((widget) => {
-                let text = widget.name + widget.value;
+                let text = widget.name + ': ' + widget.value;
                 let textWidth = fontLetterWidth * text.length;
                 if (widgetWidth < textWidth)
                     widgetWidth = textWidth;  
